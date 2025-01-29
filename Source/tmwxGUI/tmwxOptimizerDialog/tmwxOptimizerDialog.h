@@ -5,7 +5,7 @@ Purpose:      Header file for class tmwxOptimizerDialog
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-04-22
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXOPTIMIZERDIALOG_H_
@@ -19,7 +19,6 @@ Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
 class tmwxDoc;
 class tmOptimizer;
 class tmwxStaticText;
-
 
 /**********
 class tmwxOptimizerDialog
@@ -48,10 +47,10 @@ public:
   int GetReason() const {return mReason;};
 protected:
   // Implementation (some is platform-specific)
-  virtual void DoStartModal();
-  virtual void DoEventLoopModal();
-  virtual void DoEventLoopOnce();
-  virtual void DoFinishModal();
+  virtual void DoStartModal() = 0;
+  virtual void DoEventLoopModal() = 0;
+  virtual void DoEventLoopOnce() = 0;
+  virtual void DoFinishModal() = 0;
   void EndModal(int retCode);
   void SetStatus(int aStatus);
   void SetReason(int aReason);
@@ -60,7 +59,7 @@ protected:
   void UpdateUI();            // override tmNLCOUpdater::UpdateUI()
 private:
   tmwxDoc* mDoc;              // doc that this applies to
-  tmwxStaticText* mProgress;  // to display progress
+  wxStaticText* mProgress;    // to display progress
   wxStopWatch mMathWatch;     // timer for calculation
   wxStopWatch mGUIWatch;      // timer for GUI
   tmOptimizer* mOptimizer;    // object that performs the optimization

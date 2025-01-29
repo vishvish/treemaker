@@ -5,7 +5,7 @@ Purpose:      Source file for TreeMaker document class, Action menu commands
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-12-10
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxDoc.h"
@@ -13,6 +13,10 @@ Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
 #include "tmwxStr.h"
 #include "tmwxOptimizerDialog.h"
 #include "tmwxApp.h"
+
+#ifdef __WXMAC__
+#include "tmwxOptimizerDialog_mac.h"
+#endif
 
 using namespace std;
 
@@ -56,7 +60,11 @@ void tmwxDoc::OnScaleEverything(wxCommandEvent&)
     return;
   }
   // The actual calculation takes place during the modal dialog event loop
+#ifdef __WXMAC__
+  tmwxOptimizerDialogMac theDialog(this, theOptimizer, 
+#else
   tmwxOptimizerDialog theDialog(this, theOptimizer, 
+#endif
     wxT("Maximizing scale...")); 
   theNLCO->SetUpdater(&theDialog);
   wxString cmd;
@@ -154,7 +162,11 @@ void tmwxDoc::OnScaleSelection(wxCommandEvent&)
     delete theNLCO;
     return;
   }
+#ifdef __WXMAC__
+  tmwxOptimizerDialogMac theDialog(this, theOptimizer, 
+#else
   tmwxOptimizerDialog theDialog(this, theOptimizer, 
+#endif
     wxT("Maximizing strain...")); 
   theNLCO->SetUpdater(&theDialog);
   wxString cmd;
@@ -251,7 +263,11 @@ void tmwxDoc::OnMinimizeStrain(wxCommandEvent&)
     delete theNLCO;
     return;
   }
+#ifdef __WXMAC__
+  tmwxOptimizerDialogMac theDialog(this, theOptimizer, 
+#else
   tmwxOptimizerDialog theDialog(this, theOptimizer, 
+#endif
     wxT("Minimizing RMS strain...")); 
   theNLCO->SetUpdater(&theDialog);
   wxString cmd;

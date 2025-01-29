@@ -7,6 +7,18 @@ file(GLOB_RECURSE GUI_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 
+# Remove platform-specific files that don't match the current platform
+if(APPLE)
+    list(FILTER GUI_SOURCES EXCLUDE REGEX ".*_msw\\.cpp$")
+    list(FILTER GUI_SOURCES EXCLUDE REGEX ".*_gtk\\.cpp$")
+elseif(WIN32)
+    list(FILTER GUI_SOURCES EXCLUDE REGEX ".*_mac\\.cpp$")
+    list(FILTER GUI_SOURCES EXCLUDE REGEX ".*_gtk\\.cpp$")
+elseif(UNIX)
+    list(FILTER GUI_SOURCES EXCLUDE REGEX ".*_mac\\.cpp$")
+    list(FILTER GUI_SOURCES EXCLUDE REGEX ".*_msw\\.cpp$")
+endif()
+
 # Create the GUI library
 add_library(tmwxgui STATIC
     ${GUI_SOURCES}

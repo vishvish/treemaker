@@ -202,3 +202,5 @@ Total estimated time: 7-12 weeks
 - Fixed OnActivate event handling in tmwxDesignFrame
 - Updated wxMetafileDC::Ok() to IsOk() in tmwxDoc_Edit.cpp
 - Updated wxFileDialog flags and removed deprecated Mac code in tmwxDoc_File.cpp
+- Updated deprecated wxWidgets style constants in tmwxFoldedFormFrame.cpp
+- Fixed wxHtmlHelpController to use GetData() instead of m_data

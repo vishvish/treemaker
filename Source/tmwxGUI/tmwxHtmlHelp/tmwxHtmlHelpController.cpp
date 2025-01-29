@@ -47,7 +47,7 @@ Override from base class to create our own help frame
 *****/
 wxWindow* tmwxHtmlHelpController::CreateHelpWindow()
 {
-  wxHtmlHelpFrame* frame = CreateHelpFrame(m_data);
+  wxHtmlHelpFrame* frame = CreateHelpFrame(GetData());
   frame->SetController(this);
   return frame;
 }

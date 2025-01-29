@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmwxFoldedFormFrame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-05-27
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmModel.h"
@@ -145,7 +145,7 @@ void tmwxFoldedFormFrame::DrawVertex(wxDC& dc, tmVertex* aVertex)
 {
   wxColor theColor = BLACK_COLOR;
   int theWidth = (mDoc->mSelection.Contains(aVertex)) ? 5 : 1;
-  dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+  dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
   wxPoint pt = TreeToFrame(aVertex);
   dc.DrawLine(pt, pt);
 }
@@ -181,7 +181,7 @@ void tmwxFoldedFormFrame::DrawCrease(wxDC& dc, tmCrease* aCrease)
         "tmwxFoldedFormFrame::DrawCrease(wxDC&, tmCrease*)");
   }
   int theWidth = (mDoc->mSelection.Contains(aCrease)) ? 3 : 1;
-  dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+  dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
   const tmVertex* v1 = aCrease->GetFrontVertex();
   const tmVertex* v2 = aCrease->GetBackVertex();
   wxPoint pts[2] = {
@@ -199,9 +199,9 @@ void tmwxFoldedFormFrame::DrawFacet(wxDC& dc, tmFacet* aFacet)
 {
   dc.SetPen(*wxTRANSPARENT_PEN);
   if (IsFacetDrawnSelected(aFacet))
-    dc.SetBrush(wxBrush(FACET_SELECTED_COLOR, wxSOLID));
+    dc.SetBrush(wxBrush(FACET_SELECTED_COLOR, wxBRUSHSTYLE_SOLID));
   else
-    dc.SetBrush(wxBrush(FACET_COLOR, wxSOLID));
+    dc.SetBrush(wxBrush(FACET_COLOR, wxBRUSHSTYLE_SOLID));
   size_t n = aFacet->GetVertices().size();
   wxPoint* pts = new wxPoint[n];
   for (size_t j = 0; j < n; ++j) {
@@ -253,7 +253,7 @@ fully fills the dc.
 void tmwxFoldedFormFrame::OnDraw(wxDC& dc)
 {
   wxFont theFont;
-  theFont.SetFamily(wxSWISS);
+  theFont.SetFamily(wxFONTFAMILY_SWISS);
   theFont.SetPointSize(18);
   dc.SetFont(theFont);
   dc.SetTextForeground(wxColor(127, 127, 127));
@@ -304,7 +304,7 @@ void tmwxFoldedFormFrame::OnDraw(wxDC& dc)
   // Draw the background if we're not printing
   if (!mPrinting) {
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(wxBrush(BACKGROUND_COLOR, wxSOLID));
+    dc.SetBrush(wxBrush(BACKGROUND_COLOR, wxBRUSHSTYLE_SOLID));
     dc.DrawRectangle(0, 0, w, h);
   }
 

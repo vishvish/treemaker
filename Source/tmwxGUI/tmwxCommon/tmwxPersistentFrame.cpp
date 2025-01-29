@@ -21,18 +21,20 @@ Event table entries for tmwxPersistentFrame<wxFrame>
 *****/
 template <>
 const wxEventTableEntry tmwxPersistentFrame<wxFrame>::sm_eventTableEntries[] = {
-  EVT_MOVE(tmwxPersistentFrame<wxFrame>::OnMove)
-  EVT_SIZE(tmwxPersistentFrame<wxFrame>::OnSize)
-END_EVENT_TABLE()
+  { wxEVT_MOVE, 0, -1, wxNewEventTableFunctor(wxEVT_MOVE, (wxObjectEventFunction)&tmwxPersistentFrame<wxFrame>::OnMove), NULL },
+  { wxEVT_SIZE, 0, -1, wxNewEventTableFunctor(wxEVT_SIZE, (wxObjectEventFunction)&tmwxPersistentFrame<wxFrame>::OnSize), NULL },
+  { wxEVT_NULL, 0, 0, NULL, NULL }
+};
 
 /*****
 Event table entries for tmwxPersistentFrame<tmwxDocParentFrame>
 *****/
 template <>
 const wxEventTableEntry tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventTableEntries[] = {
-  EVT_MOVE(tmwxPersistentFrame<tmwxDocParentFrame>::OnMove)
-  EVT_SIZE(tmwxPersistentFrame<tmwxDocParentFrame>::OnSize)
-END_EVENT_TABLE()
+  { wxEVT_MOVE, 0, -1, wxNewEventTableFunctor(wxEVT_MOVE, (wxObjectEventFunction)&tmwxPersistentFrame<tmwxDocParentFrame>::OnMove), NULL },
+  { wxEVT_SIZE, 0, -1, wxNewEventTableFunctor(wxEVT_SIZE, (wxObjectEventFunction)&tmwxPersistentFrame<tmwxDocParentFrame>::OnSize), NULL },
+  { wxEVT_NULL, 0, 0, NULL, NULL }
+};
 
 /*****
 Constructor for ordinary wxFrame with persistence

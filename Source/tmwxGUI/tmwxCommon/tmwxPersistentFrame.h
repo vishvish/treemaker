@@ -62,12 +62,22 @@ public:
   // Event handling
   void OnMove(wxMoveEvent& event);
   void OnSize(wxSizeEvent& event);
+  wxDECLARE_EVENT_TABLE();
 protected:
   virtual void InitPositionAndSize();
   virtual void GetPositionSizeInfo(Key key, wxString& keystr, int& val);
 private:
   bool mPositionAndSizeInitialized;
 };
+
+// Declare event table specializations
+template<> wxEventTable const tmwxPersistentFrame<wxFrame>::sm_eventTable;
+template<> wxEventHashTable tmwxPersistentFrame<wxFrame>::sm_eventHashTable;
+template<> wxEventTableEntry const tmwxPersistentFrame<wxFrame>::sm_eventTableEntries[];
+
+template<> wxEventTable const tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventTable;
+template<> wxEventHashTable tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventHashTable;
+template<> wxEventTableEntry const tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventTableEntries[];
 
 /**********
 Template functions

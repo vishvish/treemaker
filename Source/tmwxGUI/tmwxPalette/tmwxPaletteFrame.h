@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker frame class for palettes
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-05-03
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXPALETTEFRAME_H_
@@ -44,6 +44,32 @@ protected:
 
   virtual void UninstallPanel();
   virtual void InstallPanel(tmwxPalettePanel* aPanel);
+  
+  // Override GetPositionSizeInfo to provide position and size information
+  virtual void GetPositionSizeInfo(typename tmwxPersistentFrame<Frame>::Key key, 
+    wxString& keystr, int& val) {
+    switch(key) {
+      case tmwxPersistentFrame<Frame>::X_KEY:
+        keystr = wxT("PaletteFrameX");
+        val = 50;
+        break;
+      case tmwxPersistentFrame<Frame>::Y_KEY:
+        keystr = wxT("PaletteFrameY");
+        val = 50;
+        break;
+      case tmwxPersistentFrame<Frame>::W_KEY:
+        keystr = wxT("PaletteFrameW");
+        val = 280;
+        break;
+      case tmwxPersistentFrame<Frame>::H_KEY:
+        keystr = wxT("PaletteFrameH");
+        val = 400;
+        break;
+      default:
+        TMFAIL("unknown key encountered in tmwxPaletteFrame::GetPositionSizeInfo(..)");
+        break;
+    }
+  }
 };
 
 
@@ -122,7 +148,6 @@ void tmwxPaletteFrame<Frame>::InstallPanel(tmwxPalettePanel* aPanel)
 {
   TMASSERT(mPanel == 0);
   mPanel = aPanel;
-  mPanel->Show();  // need to make it visible first so sizer recognizes it
   mSizer->Add(mPanel, 0, wxGROW | wxALL,
 #ifdef __WXMSW__
     // don't make non-native border around palette panel
@@ -134,6 +159,7 @@ void tmwxPaletteFrame<Frame>::InstallPanel(tmwxPalettePanel* aPanel)
   mSizer->Layout();
   mSizer->SetSizeHints(this);
   mSizer->Fit(this);
+  mPanel->Show();  // Show panel after layout is complete
 }
 
 

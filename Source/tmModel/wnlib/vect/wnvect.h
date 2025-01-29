@@ -15,6 +15,9 @@ AUTHOR:
 #ifndef wnvectH
 #define wnvectH
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void wn_print_vect(double vect[],int len);
 void wn_enter_vect(double vect[],int len);
@@ -69,5 +72,8 @@ void wn_scale_vect(double *vect,double scalar,int len);
 void wn_multiply_vect_by_vect(double *v1, double *v2, int len);
 void wn_divide_vect_by_vect(double *v1, double *v2, int len);
 
+#ifdef __cplusplus
+}
 #endif
 
+#endif

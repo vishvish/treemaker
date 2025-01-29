@@ -5,7 +5,7 @@ Purpose:      Implementation file for TreeMaker view settings frame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-03-16
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxPaletteFrame.h"
@@ -29,16 +29,23 @@ tmwxPaletteFrame<wxFrame>::tmwxPaletteFrame(const wxString& title,
 #endif
     wxFRAME_TOOL_WINDOW | wxCAPTION | wxCLOSE_BOX
   ),
-  mObj(0), mPanel(0), mSizer(new wxBoxSizer(wxVERTICAL))
+  mObj(0), mPanel(0)
 {
+  // Create and set up the sizer
+  mSizer = new wxBoxSizer(wxVERTICAL);
   mSizer->SetMinSize(minWidth, 0);
   SetSizer(mSizer);
-  mSizer->SetSizeHints(this);
-  mSizer->Fit(this);
+
+  // Set minimum size and fit content
+  SetMinSize(wxSize(minWidth, 100));
+  Layout();
 
 #if wxUSE_ACCEL
   SetAcceleratorTable(tmwxGetAcceleratorTable());
 #endif
+
+  // Initialize position and size after everything is set up
+  InitPositionAndSize();
 }
 
 
@@ -54,14 +61,21 @@ tmwxPaletteFrame<tmwxDocParentFrame>::tmwxPaletteFrame(wxDocManager* docManager,
 #endif
     wxFRAME_TOOL_WINDOW | wxCAPTION | wxCLOSE_BOX
   ),
-  mObj(0), mPanel(0), mSizer(new wxBoxSizer(wxVERTICAL))
+  mObj(0), mPanel(0)
 {
+  // Create and set up the sizer
+  mSizer = new wxBoxSizer(wxVERTICAL);
   mSizer->SetMinSize(minWidth, 0);
   SetSizer(mSizer);
-  mSizer->SetSizeHints(this);
-  mSizer->Fit(this);
+
+  // Set minimum size and fit content
+  SetMinSize(wxSize(minWidth, 100));
+  Layout();
 
 #if wxUSE_ACCEL
   SetAcceleratorTable(tmwxGetAcceleratorTable());
 #endif
+
+  // Initialize position and size after everything is set up
+  InitPositionAndSize();
 }

@@ -5,7 +5,7 @@ Purpose:      Test application for the tmDpptr and tmDpptrArray container classe
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-09-27
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include <iostream>
@@ -116,9 +116,9 @@ int main(void)
   
   tmDpptrArray<D> rld;    // create a list of references
 
-  D* d1 = new D("d1");  // create a bunch of objects to put into the list
-  D* d2 = new D("d2");
-  D* d3 = new D("d3");
+  D* d1 = new D(const_cast<char*>("d1"));  // create a bunch of objects to put into the list
+  D* d2 = new D(const_cast<char*>("d2"));
+  D* d3 = new D(const_cast<char*>("d3"));
   
   tmDpptrTarget* rd1 = d1;
   tmDpptrTarget* rd2 = d2;
@@ -145,9 +145,9 @@ int main(void)
   
   // Try it again but this time test the clear() command
   
-  D* d4 = new D("d4");  // create a bunch of objects to put into the list
-  D* d5 = new D("d5");
-  D* d6 = new D("d6");
+  D* d4 = new D(const_cast<char*>("d4"));  // create a bunch of objects to put into the list
+  D* d5 = new D(const_cast<char*>("d5"));
+  D* d6 = new D(const_cast<char*>("d6"));
   
   rld.push_back(d4);    // put them into the list.
   rld.push_back(d5);

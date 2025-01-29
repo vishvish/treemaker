@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker Newton-Raphson equation solver class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    Â©2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMNEWTONRAPHSON_H_
@@ -113,7 +113,7 @@ Perform the LU decomposition of a matrix in place. Given a matrix a, this
 routine replaces it by the LU decomposition of a rowwise permutation of itself.
 a is input and output, arranged as in equation (2.3.14) in PFTV;
 mRowPermutation is an output vector that records the row permutation effected
-by the partial pivoting; d is output as ±1 depending on whether the number of
+by the partial pivoting; d is output as Â±1 depending on whether the number of
 row interchanges was even or odd, respectively. This routine is used in
 combination with LUBackSubstitution to solve linear equations or invert a
 matrix.

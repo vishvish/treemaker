@@ -78,7 +78,6 @@ AUTHOR:
 #endif
 /*[\RJL]*/
 
-#include <malloc.h>
 #include <string.h>
 
 #include "wnlib.h"
@@ -88,17 +87,27 @@ AUTHOR:
 
 #include "wnmem.h"
 
+static char* wn_duplicate_string(const char* str);
 
+/* Default error handler */
+static void wn_error_func(int size) {
+  fprintf(stderr, "Memory allocation failed for size %d\n", size);
+  exit(1);
+}
+
+/* Global function pointer for error handling */
+typedef void (*voidfunc)(int size);
+static voidfunc perror_func = wn_error_func;
 
 #define BEGIN_MAGIC      1122112211
 #define END_MAGIC        1221122112
 
-local bool initialized = FALSE;
+bool initialized = FALSE;
 
-local wn_gpstack current_gpstack = NULL;
+wn_gpstack current_gpstack = NULL;
 
-local wn_memgp group_list = NULL;
-local wn_memgp default_group = NULL;
+wn_memgp group_list = NULL;
+wn_memgp default_group = NULL;
 
 bool wn_gp_fill_flag=FALSE,
      wn_gp_pad_flag=FALSE,
@@ -107,16 +116,12 @@ ptr wn_gp_trap_address_address;
 
 ptr wn_system_alloc(/*size*/);
 
-local void default_error_func(int size);
-typedef void (*voidfunc)(int size);
-local voidfunc perror_func = (default_error_func);
-
 void wn_initialize_group_for_general_free(wn_memgp group);
 void wn_initialize_group_for_no_free(wn_memgp group);
 
 
-local wn_system_memory_alloc_func_type lo_system_memory_alloc_func = &malloc;
-local wn_system_memory_free_func_type  lo_system_memory_free_func  = &free;
+wn_system_memory_alloc_func_type lo_system_memory_alloc_func = (wn_system_memory_alloc_func_type)malloc;
+wn_system_memory_free_func_type lo_system_memory_free_func = (wn_system_memory_free_func_type)free;
 
 
 void wn_set_system_memory_alloc_func(wn_system_memory_alloc_func_type func)
@@ -135,7 +140,7 @@ ptr wn_system_alloc(int size)
 {
   ptr ret;
 
-  ret = (ptr)(*lo_system_memory_alloc_func)((unsigned int) size);
+  ret = (ptr)(*lo_system_memory_alloc_func)((size_t) size);
 
   if(ret == NULL)  /* out of memory */
   {
@@ -143,7 +148,7 @@ ptr wn_system_alloc(int size)
                               or free up necessary memory */
 
     /* try again */
-    ret = (ptr)(*lo_system_memory_alloc_func)((unsigned int) size);
+    ret = (ptr)(*lo_system_memory_alloc_func)((size_t) size);
 
     if(ret == NULL)
     {
@@ -172,13 +177,14 @@ void wn_system_free(ptr mem,int size)
 }
 
 
-local void print_group(wn_memgp group)
+void print_group(wn_memgp group)
 {
-  char *label;
+  const char* label;
+  static const char* const NULL_LABEL = "(NULL)";
 
   if(group == NULL)
   {
-    printf("%20s  %lx","",(unsigned long)group);
+    printf("%20s  %lx",NULL_LABEL,(unsigned long)group);
   }
   else
   {
@@ -186,7 +192,7 @@ local void print_group(wn_memgp group)
 
     if(label == NULL)
     {
-      label = "(NULL)";
+      label = NULL_LABEL;
     }
 
     printf("%20s  %lx",label,(unsigned long)group);
@@ -250,7 +256,7 @@ void wn_gppop(void)
 }
 
 
-local void make_system_gpstack(wn_gpstack *pstack)    
+void make_system_gpstack(wn_gpstack *pstack)    
 {
   *pstack = (wn_gpstack)wn_system_alloc(sizeof(struct wn_gpstack_struct));
 
@@ -286,7 +292,7 @@ void wn_set_current_gpstack(wn_gpstack stack)
 }
 
 
-local void initialize_memory_allocator(void)
+void initialize_memory_allocator(void)
 {
   make_system_gpstack(&current_gpstack);   
 
@@ -312,7 +318,7 @@ wn_memgp wn_curgp(void)
 }
 
 
-local void make_memory_group 
+void make_memory_group 
 (
   wn_memgp *pgroup,
   int flags,
@@ -385,11 +391,13 @@ local void make_memory_group
 }
 
 
-local void label_group(char *label,wn_memgp group)
+void wn_label_group(const char* label, wn_memgp group)
 {
-  wn_assert(group->label == NULL);
-
-  group->label = label;
+  if(group == NULL)
+  {
+    return;
+  }
+  group->label = wn_duplicate_string(label);
 }
 
 
@@ -404,7 +412,7 @@ void wn_gplabel(const char *label)
 
   label_copy = (char *)wn_alloc(strlen(label)+1);
   strcpy(label_copy,label);
-  label_group(label_copy,current_gpstack->current_group);
+  wn_label_group(label_copy,current_gpstack->current_group);
 
   current_gpstack->current_group->mem_used = save_mem_used;
 }
@@ -421,7 +429,7 @@ wn_memgp wn_defaultgp(void)
   {
     make_memory_group(&default_group, WN_GENERAL_FREE, 4000, (wn_memgp)NULL);
 
-    label_group("default_group",default_group);
+    wn_label_group("default_group",default_group);
   }
 
   return(default_group);
@@ -486,9 +494,9 @@ void wn_gpmakef(int flags, int block_size)
 } /* wn_gpmakef */
 
 
-local void free_group(wn_memgp group);
+void free_group(wn_memgp group);
 
-local void free_groups_children(wn_memgp group)
+void free_groups_children(wn_memgp group)
 {
   wn_memgp child,next;
 
@@ -509,7 +517,7 @@ local void free_groups_children(wn_memgp group)
 }
 
 
-local void free_group_memory(wn_memgp group)
+void free_group_memory(wn_memgp group)
 {
   wn_mem_block block,next;
 
@@ -529,7 +537,7 @@ local void free_group_memory(wn_memgp group)
 }
 
 
-local void remove_group_from_group_list(wn_memgp group)
+void remove_group_from_group_list(wn_memgp group)
 {
   *(group->plast) = group->next;
   if(group->next != NULL)
@@ -539,7 +547,7 @@ local void remove_group_from_group_list(wn_memgp group)
 }
 
 
-local void remove_group_from_parent_subgroup_list(wn_memgp group)
+void remove_group_from_parent_subgroup_list(wn_memgp group)
 {
   if(group->psub_last != NULL)
   {
@@ -552,11 +560,11 @@ local void remove_group_from_parent_subgroup_list(wn_memgp group)
 }
 
 
-local FILE *lo_trace_group_fp = NULL;
-local long unsigned lo_last_heapsize = 0;
-local int lo_traces_displayed = 0;
+FILE *lo_trace_group_fp = NULL;
+long unsigned lo_last_heapsize = 0;
+int lo_traces_displayed = 0;
 
-local void lo_trace_group_one_line(FILE *out, wn_memgp group)
+void lo_trace_group_one_line(FILE *out, wn_memgp group)
 {
   wn_mem_block block;
   long unsigned total_memory, leftover;
@@ -591,7 +599,7 @@ local void lo_trace_group_one_line(FILE *out, wn_memgp group)
   else
   {
     percent_free = 100.0 * free / total_memory;
-    sprintf(percent_free_buf, "%6.2f", percent_free);
+    snprintf(percent_free_buf, sizeof(percent_free_buf), "%6.2f", percent_free);
   }
 
   leftover = 0;
@@ -612,7 +620,7 @@ local void lo_trace_group_one_line(FILE *out, wn_memgp group)
 } /* lo_trace_group_one_line */
 
 
-local void lo_trace_group_free_start(wn_memgp group)
+void lo_trace_group_free_start(wn_memgp group)
 {
   static bool first_time = TRUE;
   char *pfn;
@@ -649,7 +657,7 @@ local void lo_trace_group_free_start(wn_memgp group)
 } /* lo_trace_group_free_start */
 
 
-local void lo_trace_group_free_end()
+void lo_trace_group_free_end()
 {
   long unsigned new_heapsize;
 
@@ -669,7 +677,7 @@ local void lo_trace_group_free_end()
 } /* lo_trace_group_free_end */
 
 
-local void free_group(wn_memgp group)
+void free_group(wn_memgp group)
 {
   free_groups_children(group);
 
@@ -796,13 +804,6 @@ void wn_gperrfpush(void (*pfunc)(int size))
 }
 
 
-/*ARGSUSED*/ local void default_error_func(int size)
-{
-  fprintf(stderr,"out of memory\n");
-  wn_assert_notreached();
-}
-
-
 void wn_gp_fill(void)
 {
   wn_gp_fill_flag = TRUE;
@@ -820,7 +821,7 @@ void wn_gp_pad(void)
 }
 
 
-local void stack_fill(int size)
+void stack_fill(int size)
 {
   int filler[1000/sizeof(int)];
 
@@ -848,7 +849,7 @@ void wn_gp_trap_address(ptr address)
 }
 
 
-local bool group_is_in_group_list(wn_memgp group)
+bool group_is_in_group_list(wn_memgp group)
 {
   wn_memgp g;
 
@@ -864,7 +865,7 @@ local bool group_is_in_group_list(wn_memgp group)
 }
 
 
-local void verify_group_stack_group(wn_memgp group)
+void verify_group_stack_group(wn_memgp group)
 {
   if(!(group_is_in_group_list(group)))
   {
@@ -874,14 +875,14 @@ local void verify_group_stack_group(wn_memgp group)
 }
 
 
-local void generic_verify_group(wn_memgp group)
+void generic_verify_group(wn_memgp group)
 {
   wn_assert(group->begin_magic == (int) BEGIN_MAGIC);
   wn_assert(group->end_magic   == (int) END_MAGIC);
 }
 
 
-local void verify_group(wn_memgp group)
+void verify_group(wn_memgp group)
 {
   generic_verify_group(group);
 
@@ -889,7 +890,7 @@ local void verify_group(wn_memgp group)
 }
 
 
-local void verify_group_stack(void)
+void verify_group_stack(void)
 {
   int i;
   wn_memgp group;
@@ -914,7 +915,7 @@ local void verify_group_stack(void)
 }
 
 
-local void verify_all_groups(void)
+void verify_all_groups(void)
 {
   wn_memgp group;
 
@@ -947,7 +948,7 @@ void wn_allmem_verify(void)
 }
 
 
-local long int memory_used_in_group(wn_memgp group)
+long int memory_used_in_group(wn_memgp group)
 {
   return(group->mem_used);
 }
@@ -969,21 +970,42 @@ long int wn_mem_used(void)
 }
 
 
+void wn_print_mem_use(FILE *out)
+{
+  const char* const NULL_LABEL = "(NULL)";
+  const char* label;
+
+  if(out == NULL)
+  {
+    return;
+  }
+
+  if(default_group == NULL)
+  {
+    label = NULL_LABEL;  /* Safe because we only read from it */
+  }
+  else
+  {
+    label = default_group->label;
+  }
+
+  fprintf(out, "Memory group %s:\n", label);
+  fprintf(out, "total memory used for group = %ld\n", wn_group_mem_used(default_group));
+  fprintf(out, "label = %s\n", label);
+}
+
+
 void wn_print_mem_used(void)
 {
-  char string[150];
-
-  (void)sprintf(string,"total memory used = %d\n",wn_mem_used());
-  fputs(string,stdout);
-  fflush(stdout);
+  wn_print_mem_use(stdout);
 }
 
 
 void wn_print_group_mem_used(wn_memgp group)
 {
-  char string[150];
+  char string[256];
 
-  (void)sprintf(string,"total memory used for group = %d\n",
+  (void)snprintf(string, 256, "total memory used for group = %ld\n",
   /**/            wn_group_mem_used(group));
   fputs(string,stdout);
   fflush(stdout);
@@ -1071,7 +1093,7 @@ long unsigned wn_heapsize(void)
 }
 
 
-local bool memory_is_in_block(ptr p,wn_mem_block block)
+bool memory_is_in_block(ptr p,wn_mem_block block)
 {
   long unsigned int start,fin,p_address;
 
@@ -1106,15 +1128,32 @@ bool wn_mem_in_group(ptr p,wn_memgp group)
 }
 
 
-local void
-group_memory_fragmentation_report(wn_memgp group, int level)
+void group_memory_fragmentation_report(wn_memgp group, int level)
 {
   /* stub */
 }
 
 
-void
-wn_memory_fragmentation_report()
+void wn_memory_fragmentation_report()
 {
   /* stub */
+}
+
+static char* wn_duplicate_string(const char* str) {
+    if (!str) return NULL;
+    size_t len = strlen(str) + 1;
+    char* dup = (char*)wn_alloc(len);
+    if (dup) {
+        strncpy(dup, str, len);
+        dup[len-1] = '\0';  /* Ensure null termination */
+    }
+    return dup;
+}
+
+void wn_set_group_label(wn_memgp group, const char* label)
+{
+  if (group->label) {
+    wn_free((ptr)group->label);
+  }
+  group->label = wn_duplicate_string(label);
 }

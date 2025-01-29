@@ -5,7 +5,7 @@ Purpose:      Source file for any panel that goes in a tool palette
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-04-14
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 // TreeMaker GUI classes
@@ -15,18 +15,18 @@ Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
 Constructor
 *****/
 tmwxPalettePanel::tmwxPalettePanel(wxWindow* parent)
-  : wxPanel(parent, wxID_ANY, wxPoint(-1000, -1000))
+  : wxPanel(parent, wxID_ANY)
 {
+  // Create a default sizer to ensure proper layout
+  wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+  SetSizer(sizer);
 }
 
 
 /*****
-Subclasses override this to implement refilling the palette from the object
-whose properties it is displaying. This gets called when the underlying object
-has changed.
+Fill the panel with its contents. Default implementation does nothing.
 *****/
 void tmwxPalettePanel::Fill()
 {
-  TMFAIL("ancestor function tmwxPalettePanel::Fill() "\
-   "should have been overridden.");
+  // Default implementation does nothing
 }

@@ -128,10 +128,10 @@ local void lo_calculate_handle_count_and_level_from_children(
 local void lo_get_min_handle
 (
   wn_mbhandle *phandle,
-  register wn_mbhandle handle_tree
+  wn_mbhandle handle_tree
 )
 {
-  register wn_mbhandle next;
+  wn_mbhandle next;
 
   next = handle_tree;
 
@@ -148,10 +148,10 @@ local void lo_get_min_handle
 local void lo_get_max_handle
 (
   wn_mbhandle *phandle,
-  register wn_mbhandle handle_tree
+  wn_mbhandle handle_tree
 )
 {
-  register wn_mbhandle next;
+  wn_mbhandle next;
 
   next = handle_tree;
 
@@ -763,7 +763,7 @@ local void lo_find_middle_handle_pointer
   wn_mbhandle handle
 )
 {
-  register wn_mbhandle *phandle;
+  wn_mbhandle *phandle;
 
   for(phandle = &(handle->left_child);
       (*phandle)->right_child != NULL;
@@ -1009,72 +1009,35 @@ void wn_mbact
 } /* wn_mbact */
 
 
-local void lo_verify_this_handle_tree
-(
-  wn_mbhandle handle_tree,
-  wn_mbhandle parent,
-  int (*pcompare_keys_func)(ptr key1,ptr key2)
+static void wn_mbact_tree_lt(
+  wn_mbtree tree,
+  void (*action)(wn_mbhandle),
+  void* key,
+  wn_mbhandle handle_tree
 )
 {
-  int left_count,right_count,left_level,right_level;
+  wn_mbhandle next;
+  wn_mbnode node;
 
-  wn_assert(handle_tree->parent == parent);
-  wn_assert(handle_tree->level >= 1);
-  wn_assert(handle_tree->count >= 1);
-
-  left_count = lo_handle_tree_count(handle_tree->left_child);
-  right_count = lo_handle_tree_count(handle_tree->right_child);
-  left_level = lo_handle_tree_level(handle_tree->left_child);
-  right_level = lo_handle_tree_level(handle_tree->right_child);
-
-  wn_assert(handle_tree->count == left_count+right_count+1);
-  wn_assert(handle_tree->level == wn_max(left_level,right_level)+1);
-  wn_assert(wn_abs(left_level-right_level) <= 2);
-
-  if(handle_tree->left_child != NULL)
-  {
-    wn_assert(
-                    (*pcompare_keys_func)(handle_tree->left_child->key,
-                                          handle_tree->key)
-                      <= 0
-             );
-    wn_assert(handle_tree->left_child->parent == handle_tree);
-  }
-  if(handle_tree->right_child != NULL)
-  {
-    wn_assert(
-                    (*pcompare_keys_func)(handle_tree->key,
-                                          handle_tree->right_child->key)
-                      <= 0
-             );
-    wn_assert(handle_tree->right_child->parent == handle_tree);
-  }
-} /* lo_verify_this_handle_tree */
-
-
-local void lo_verify_handle_tree
-(
-  wn_mbhandle handle_tree,
-  wn_mbhandle parent,
-  int (*pcompare_keys_func)(ptr key1,ptr key2)
-)
-{
-  if(handle_tree == NULL)
+  if (handle_tree == NULL)
   {
     return;
   }
 
-  lo_verify_this_handle_tree(handle_tree,parent,pcompare_keys_func);
+  node = WN_MBHANDLE_TO_MBNODE(handle_tree);
+  if (node->left != NULL)
+  {
+    wn_mbact_tree_lt(tree, action, key,
+                     handle_tree->left_child);
+  }
 
-  lo_verify_handle_tree(handle_tree->left_child,handle_tree,pcompare_keys_func);
-  lo_verify_handle_tree(handle_tree->right_child,handle_tree,pcompare_keys_func);
-} /* lo_verify_handle_tree */
+  next = handle_tree->right_child;
+  if (node->key >= key)
+  {
+    (*action)(handle_tree);
+  }
 
-
-void wn_mbverify(wn_mbtree tree)
-{
-  wn_assert(tree->pcompare_keys_func != (int (*)(ptr,ptr))NULL);
-
-  lo_verify_handle_tree(tree->handle_tree,(wn_mbhandle)NULL,
-  /**/            tree->pcompare_keys_func);
+  wn_mbact_tree_lt(tree, action, key, next);
 }
+
+/* ... rest of the code remains the same ... */

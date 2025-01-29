@@ -48,6 +48,14 @@ tmwxPersistentFrame<wxFrame>::tmwxPersistentFrame(const wxString& title,
 #if defined(__LINUX__) || defined(__WXMSW__)
   SetIcon (wxGetApp ().GetAppIcon ());
 #endif
+
+  // Create a default sizer to ensure proper layout
+  wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+  SetSizer(sizer);
+  
+  // Set a default minimum size
+  SetMinSize(wxSize(100, 100));
+  Layout();
 }
 
 
@@ -64,6 +72,14 @@ tmwxPersistentFrame<tmwxDocParentFrame>::tmwxPersistentFrame(
 #if defined(__LINUX__) || defined(__WXMSW__)
   SetIcon (wxGetApp ().GetAppIcon ());
 #endif
+
+  // Create a default sizer to ensure proper layout
+  wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+  SetSizer(sizer);
+  
+  // Set a default minimum size
+  SetMinSize(wxSize(100, 100));
+  Layout();
 }
 
 /*

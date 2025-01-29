@@ -5,7 +5,7 @@ Purpose:      Implementation file for tmConstraintFns class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-03-03
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    Â©2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmConstraintFns.h"
@@ -1076,13 +1076,13 @@ ix is the index of the x component of the position of the first tmNode
 iy is the index of the y component of the position of the first tmNode
 jx is the index of the x component of the position of the second tmNode
 jy is the index of the y component of the position of the second tmNode
-n is the number of divisions of 180¡ by which the angle is quantized
+n is the number of divisions of 180Â¡ by which the angle is quantized
 oa is the offset in angle quantization
 da is the angle step
 wt is a weighting constant for the constraint
 The functional form of the constraint is
-F = wt * ¸(all ak) ((u[ix] - u[jx]) sin(ak) - (u[iy] - u[jy]) cos(ak))
-where wt = 3^(n - 1) * /¸(i=1,n-1) sin(i)
+F = wt * Â¸(all ak) ((u[ix] - u[jx]) sin(ak) - (u[iy] - u[jy]) cos(ak))
+where wt = 3^(n - 1) * /Â¸(i=1,n-1) sin(i)
 ******************************************************************************/
 
 /*****
@@ -1199,13 +1199,13 @@ ix is the index of the x component of the position of the first tmNode
 iy is the index of the y component of the position of the first tmNode
 jx is the index of the x component of the position of the second tmNode
 jy is the index of the y component of the position of the second tmNode
-n is the number of divisions of 180¡ by which the angle is quantized
+n is the number of divisions of 180Â¡ by which the angle is quantized
 oa is the offset in angle quantization
 da is the angle step
 wt is the weighting function for the constraint
 The functional form of the constraint is
-F = wt * ¸(all ak) ((u[ix] - u[jx]) sin(ak) - (u[iy] - u[jy]) cos(ak))
-where wt = 3^(n - 1) * /¸(i=1,n-1) sin(i)
+F = wt * Â¸(all ak) ((u[ix] - u[jx]) sin(ak) - (u[iy] - u[jy]) cos(ak))
+where wt = 3^(n - 1) * /Â¸(i=1,n-1) sin(i)
 ******************************************************************************/
 
 /*****
@@ -1292,13 +1292,13 @@ ix is the index of the x component of the position of the movable tmNode
 iy is the index of the y component of the position of the movable tmNode
 vx is the index of the x component of the position of the fixed tmNode
 vy is the index of the y component of the position of the fixed tmNode
-n is the number of divisions of 180¡ by which the angle is quantized
+n is the number of divisions of 180Â¡ by which the angle is quantized
 oa is the offset in angle quantization
 da is the angular step
 wt is the weighting function for the constraint
 The functional form of the constraint is
-F = wt * ¸(all ak) ((u[ix] - vx) sin(ak) - (u[iy] - vy) cos(ak))
-where wt = 3^(n - 1) * /¸(i=1,n-1) sin(i)
+F = wt * Â¸(all ak) ((u[ix] - vx) sin(ak) - (u[iy] - vy) cos(ak))
+where wt = 3^(n - 1) * /Â¸(i=1,n-1) sin(i)
 ******************************************************************************/
 
 /*****

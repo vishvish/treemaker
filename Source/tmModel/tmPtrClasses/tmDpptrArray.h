@@ -5,7 +5,7 @@ Purpose:      Header file for dangle-proof array of pointers
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMDPPTRARRAY_H_
@@ -240,7 +240,7 @@ referencing it
 template <class T>
 void tmDpptrArray<T>::union_with(T* pt)
 {
-  if (!contains(pt)) push_back(pt);
+  if (!this->contains(pt)) this->push_back(pt);
 }
 
 
@@ -250,7 +250,7 @@ Remove all copies of this item from the list.
 template <class T>
 void tmDpptrArray<T>::erase_remove(T* pt)
 {
-  if (contains(pt)) {
+  if (this->contains(pt)) {
     tmArray<T*>::erase_remove(pt);
     DstRemoveMeAsDpptrSrc(pt);
   };
@@ -344,7 +344,7 @@ template <class T>
 void tmDpptrArray<T>::union_with(const tmArray<T*>& aList)
 {
   for (std::size_t i = 0; i < aList.size(); ++i) 
-    union_with(aList[i]);
+    if (!this->contains(aList[i])) this->push_back(aList[i]);
 }
 
 
@@ -355,7 +355,7 @@ template <class T>
 void tmDpptrArray<T>::intersect_with(const tmArray<T*>& aList)
 {
   for (std::size_t i = 0; i < this->size(); ++i) {
-    T* pt = aList[i];
+    T* pt = (*this)[i];
     if (!aList.contains(pt)) {
       erase_remove(pt);
       --i;

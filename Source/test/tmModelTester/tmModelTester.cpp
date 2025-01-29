@@ -5,7 +5,7 @@ Purpose:      Implementation file for testing the TreeMaker model (no GUI)
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-05-29
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 /*
@@ -237,27 +237,27 @@ void DoSeveralOptimizations()
   
   // Read in a test structure from a file and do an optimization.
   // tmModelTest_1.tmd5 is a simple 3-star, which should optimize quickly.
-  DoScaleOptimization<NLCO>("tmModelTester_1.tmd5");
+  DoScaleOptimization<NLCO>(const_cast<char*>("tmModelTester_1.tmd5"));
   
   // tmModelText_2.tmd5 is a much more complex structure, a fully
   // unoptimized centipede, but no constraints on it.
-  DoScaleOptimization<NLCO>("tmModelTester_2.tmd5");
+  DoScaleOptimization<NLCO>(const_cast<char*>("tmModelTester_2.tmd5"));
   
   // tmModelTest_3.tmd5 is the same centipede, but this time with symmetry
   // constraints and an infeasible starting configuration.
-  DoScaleOptimization<NLCO>("tmModelTester_3.tmd5");
+  DoScaleOptimization<NLCO>(const_cast<char*>("tmModelTester_3.tmd5"));
   
   // EDGE OPTIMIZATION
   
   // tmModelTest_4.tmd5 is an optimized centipede, but now some of the nodes
   // are unpinned, so an edge optimization can be performed.
-  DoEdgeOptimization<NLCO>("tmModelTester_4.tmd5");
+  DoEdgeOptimization<NLCO>(const_cast<char*>("tmModelTester_4.tmd5"));
   
   // STRAIN OPTIMIZATION
   
   // tmModelTest_5.tmd5 is a scorpion design with many path active constraints,
   // edge strain constraints, and an infeasible initial configuration.
-  DoStrainOptimization<NLCO>("tmModelTester_5.tmd5");
+  DoStrainOptimization<NLCO>(const_cast<char*>("tmModelTester_5.tmd5"));
 }
 
 

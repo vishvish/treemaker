@@ -27,7 +27,8 @@ AUTHOR:
 #include "wnlib.h"
 #include "wnasrt.h"
 
-
+#define BUFFER_SIZE 1024
+#define STRING_LENGTH 1000
 
 local bool initialized = FALSE;
 
@@ -122,8 +123,8 @@ void wn_get_assert_override_string(char *output_buffer,
 
   result += line_num * line_num * line_num * line_num * line_num * line_num;
 
-  sprintf(output_buffer, "WN_ASSERT_SUPPRESS_%s_%d_%x", file_name, line_num,
-  /**/                result);
+  snprintf(output_buffer, BUFFER_SIZE, "WN_ASSERT_SUPPRESS_%s_%d_%x", file_name, line_num,
+           (unsigned int)result);
   for (pc = output_buffer;  *pc;  ++pc)
   {
     if ('.' == *pc)
@@ -145,8 +146,8 @@ void wn_general_assert_routine(const char *file_name, int line_num,
 /**/  const char *func_name, const char *exp_string, bool warn_only,
 /**/            bool notreached)
 {
-  char string[1000];
-  char override_string[1000];
+  char string[STRING_LENGTH];
+  char override_string[BUFFER_SIZE];
   char *pc;
 
   /* if overridden, be absolutely silent, whether warning or fatal */
@@ -175,22 +176,22 @@ void wn_general_assert_routine(const char *file_name, int line_num,
   {
     /* There is no expression, we just reached a notreached */
 
-    (void)sprintf(string,
-    /**/  "wn_assert%s_notreached() called -- %sforcing crash\n",
-    /**/    warn_only ? "_warn" : "", warn_only ? "NOT " : "");
+    snprintf(string, STRING_LENGTH,
+             "wn_assert%s_notreached() called -- %sforcing crash\n",
+             warn_only ? "_warn" : "", warn_only ? "NOT " : "");
     (*psaved_assert_print)(string);
   }
   else
   {
-    (void)sprintf(string, "Assertion botched -- %sforcing crash\n",
-    /**/          warn_only ? "NOT " : "");
+    snprintf(string, STRING_LENGTH, "Assertion botched -- %sforcing crash\n",
+             exp_string ? exp_string : "");
     (*psaved_assert_print)(string);
 
     /*     we want the expression on a separate line because it could be
     ** very long */
     if (exp_string)
     {
-      (void) sprintf(string, "Expr (%s) was false\n", exp_string);
+      snprintf(string, STRING_LENGTH, "Expr (%s) was false\n", exp_string);
       (*psaved_assert_print)(string);
     }
   }
@@ -198,11 +199,11 @@ void wn_general_assert_routine(const char *file_name, int line_num,
   pc = string;
   if (func_name)
   {
-    (void) sprintf(string, "%cn %s() ", exp_string ? 'i' : 'I', func_name);
+    snprintf(string, STRING_LENGTH, "%cn %s() ", exp_string ? 'i' : 'I', func_name);
     for (  ;  *pc;  ++pc) ;
   }
-  (void) sprintf(pc, "%ct line %d in file %s\n", func_name ? 'a' : 'A',
-  /**/              line_num, file_name);
+  snprintf(pc, STRING_LENGTH - (pc - string), "%ct line %d in file %s\n", 
+           func_name ? 'a' : 'A', line_num, file_name);
   (*psaved_assert_print)(string);
 
   if (!warn_only)

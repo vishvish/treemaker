@@ -1,6 +1,10 @@
 #ifndef wnparvectH
 #define wnparvectH
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void *(*wn_parallel_func)(void*);
 typedef void **wn_parallel_args;
 typedef void (*wn_parallel_callback)(wn_parallel_func, wn_parallel_args,
@@ -53,5 +57,9 @@ double wn_scaled_max_diff_vect_par(wn_parvect_context context,
            double *v1, double *v2, double *s, int len);
 EXTERN
 void wn_make_vect_par(wn_parvect_context context, double **v1, int len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

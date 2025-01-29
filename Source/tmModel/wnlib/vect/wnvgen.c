@@ -19,13 +19,12 @@ AUTHOR:
 
 
 
-void wn_zero_vect(register double vect[],register int len)
+void wn_zero_vect(double vect[], int len)
 {
-  register int i;
+  int i;
 
-  for(i=0;i<len;++i)
+  for (i = 0; i < len; ++i)
   {
     vect[i] = 0.0;
   }
 }
-

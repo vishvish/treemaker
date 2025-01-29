@@ -66,12 +66,37 @@ struct free_list_type_struct
 ** (->size + sizeof(int)). */
 
 typedef struct allocated_block_type_struct *allocated_block_type;
-struct allocated_block_type_struct
-{
-  int size;
-  int memory;
+struct allocated_block_type_struct {
+    size_t size;  
+    char _padding[((sizeof(size_t) + WN_MAX_ALIGN - 1) & ~(WN_MAX_ALIGN - 1)) - sizeof(size_t)];
+    char memory[];  
 };
 
+
+wn_memgp lo_free_list_verify_act_group;
+long int lo_amount_of_free_memory_total;
+
+/* Forward declarations - all local functions */
+static void make_pad(allocated_block_type allocated_block, wn_memgp group);
+static void delete_pad(allocated_block_type allocated_block);
+static void verify_pad(allocated_block_type allocated_block);
+static void verify_pad_list(pad_type pad_list);
+static void verify_free_blocks_of_one_size(wn_free_block free_block_list, long int size, wn_memgp group);
+static void verify_free_list(wn_memgp group);
+static void verify_group(wn_memgp group);
+static void make_free_list(free_list_type *pfree_list, wn_memgp group);
+static void free_piece(ptr p, wn_memgp group);
+ptr alloc_piece(size_t size, wn_memgp group);  /* Not local - used via function pointer */
+void wn_free_list_verify_act(wn_mbhandle handle);
+void verify_pad(allocated_block_type allocated_block);
+void verify_pad_list(pad_type pad_list);
+void verify_free_blocks_of_one_size(wn_free_block free_block_list, long int size, wn_memgp group);
+void verify_free_list(wn_memgp group);
+void verify_group(wn_memgp group);
+void make_free_list(free_list_type *pfree_list, wn_memgp group);
+void free_piece(ptr p, wn_memgp group);
+void make_pad(allocated_block_type allocated_block, wn_memgp group);
+void delete_pad(allocated_block_type allocated_block);
 
 local void insert_into_block_list
 (
@@ -126,10 +151,10 @@ local void insert_free_block_into_free_list
 )
 {
   free_list_type free_list = (free_list_type) group->free_list;
-  int size;
+  size_t size;
 
   /* assert proper alignment */
-  wn_assert((((long unsigned int)free_block)&7) == 4);
+  wn_assert((uintptr_t)free_block % alignof(max_align_t) == 0);
 
   size = free_block->free_block_size;
 
@@ -334,21 +359,28 @@ local void lo_simple_alloc(ptr *pmem,int size,wn_memgp group)
 local void get_new_memory
 (
   ptr *pallocated_block,
-  int size,
+  size_t size,  
   wn_memgp group
 )
 {
-  int total_segment_size;
+  allocated_block_type allocated_block;
+  size_t total_size;
 
-  total_segment_size = size + sizeof(int);
-  total_segment_size = wn_max(total_segment_size, WN_SIZEOF_FREE_BLOCK_STRUCT);
+  /* Calculate total size needed including header */
+  total_size = sizeof(struct allocated_block_type_struct) + size;
+  
+  /* Ensure alignment */
+  total_size = (total_size + WN_MAX_ALIGN - 1) & ~(WN_MAX_ALIGN - 1);
+  
+  allocated_block = (allocated_block_type)wn_system_alloc(total_size);
+  if(allocated_block == NULL)
+  {
+    wn_assert_notreached();
+    return;
+  }
 
-  lo_simple_alloc(pallocated_block, total_segment_size, group);
-
-  wn_assert((((long unsigned int)(*pallocated_block)) & 7) == 4);
-
-  ((allocated_block_type) *pallocated_block)->size = total_segment_size -
-  /**/                sizeof(int);
+  allocated_block->size = size;
+  *pallocated_block = allocated_block;
 }
 
 
@@ -371,10 +403,60 @@ local void allocate_block
 }
 
 
-local void make_pad(allocated_block_type allocated_block, wn_memgp group)
+ptr alloc_piece(size_t size, wn_memgp group)  
+{
+  allocated_block_type allocated_block;
+  ptr p;
+
+  if(size <= 0)
+  {
+    return(NULL);
+  }
+
+  /* Round up size to maintain alignment */
+  size = (size + WN_MAX_ALIGN - 1) & ~(WN_MAX_ALIGN - 1);
+
+  allocate_block(&allocated_block, size, group);
+  if(allocated_block == NULL)
+  {
+    wn_assert_notreached();
+    return NULL;
+  }
+
+  p = allocated_block->memory;
+
+  if(wn_gp_fill_flag)
+  {
+    wn_memset(p, 'a', size);
+  }
+
+  if(wn_gp_pad_flag)
+  {
+    make_pad(allocated_block, group);
+  }
+
+  if(wn_gp_trap_address_flag)
+  {
+    if(p == wn_gp_trap_address_address)
+    {
+      wn_assert_notreached();
+    }
+  }
+
+  return p;
+}
+
+void wn_free_list_verify_act(wn_mbhandle handle)
+{
+  wn_assert((long int) handle->key >= SMALL_SIZE);
+  verify_free_blocks_of_one_size(handle->next_free_block,
+                                (long int) handle->key,
+                                lo_free_list_verify_act_group);
+}
+
+static void make_pad(allocated_block_type allocated_block, wn_memgp group)
 {
   pad_type pad;
-  pad_type next;
   int pad_offset;
 
   if(!wn_gp_pad_flag)
@@ -383,24 +465,21 @@ local void make_pad(allocated_block_type allocated_block, wn_memgp group)
   }
 
   pad_offset = sizeof(int) + allocated_block->size -
-  /**/            sizeof(struct pad_type_struct);
+               sizeof(struct pad_type_struct);
   pad = (pad_type) ((char *) allocated_block + pad_offset);
 
   pad->begin_magic = PAD_BEGIN_MAGIC;
-  pad->end_magic   = PAD_END_MAGIC;
-
-  next = (pad_type)(group->pad_list);
-  if(next != NULL)
+  pad->end_magic = PAD_END_MAGIC;
+  pad->plast = (pad_type *) &(group->pad_list);
+  pad->next = (pad_type)group->pad_list;  /* Explicit cast */
+  if(pad->next != NULL)
   {
-    next->plast = &(pad->next);
+    pad->next->plast = &(pad->next);
   }
-  pad->next = next;
   group->pad_list = (ptr)pad;
-  pad->plast = (pad_type *)(&(group->pad_list));
 }
 
-
-local void delete_pad(allocated_block_type allocated_block)
+static void delete_pad(allocated_block_type allocated_block)
 {
   pad_type pad;
   int pad_offset;
@@ -412,7 +491,7 @@ local void delete_pad(allocated_block_type allocated_block)
   }
 
   pad_offset = sizeof(int) + allocated_block->size -
-  /**/            sizeof(struct pad_type_struct);
+               sizeof(struct pad_type_struct);
   pad = (pad_type) ((char *) allocated_block + pad_offset);
 
   wn_assert(PAD_BEGIN_MAGIC == pad->begin_magic);
@@ -429,127 +508,36 @@ local void delete_pad(allocated_block_type allocated_block)
   pad->end_magic   = PAD_DELETED_END_MAGIC;
 } /* delete_pad */
 
-
-/*[RJL] added prototype */
-ptr alloc_piece(int size, wn_memgp group);
-/*[\RJL]*/
-ptr alloc_piece(int size, wn_memgp group)
+static void verify_pad(allocated_block_type allocated_block)
 {
-  int old_size;
-  allocated_block_type allocated_block;
-  ptr ret;
+  pad_type pad;
+  int pad_offset;
 
-  if(wn_gp_pad_flag)
+  if(!wn_gp_pad_flag)
   {
-    old_size = size;
-    size += sizeof(struct pad_type_struct);
+    return;
   }
 
-  allocate_block(&allocated_block,size,group);
+  pad_offset = sizeof(int) + allocated_block->size -
+               sizeof(struct pad_type_struct);
+  pad = (pad_type) ((char *) allocated_block + pad_offset);
 
-  ret = (ptr)(&(allocated_block->memory));
-
-  if(wn_gp_pad_flag)
-  {
-    make_pad(allocated_block, group);
-
-    group->mem_used += allocated_block->size - sizeof(struct pad_type_struct);
-  }
-  else
-  {
-    group->mem_used += allocated_block->size;
-  }
-  if(wn_gp_fill_flag)
-  {
-    if(wn_gp_pad_flag)
-    {
-      wn_memset(ret,'a',old_size);
-    }
-    else
-    {
-      wn_memset(ret,'a',size);
-    }
-  }
-  if(wn_gp_trap_address_flag)
-  {
-    if(ret == wn_gp_trap_address_address)
-    {
-      fprintf(stderr,"address found.\n");
-      wn_assert_notreached();
-    }
-  }
-
-  wn_assert((((long unsigned int) ret) & 7) == 0);
-
-  return(ret);
-} /* alloc_piece */
-
-
-/*[RJL] added prototype */
-void free_piece(ptr p,wn_memgp group);
-/*[\RJL]*/
-/*ARGSUSED*/ void free_piece(ptr p,wn_memgp group)
-{
-  allocated_block_type allocated_block;
-
-  allocated_block = (allocated_block_type)(((char *)p)-sizeof(int));
-
-  if(wn_gp_pad_flag)
-  {
-    delete_pad(allocated_block);
-
-    group->mem_used -=
-        (allocated_block->size - sizeof(struct pad_type_struct));
-  }
-  else
-  {
-    group->mem_used -= allocated_block->size;
-  }
-
-  if(wn_gp_fill_flag)
-  {
-    wn_memset(p,'f',allocated_block->size);
-  }
-
-  insert_free_block_into_free_list((wn_free_block)allocated_block, group);
-} /* free_piece */
-
-
-local void verify_pad(pad_type pad)
-{
   wn_assert(pad->begin_magic == PAD_BEGIN_MAGIC);
   wn_assert(pad->end_magic == PAD_END_MAGIC);
   wn_assert(*(pad->plast) == pad);
 }
 
-
-local void verify_pad_list(pad_type pad_list)
+static void verify_pad_list(pad_type pad_list)
 {
   pad_type pad;
 
-  for(pad=pad_list;pad != NULL;pad=pad->next)
+  for(pad = pad_list; pad != NULL; pad = pad->next)
   {
-    verify_pad(pad);
+    verify_pad((allocated_block_type)((char *)pad - (sizeof(int) + sizeof(struct pad_type_struct))));
   }
 }
 
-
-local void verify_free_block
-(
-  wn_free_block free_block,
-  int size,
-  wn_memgp group
-)
-{
-  wn_assert(free_block->free_block_size == size);
-  wn_assert(WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block !=
-  /**/                free_block);
-  wn_assert(wn_mem_in_group(free_block, group));
-}
-
-
-local void verify_free_blocks_of_one_size
-(
+static void verify_free_blocks_of_one_size(
   wn_free_block free_block_list,
   long int size,
   wn_memgp group
@@ -558,181 +546,173 @@ local void verify_free_blocks_of_one_size
   wn_free_block free_block;
 
   for(free_block = free_block_list; free_block;
-  /**/  free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
+      free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
   {
-    verify_free_block(free_block, size, group);
+    wn_assert((size_t)free_block->free_block_size == (size_t)size);
+    wn_assert((uintptr_t)free_block % WN_MAX_ALIGN == 0);
   }
-} /* verify_free_blocks_of_one_size */
+}
 
-
-wn_memgp lo_free_list_verify_act_group;
-
-/*[RJL] added prototype */
-void wn_free_list_verify_act(wn_mbhandle handle);
-/*[\RJL]*/
-void wn_free_list_verify_act(wn_mbhandle handle)
-{
-  wn_assert((long int) handle->key >= SMALL_SIZE);
-
-  verify_free_blocks_of_one_size(handle->free_block_list,
-  /**/  (int) (long int) handle->key, lo_free_list_verify_act_group);
-  verify_free_blocks_of_one_size(WN_MBHANDLE_TO_FREE_BLOCK(handle),
-  /**/  (int) (long int) handle->key, lo_free_list_verify_act_group);
-} /* lo_free_list_verify_act */
-
-
-local void verify_free_list(wn_memgp group)
+static void verify_free_list(wn_memgp group)
 {
   free_list_type free_list;
   int size;
-  wn_mbhandle handle;
-  void (*routine_ptr)(wn_mbhandle);
   long int i;
 
   free_list = (free_list_type)(group->free_list);
 
-  for(size = 4;size < SMALL_SIZE;size += 4)
+  for(size = 4; size < SMALL_SIZE; size += 4)
   {
-    verify_free_blocks_of_one_size((free_list->small_blocks)[size>>2], size,
-    /**/                group);
+    verify_free_blocks_of_one_size((free_list->small_blocks)[size>>2], size, group);
   }
 
   lo_free_list_verify_act_group = group;
+  wn_mbact(free_list->big_blocks_tree, wn_free_list_verify_act,
+           (ptr) 0, WN_MB_GE, (ptr) -1, WN_MB_LE);
+}
 
-  routine_ptr = wn_free_list_verify_act;
-  /* couldn't make call to wn_mbact work on 64 bit */
-
-  /* note tree does compares as pointers, as unsigned ints */
-  wn_mbact(free_list->big_blocks_tree, routine_ptr,
-  /**/        (ptr) 0, WN_MB_GE, (ptr) -1, WN_MB_LE);
-} /* verify_free_list */
-
-
-local void verify_group(wn_memgp group)
+static void verify_group(wn_memgp group)
 {
   if(wn_gp_pad_flag)
   {
     verify_pad_list((pad_type)(group->pad_list));
   }
-
   verify_free_list(group);
-} /* verify_group */
+}
 
-
-local void make_free_list(free_list_type *pfree_list,wn_memgp group)
+static void make_free_list(free_list_type *pfree_list, wn_memgp group)
 {
   wn_mbtree tree;
 
-  /*   note lo_simple_alloc always returns a result not 8-byte aligned,
-  ** we have to align it ourselves. */
+  /* Note lo_simple_alloc always returns a result not aligned to WN_MAX_ALIGN,
+     we have to align it ourselves. */
   lo_simple_alloc((ptr *) pfree_list,
-  /**/    sizeof(struct free_list_type_struct) + sizeof(int), group);
-  *pfree_list = (free_list_type) ((char *) *pfree_list + sizeof(int));
+                 sizeof(struct free_list_type_struct) + WN_MAX_ALIGN, group);
+  *pfree_list = (free_list_type)(((uintptr_t)*pfree_list + WN_MAX_ALIGN - 1) & ~(WN_MAX_ALIGN - 1));
   wn_memzero(*pfree_list, sizeof(struct free_list_type_struct));
 
-  lo_simple_alloc((ptr *) &tree, sizeof(*tree) + sizeof(int), group);
-  tree = (wn_mbtree) ((char *) tree + sizeof(int));
+  lo_simple_alloc((ptr *) &tree, sizeof(*tree) + WN_MAX_ALIGN, group);
+  tree = (wn_mbtree)(((uintptr_t)tree + WN_MAX_ALIGN - 1) & ~(WN_MAX_ALIGN - 1));
   wn_memzero(tree, sizeof(*tree));
   (*pfree_list)->big_blocks_tree = tree;
   wn_mmkptrbtree(tree);
-} /* make_free_list */
+}
 
-
-/*[RJL] added prototype */
-void wn_initialize_group_for_general_free(wn_memgp group);
-/*[\RJL]*/
 void wn_initialize_group_for_general_free(wn_memgp group)
 {
-  group->pverify_group = (verify_group);
-  group->pfree_piece = (free_piece);
-  group->palloc_piece = (alloc_piece);
+  group->pverify_group = verify_group;
+  group->pfree_piece = free_piece;
+  group->palloc_piece = (ptr (*)(int, wn_memgp))alloc_piece;
 
   make_free_list((free_list_type *)(&(group->free_list)), group);
-} /* wn_initialize_group_for_general_free */
+}
 
-
-long int lo_amount_of_free_memory_total;
-local void lo_amount_of_free_memory_act(wn_mbhandle handle)
+static void lo_amount_of_free_memory_act(wn_mbhandle handle)
 {
   wn_free_block free_block;
 
-  wn_assert((long int) handle->key >= SMALL_SIZE);
+  wn_assert((long int)handle->key >= SMALL_SIZE);
 
-  for (free_block = handle->free_block_list;  free_block;
-  /**/ free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
+  for(free_block = handle->next_free_block; free_block;
+      free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
   {
-    wn_assert(handle->key == WN_FREE_BLOCK_TO_MBHANDLE(free_block)->key);
+    wn_assert((size_t)handle->key == (size_t)free_block->free_block_size);
+    lo_amount_of_free_memory_total += free_block->free_block_size;
+  }
+}
 
-    lo_amount_of_free_memory_total += (long int) handle->key;
+void wn_print_composition_of_big_blocks_free_list(wn_memgp group)
+{
+  free_list_type free_list = (free_list_type)group->free_list;
+  wn_free_block free_block;
+  wn_mbhandle handle;
+  int count_of_this_size;
+  long int i;
+
+  printf("%-6s: %s\n", "size", "count");
+
+  for(i = 0; wn_mbget(&handle, free_list->big_blocks_tree, (ptr)i, WN_MB_GT), handle; )
+  {
+    i = (long int)handle->key;
+    count_of_this_size = 1;  /* headnode */
+    
+    for(free_block = handle->next_free_block; free_block;
+        free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
+    {
+      wn_assert(free_block->free_block_size == i);
+      ++count_of_this_size;
+    }
+
+    printf("%6ld: %d\n", i, count_of_this_size);
+  }
+}
+
+static void free_piece(ptr p, wn_memgp group)
+{
+  allocated_block_type allocated_block;
+  wn_free_block free_block;
+  size_t size;
+
+  if(p == NULL)
+  {
+    return;
   }
 
-  lo_amount_of_free_memory_total += (long int) handle->key;  /* headnode */
-} /* lo_amount_of_free_memory_act */
+  allocated_block = (allocated_block_type)((char*)p - offsetof(struct allocated_block_type_struct, memory));
+  size = allocated_block->size;
 
+  /* Convert allocated block to free block */
+  free_block = (wn_free_block)allocated_block;
+  
+  /* Verify alignment */
+  wn_assert(((uintptr_t)free_block & (WN_MAX_ALIGN - 1)) == 0);
+  
+  free_block->free_block_size = size;
 
-/*     if group is a freeable group, return the amount of memory on the
-** free list, -1 otherwise */
+  if(wn_gp_pad_flag)
+  {
+    delete_pad(allocated_block);
+  }
+
+  insert_free_block_into_free_list(free_block, group);
+} /* free_piece */
 
 long int wn_amount_of_free_memory_in_group(wn_memgp group)
 {
   free_list_type free_list;
   wn_free_block free_block;
-  wn_mbhandle handle;
   long int result = 0;
   long int i;
 
-  if ((alloc_piece) != group->palloc_piece)
+  if (group->palloc_piece != (ptr (*)(int, wn_memgp))alloc_piece)
   {
     return -1;
   }
 
   free_list = (free_list_type) group->free_list;
-  for (i = 0;  i < SMALL;  ++i)
+  for (i = 0; i < SMALL; ++i)
   {
-    for (free_block = free_list->small_blocks[i];  free_block;
-    /**/ free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
+    for (free_block = free_list->small_blocks[i]; free_block;
+         free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
     {
       wn_assert(i*sizeof(int) == free_block->free_block_size);
-
       result += free_block->free_block_size;
     }
   }
 
   lo_amount_of_free_memory_total = 0;
   wn_mbact(free_list->big_blocks_tree, lo_amount_of_free_memory_act,
-  /**/        (ptr) 0, WN_MB_GE, (ptr) -1, WN_MB_LE);
+           (ptr) 0, WN_MB_GE, (ptr) -1, WN_MB_LE);
   result += lo_amount_of_free_memory_total;
 
   return result;
 } /* wn_amount_of_free_memory_in_group */
 
-
-void wn_print_composition_of_big_blocks_free_list(wn_memgp group)
+void wn_init_group(wn_memgp group)
 {
-  free_list_type free_list = (free_list_type) group->free_list;
-  wn_free_block free_block;
-  int size, next_size;
-  int count_of_this_size;
-  wn_mbhandle handle;
-  long int i;
-
-  (void) printf("%-6s: %s\n", "size", "count");
-
-  /* this may develop speed problems, if so, replace with a call to wn_mbact */
-  for (i = 0;  wn_mbget(&handle, free_list->big_blocks_tree, (ptr) i,
-  /**/              WN_MB_GT), handle;  )
-  {
-    i = (long int) handle->key;
-
-    count_of_this_size = 1;  /* headnode */
-    for (free_block = handle->free_block_list;  free_block;
-    /**/ free_block = WN_FREE_BLOCK_TO_MBHANDLE(free_block)->next_free_block)
-    {
-      wn_assert(free_block->free_block_size == i);
-
-      ++ count_of_this_size;
-    }
-
-    (void) printf("%6d: %d\n", (int) i, count_of_this_size);
-  }
-} /* wn_print_composition_of_big_blocks_free_list */
+  group->free_list = NULL;
+  group->pad_list = NULL;
+  group->mem_used = 0;
+  group->pfree_piece = free_piece;
+  group->palloc_piece = (ptr (*)(int, wn_memgp))alloc_piece;
+}

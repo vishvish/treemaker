@@ -272,6 +272,7 @@ bool tmwxApp::OnInit(void)
   ::wxInitAllImageHandlers();
   wxFileSystem::AddHandler(new wxZipFSHandler);
   mDataDir = wxStandardPaths::Get().GetDataDir();
+  wxLogDebug(wxT("Looking for help files in: %s"), mDataDir.c_str());
 
 #ifdef __LINUX__
   /* Load icons. Silently ignore failures (SetIcon will also silently fail) */

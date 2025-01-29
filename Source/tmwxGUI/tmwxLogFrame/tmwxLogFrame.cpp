@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmwxLogFrame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-02-19
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmModel.h"
@@ -28,15 +28,22 @@ tmwxLogFrame::tmwxLogFrame()
   : tmwxPersistentFrame<wxFrame>(wxT("Log"),
     wxFRAME_TOOL_WINDOW | wxCAPTION | wxRESIZE_BORDER | wxCLOSE_BOX)
 {
+  // First create the text control
   mTextCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, 
     wxDefaultPosition, wxDefaultSize,  wxTE_MULTILINE | wxTE_READONLY);
   mTextCtrl->SetFont(DEFAULT_FONT_10);
+  
+  // Create a sizer and add the text control to it
+  wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+  sizer->Add(mTextCtrl, 1, wxEXPAND | wxALL, 5);
+  SetSizer(sizer);
+  
+  // Set up logging
   wxLogTextCtrl* logTextCtrl = new wxLogTextCtrl(mTextCtrl);
   wxLog* oldTarget = wxLog::SetActiveTarget(logTextCtrl);
   if (oldTarget) delete oldTarget;
 
-  // This comes last so that we already have a log target to receive debug
-  // messages.
+  // Initialize position and size last, after the frame is fully set up
   InitPositionAndSize();
 }
 
@@ -91,8 +98,7 @@ void tmwxLogFrame::GetPositionSizeInfo(Key key, wxString& keystr, int& val)
       val = 280;
       break;
     default:
-      TMFAIL("unknown key encountered in "\
-       "tmwxLogFrame::GetPositionSizeInfo(..)");
+      TMFAIL("unknown key encountered in tmwxLogFrame::GetPositionSizeInfo(..)");
       break;
   }
 }

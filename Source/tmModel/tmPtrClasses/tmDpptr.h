@@ -5,7 +5,7 @@ Purpose:      Header file for dangle-proof pointer class tmDpptr<T>
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMDPPTR_H_
@@ -48,7 +48,7 @@ public:
   typedef T* const ptr_t_const;
   
   // Ctor & dtor
-  tmDpptr() : mTarget(0) {};
+  tmDpptr() : mTarget(nullptr) {};
   tmDpptr(const tmDpptr<T>& t);
   tmDpptr(ptr_t_const t);
   virtual ~tmDpptr();
@@ -59,12 +59,26 @@ public:
   // Cast to ptr_t; only allowed is cast to ptr_t_const
   operator ptr_t_const() const {return mTarget;};
   
-  // Comparison with raw types (typically ptr_t_const, const tmDpptr<T>&, or
-  // int (null ptr))
-  template <class R>
-    bool operator==(R r) const {return mTarget == (ptr_t_const)(r);};
-  template <class R>
-    bool operator!=(R r) const {return mTarget != (ptr_t_const)(r);};
+  // Comparison operators
+  bool operator==(ptr_t_const r) const {return mTarget == r;};
+  bool operator!=(ptr_t_const r) const {return mTarget != r;};
+  
+  // Comparison with nullptr
+  bool operator==(std::nullptr_t) const {return mTarget == nullptr;};
+  bool operator!=(std::nullptr_t) const {return mTarget != nullptr;};
+  
+  // Template comparison operators for other types (with nullptr check)
+  template<typename R>
+  bool operator==(R r) const {
+    if (r == 0) return mTarget == nullptr;
+    return mTarget == reinterpret_cast<ptr_t_const>(r);
+  };
+  
+  template<typename R>
+  bool operator!=(R r) const {
+    if (r == 0) return mTarget != nullptr;
+    return mTarget != reinterpret_cast<ptr_t_const>(r);
+  };
   
   // Dereferencing
   T& operator *() const {return *mTarget;};
@@ -155,7 +169,7 @@ Called by:
 template <class T>
 void tmDpptr<T>::RemoveDpptrTarget(tmDpptrTarget*)
 {
-  mTarget = 0;
+  mTarget = nullptr;
 }
 
 #endif // _TMDPPTR_H_

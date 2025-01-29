@@ -114,7 +114,7 @@ void wn_add_vect_and_scaled_vect_par(wn_parvect_context context,
   context->s2 = s2;
   (*context->par_cb)((wn_parallel_func)add_vect_and_scaled_vect_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_add_vect_and_scaled_vect");
+         const_cast<char*>("wn_add_vect_and_scaled_vect"));
 }
 
 static void *add_scaled_vects_thread(vect_thread_context tcontext)
@@ -146,7 +146,7 @@ void wn_add_scaled_vects_par(wn_parvect_context context,
   context->s2 = s2;
   (*context->par_cb)((wn_parallel_func)add_scaled_vects_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_add_scaled_vects");
+         const_cast<char*>("wn_add_scaled_vects"));
 }
 
 static void *add_3_scaled_vects_thread(vect_thread_context tcontext)
@@ -182,7 +182,7 @@ void wn_add_3_scaled_vects_par(wn_parvect_context context,
   context->s3 = s3;
   (*context->par_cb)((wn_parallel_func)add_3_scaled_vects_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_add_3_scaled_vects");
+         const_cast<char*>("wn_add_3_scaled_vects"));
 }
 
 static void *norm2_vect_thread(vect_thread_context tcontext)
@@ -206,7 +206,7 @@ double wn_norm2_vect_par(wn_parvect_context context, double *v1, int len)
   context->v1 = v1;
   (*context->par_cb)((wn_parallel_func)norm2_vect_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_norm2_vect");
+         const_cast<char*>("wn_norm2_vect"));
   for (t = 0; t < context->num_threads; ++t)
     sum += context->thread_contexts[t]->sum;
   return sum;
@@ -235,7 +235,7 @@ double wn_dot_vects_par(wn_parvect_context context, double *v1, double *v2, int 
   context->v2 = v2;
   (*context->par_cb)((wn_parallel_func)dot_vects_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_dot_vects");
+         const_cast<char*>("wn_dot_vects"));
   for (t = 0; t < context->num_threads; ++t)
     sum += context->thread_contexts[t]->sum;
   return sum;
@@ -267,7 +267,7 @@ void wn_multiply_vect_by_vect_par(wn_parvect_context context,
   context->v2 = v2;
   (*context->par_cb)((wn_parallel_func)multiply_vect_by_vect_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_multiply_vect_by_vect");
+         const_cast<char*>("wn_multiply_vect_by_vect"));
 }
 
 static void *divide_vect_by_vect_thread(vect_thread_context tcontext)
@@ -296,7 +296,7 @@ void wn_divide_vect_by_vect_par(wn_parvect_context context,
   context->v2 = v2;
   (*context->par_cb)((wn_parallel_func)divide_vect_by_vect_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_divide_vect_by_vect");
+         const_cast<char*>("wn_divide_vect_by_vect"));
 }
 
 static void *zero_vect_thread(vect_thread_context tcontext)
@@ -321,7 +321,7 @@ void wn_zero_vect_par(wn_parvect_context context, double *v1, int len)
   context->v1 = v1;
   (*context->par_cb)((wn_parallel_func)zero_vect_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_zero_vect");
+         const_cast<char*>("wn_zero_vect"));
 }
 
 static void *copy_vect_thread(vect_thread_context tcontext)
@@ -349,7 +349,7 @@ void wn_copy_vect_par(wn_parvect_context context, double *v1, double *v2,
   context->v2 = v2;
   (*context->par_cb)((wn_parallel_func)copy_vect_thread,
          (wn_parallel_args)context->thread_contexts,
-         "wn_copy_vect");
+         const_cast<char*>("wn_copy_vect"));
 }
 
 void wn_make_vect_par(wn_parvect_context context, double **v1, int len)
@@ -384,5 +384,5 @@ void wn_parallelize_vector_operation(wn_parvect_context context,
   context->user_data = user_data;
   (*context->par_cb)((wn_parallel_func)parallelize_vector_operation_thread,
          (wn_parallel_args)context->thread_contexts,
-         operation_name);
+         const_cast<char*>(operation_name));
 }

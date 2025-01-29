@@ -27,71 +27,18 @@ AUTHOR:
 *****************************************************************/
 double wn_dot_vects
 (
-  register double *vect1,
-  register double *vect2,
+  double *vect1,
+  double *vect2,
   int len
 )
 {
-  register double result;
+  double result;
+  int i;
 
-  if(len <= 0)
+  result = 0.0;
+  for (i = 0; i < len; ++i)
   {
-    return(0.0);
+    result += vect1[i] * vect2[i];
   }
-
-  result = ( (*(vect1))*(*(vect2)) );
-
-small:
-  switch(len)
-  {
-    case(16):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(15):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(14):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(13):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(12):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(11):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(10):  result += ( (*(++vect1))*(*(++vect2)) );
-    case(9):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(8):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(7):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(6):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(5):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(4):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(3):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(2):   result += ( (*(++vect1))*(*(++vect2)) );
-    case(1):   break;
-    case(0):   result = 0.0;
-         break;
-
-    default:
-    {
-      do
-      {
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-        result += ( (*(++vect1))*(*(++vect2)) );
-
-  len -= 16;
-      }
-      while(len > 16);
-
-      goto small;
-    }
-  }
-
-  return(result);
+  return result;
 }
-

@@ -5,7 +5,7 @@ Purpose:      Test application for the tmArray container classes
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-09-27
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 // Standard libraries
@@ -20,19 +20,19 @@ using namespace std;
 
 
 // tmArrayIterator test
-void test1(tmArray<char*>& aList);
-void test1(tmArray<char*>& aList)
+void test1(tmArray<const char*>& aList);
+void test1(tmArray<const char*>& aList)
 {
   char ch;
-  tmArrayIterator<char*> i(aList);
-  char* c;
+  tmArrayIterator<const char*> i(aList);
+  const char* c;
   while (i.Next(&c)) ch = *c;
 }
 
 
 // for loop test
-void test2(tmArray<char*>& aList);
-void test2(tmArray<char*>& aList)
+void test2(tmArray<const char*>& aList);
+void test2(tmArray<const char*>& aList)
 {
   char ch;
   size_t nmax = aList.size();
@@ -41,8 +41,8 @@ void test2(tmArray<char*>& aList)
 
 
 // for loop with repeated size()
-void test2a(tmArray<char*>& aList);
-void test2a(tmArray<char*>& aList)
+void test2a(tmArray<const char*>& aList);
+void test2a(tmArray<const char*>& aList)
 {
   char ch;
   for (size_t i = 1; i <= aList.size(); ++i) ch = *(aList.NthItem(i));
@@ -77,16 +77,16 @@ int main(void)
 {
   cout << "Hello World.\n";
   
-  char* a = "A";
-  char* b = "B";
-  char* c = "C";
-  char* d = "D";
-  char* e = "E";
-  char* f = "F";
-  char* g = "G";
-  char* h = "H";
+  const char* a = "A";
+  const char* b = "B";
+  const char* c = "C";
+  const char* d = "D";
+  const char* e = "E";
+  const char* f = "F";
+  const char* g = "G";
+  const char* h = "H";
   
-  tmArray<char*> alist;
+  tmArray<const char*> alist;
   
   alist.push_back(b);
   alist.push_back(c);
@@ -133,8 +133,8 @@ int main(void)
   cout << "After replace_with(d, a) the list is " << alist << endl;
   
   // tmArrayIterator/tmArrayIterator test
-  tmArrayIterator<char*> i(alist);
-  char* dp;
+  tmArrayIterator<const char*> i(alist);
+  const char* dp;
   cout << "Forward iterator test." << endl;
   while (i.Next(&dp)) cout << "an element is " << dp << endl;
   cout << "Backward iterator test." << endl;
@@ -149,7 +149,7 @@ int main(void)
   cout << endl;
   
   // combinational routines 
-  tmArray<char*> blist;
+  tmArray<const char*> blist;
   blist.push_back(f);
   blist.push_back(g);
   blist.push_back(h);

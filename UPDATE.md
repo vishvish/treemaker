@@ -147,11 +147,11 @@
 
 ## Progress Tracking
 
-- ✅ Phase 1 In Progress
-- ⬜ Phase 2 Not Started
-- ⬜ Phase 3 Not Started
-- ⬜ Phase 4 Not Started
-- ⬜ Phase 5 Not Started
+- Phase 1 In Progress
+- Phase 2 Not Started
+- Phase 3 Not Started
+- Phase 4 Not Started
+- Phase 5 Not Started
 
 ## Notes
 
@@ -197,3 +197,6 @@ Total estimated time: 7-12 weeks
 - Fixed circular dependencies between tmTree and tmTreeCleaner by introducing tmTree_fwd.h and tmTreeIncludes.h
 - Moved tmTreeCleaner class definition to tmTree_fwd.h to break dependency cycle
 - Fixed template specialization ordering in tmwxPersistentFrame.cpp
+- Updated deprecated wxWidgets style constants in tmwxDesignCanvas.cpp
+- Added GetPrintableName method to tmwxDoc
+- Fixed OnActivate event handling in tmwxDesignFrame

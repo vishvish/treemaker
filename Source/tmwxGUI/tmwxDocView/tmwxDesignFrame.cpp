@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmwxDesignFrame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxDesignFrame.h"
@@ -61,7 +61,8 @@ also need to update our floating windows with the currently-active palette.
 *****/
 void tmwxDesignFrame::OnActivate(wxActivateEvent& event)
 {
-  tmwxDocChildFrame::OnActivate(event); // let base class finish handling the event.
+  // Let base class handle the event through the event system
+  event.Skip();
 
   if (event.GetActive()) {
     // Make sure the application now knows we're the top window in order to
@@ -98,4 +99,3 @@ BEGIN_EVENT_TABLE(tmwxDesignFrame, tmwxDocChildFrame)
   EVT_ACTIVATE(tmwxDesignFrame::OnActivate)
   EVT_CLOSE(tmwxDesignFrame::OnClose)
 END_EVENT_TABLE()
-

@@ -5,7 +5,7 @@ Purpose:      Source file for TreeMaker document class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxDoc.h"
@@ -384,6 +384,18 @@ void tmwxDoc::UpdateDocViews()
   // Only call the ancestor method, not our overridden method, so that we don't
   // bother with updating palettes.
   wxDocument::UpdateAllViews();
+}
+
+
+/*****
+Return a printable name for this document, which is the filename without path
+*****/
+void tmwxDoc::GetPrintableName(wxString& text) const
+{
+  text = GetFilename();
+  if (text.empty()) {
+    text = "Untitled";
+  }
 }
 
 

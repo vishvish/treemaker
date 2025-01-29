@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker document class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXDOC_H_
@@ -43,6 +43,7 @@ public:
   tmwxView* GetView() const { return mView; };
   tmwxDesignFrame* GetDesignFrame() const { return mView->GetDesignFrame(); };
   tmwxDesignCanvas* GetDesignCanvas() const { return mView->GetDesignCanvas(); };
+  void GetPrintableName(wxString& text) const;
   
   // Selection routines
   template <class P>

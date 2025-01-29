@@ -5,7 +5,7 @@ Purpose:      Implementation file for TreeMaker design view canvas class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxDesignCanvas.h"
@@ -1022,11 +1022,11 @@ void tmwxDesignCanvas::DrawDot(wxDC& dc, const wxPoint& loc,
 #if (wxMAC_USE_CORE_GRAPHICS == 1)
   // Mac Core Graphics means we have to draw circles
   dc.SetPen(*wxTRANSPARENT_PEN);
-  dc.SetBrush(wxBrush(theColor, wxSOLID));
+  dc.SetBrush(wxBrush(theColor, wxBRUSHSTYLE_SOLID));
   dc.DrawCircle(loc, theWidth / 2);
 #else
   // Otherwise we can draw zero-length lines, which create dots
-  dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+  dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
   dc.DrawLine(loc, loc);
 #endif
 }
@@ -1069,7 +1069,7 @@ void tmwxDesignCanvas::DrawPaper<tmwxDesignCanvas::Lines>(wxDC& dc)
   
   // Draw the paper outline
   int theWidth = SQUARE_WIDTH;
-  dc.SetPen(wxPen(SQUARE_COLOR, theWidth, wxSOLID));
+  dc.SetPen(wxPen(SQUARE_COLOR, theWidth, wxPENSTYLE_SOLID));
   tmFloat pwidth = theTree->GetPaperWidth();
   tmFloat pheight = theTree->GetPaperHeight();
   wxPoint square[5];
@@ -1082,7 +1082,7 @@ void tmwxDesignCanvas::DrawPaper<tmwxDesignCanvas::Lines>(wxDC& dc)
   // Draw the symmetry line, which is clipped to the paper rectangle
   if (theTree->HasSymmetry() && mViewSettings.mShowSymmetryLines) {
     int theWidth = SYM_LINE_WIDTH;
-    dc.SetPen(wxPen(SYM_LINE_COLOR, theWidth, wxSOLID));
+    dc.SetPen(wxPen(SYM_LINE_COLOR, theWidth, wxPENSTYLE_SOLID));
     tmPoint q1, q2;
     ClipLineToRect(theTree->GetSymLoc(), theTree->GetSymDir(),
       tmPoint(0, 0), tmPoint(pwidth, pheight), q1, q2);
@@ -1102,7 +1102,7 @@ void tmwxDesignCanvas::DrawPaper<tmwxDesignCanvas::Fill>(wxDC& dc)
 {
   tmTree* theTree = GetTree();
   dc.SetPen(*wxTRANSPARENT_PEN);
-  dc.SetBrush(*wxWHITE_BRUSH);
+  dc.SetBrush(wxBrush(*wxWHITE, wxBRUSHSTYLE_SOLID));
   
   // Draw the paper
   tmFloat pwidth = theTree->GetPaperWidth();
@@ -1203,9 +1203,8 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmNode>(
   if (mViewSettings.mShowNodeCircles) {
     if (!aNode->IsLeafNode()) return;
     wxColor theColor = GetPartColor<Lines>(aNode, isSelected);
-    int theWidth = 
-      !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
-    dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+    int theWidth = !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
+    dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
     dc.SetBrush(*wxTRANSPARENT_BRUSH );
     wxPoint ctr = TreeToDC(CalcLoc(aNode));
     tmFloat elen = (aNode->GetEdges().not_empty()) ? 
@@ -1238,8 +1237,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmEdge>(
 {
   // Dot
   wxColor theColor = GetPartColor<Text>(aEdge, isSelected);
-  int theWidth = 
-    !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
+  int theWidth = !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
   wxPoint cloc = TreeToDC(CalcLoc(aEdge));
   if (mViewSettings.mShowEdgeDots || isSelected) 
     DrawDot(dc, cloc, theColor, theWidth);
@@ -1291,12 +1289,11 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmEdge>(
   // Draw the edge line, always if selected
   if (mViewSettings.mShowEdgeLines || isSelected) {
     wxColor theColor = GetPartColor<Lines>(aEdge, isSelected);
-    int theWidth = 
-      !isSelected ? EDGE_WIDTH : EDGE_WIDTH + DELTA_WIDTH;
+    int theWidth = !isSelected ? EDGE_WIDTH : EDGE_WIDTH + DELTA_WIDTH;
     wxPoint pts[2];
     pts[0] = TreeToDC(CalcLoc(aEdge->GetNodes().front()));
     pts[1] = TreeToDC(CalcLoc(aEdge->GetNodes().back()));
-    dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+    dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
     dc.DrawLines(2, pts);
   }
 }
@@ -1324,8 +1321,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmPath>(
 {
   // Dot
   wxColor theColor = GetPartColor<Text>(aPath, isSelected);
-  int theWidth = 
-    !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
+  int theWidth = !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
   wxPoint cloc = TreeToDC(CalcLoc(aPath));
   if (mViewSettings.mShowPathDots || isSelected) 
     DrawDot(dc, cloc, theColor, theWidth);
@@ -1343,7 +1339,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmPath>(
   // Draw the actual path length and minimum path length in tree units
   if (mViewSettings.mShowPathLengths) {
 #ifdef __WXMAC__
-    text.Printf(wxT("%.4f³%.4f"), 
+    text.Printf(wxT("%.4fÂ³%.4f"), 
 #else
     text.Printf(wxT("%.4f>=%.4f"), 
 #endif
@@ -1376,9 +1372,8 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmPath>(
   // Draw the path lines, always if selected
   if (mViewSettings.mShowPathLines || isSelected) {
     wxColor theColor = GetPartColor<Lines>(aPath, isSelected);
-    int theWidth = 
-      !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
-    dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+    int theWidth = !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
+    dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
     wxPoint pts[2];
     pts[0] = TreeToDC(CalcLoc(aPath->GetNodes().front()));
     pts[1] = TreeToDC(CalcLoc(aPath->GetNodes().back()));
@@ -1406,8 +1401,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmPoly>(
 {
   // Dot  
   wxColor theColor = GetPartColor<Text>(aPoly, isSelected);
-  int theWidth = 
-    !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
+  int theWidth = !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
   wxPoint cloc = TreeToDC(CalcLoc(aPoly));
   if (mViewSettings.mShowPolyDots || isSelected) 
     DrawDot(dc, cloc, theColor, theWidth);
@@ -1441,9 +1435,8 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmPoly>(
   // Draw poly outlines
   if (mViewSettings.mShowPolyLines) {
     wxColor theColor = GetPartColor<Lines>(aPoly, isSelected);
-    int theWidth = 
-      !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
-    dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+    int theWidth = !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
+    dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
     size_t numPts = aPoly->GetRingNodes().size();
     wxPoint* pts = new wxPoint[numPts + 1];
     for (size_t i = 0; i < numPts; ++i)
@@ -1466,7 +1459,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Fill, tmPoly>(
   if (mViewSettings.mShowPolyFills || isSelected) {
     wxColor theColor = GetPartColor<Fill>(aPoly, isSelected);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(wxBrush(theColor, wxSOLID));
+    dc.SetBrush(wxBrush(theColor, wxBRUSHSTYLE_SOLID));
     size_t n = aPoly->GetRingNodes().size();
     wxPoint* pts = new wxPoint[n];
     for (size_t i = 0; i < n; ++i) 
@@ -1496,8 +1489,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmVertex>(
 {
   // Dot
   wxColor theColor = GetPartColor<Text>(aVertex, isSelected);
-  int theWidth = 
-    !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
+  int theWidth = !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
 
 #if HIGHLIGHT_LOCAL_ROOTS
   int EXTRA = 0;
@@ -1623,8 +1615,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmCrease>(
 {
   // Dot
   wxColor theColor = GetPartColor<Text>(aCrease, isSelected);
-  int theWidth = 
-    !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
+  int theWidth = !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
   wxPoint cloc = TreeToDC(CalcLoc(aCrease));
   if (mViewSettings.mShowCreaseDots || isSelected) 
     DrawDot(dc, cloc, theColor, theWidth);
@@ -1676,8 +1667,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmCrease>(
   // Draw crease lines, always if selected
   if (mViewSettings.mShowCreaseLines || isSelected) {
     wxColor theColor = GetPartColor<Lines>(aCrease, isSelected);
-    int theWidth = 
-      !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
+    int theWidth = !isSelected ? STD_WIDTH : STD_WIDTH + DELTA_WIDTH;
 #ifdef __WXMSW__
     if (mPrinting) {
       theWidth = max_val( PixelsToDC( theWidth ) / 2 , theWidth );
@@ -1697,12 +1687,12 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmCrease>(
 
     if (mViewSettings.mShowCreaseFolds && 
       (aCrease->GetFold() == tmCrease::VALLEY)) {
-      wxPen thePen(theColor, theWidth, wxUSER_DASH);
+      wxPen thePen(theColor, theWidth, wxPENSTYLE_USER_DASH);
       thePen.SetDashes(2, DC_VALLEY_DASHES);
       dc.SetPen(thePen);
     }
     else
-      dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+      dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
     wxPoint pts[2];
     pts[0] = TreeToDC(CalcLoc(aCrease->GetFrontVertex()));
     pts[1] = TreeToDC(CalcLoc(aCrease->GetBackVertex()));
@@ -1741,8 +1731,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmFacet>(
 {
   // Dot
   wxColor theColor = GetPartColor<Text>(aFacet, isSelected);
-  int theWidth = 
-    !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
+  int theWidth = !isSelected ? DOT_SIZE : DOT_SIZE + DELTA_WIDTH;
 
 #if IDENTIFY_SRCS_SINKS
   if (!mViewSettings.mShowCreaseFolds) {
@@ -1811,9 +1800,8 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmFacet>(
   // Draw ordering arrows to all head facets. Ordering arrows are natural cubic
   // splines that pass through the common crease if the two facets are adjacent.
   if (mViewSettings.mShowFacetArrows) {
-    int theWidth = 
-      STD_WIDTH;
-    dc.SetPen(wxPen(FACET_LINE_COLOR, theWidth, wxSOLID));
+    int theWidth = STD_WIDTH;
+    dc.SetPen(wxPen(FACET_LINE_COLOR, theWidth, wxPENSTYLE_SOLID));
     // Draw arrows to all this facet's head facets.
     for (size_t i = 0; i < aFacet->GetHeadFacets().size(); ++i) {
       tmFacet* headFacet = aFacet->GetHeadFacets()[i];
@@ -1830,9 +1818,8 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmFacet>(
         // p2c is the control point that puts the spline through p2.
         p2 = 0.5 * (crossCrease->GetFrontVertex()->GetLoc() +
           crossCrease->GetBackVertex()->GetLoc());
-        tmPoint p2c = 1.3333 * p2 - 0.1667 * (p1 + p3);
         arrowTip = TreeToDC(p2);
-        wxPoint pts[3] = {TreeToDC(p1), TreeToDC(p2c), 
+        wxPoint pts[3] = {TreeToDC(p1), TreeToDC(p2), 
           TreeToDC(p3)};
         dc.DrawSpline(3, pts);
       }
@@ -1876,7 +1863,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Fill, tmFacet>(
   if (mViewSettings.mShowFacetFills || isSelected) {
     wxColor theColor = GetPartColor<Fill>(aFacet, isSelected);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(wxBrush(theColor, wxSOLID));
+    dc.SetBrush(wxBrush(theColor, wxBRUSHSTYLE_SOLID));
     size_t n = aFacet->GetVertices().size();
     wxPoint* pts = new wxPoint[n];
     for (size_t i = 0; i < n; ++i) 
@@ -2098,8 +2085,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Text, tmCondition>(
 {
   // Dot
   wxColor theColor = GetPartColor<Text>(aCondition, isSelected);
-  int theWidth = 
-    !isSelected ? CONDITION_WIDTH : CONDITION_WIDTH + DELTA_WIDTH;
+  int theWidth = !isSelected ? CONDITION_WIDTH : CONDITION_WIDTH + DELTA_WIDTH;
   wxPoint cloc = TreeToDC(CalcLoc(aCondition));
   if (mViewSettings.mShowConditionDots || isSelected) 
     DrawDot(dc, cloc, theColor, theWidth);
@@ -2313,7 +2299,7 @@ void tmwxDesignCanvas::DrawPart<tmwxDesignCanvas::Lines, tmCondition>(
     wxColor theColor = GetPartColor<Lines>(aCondition, isSelected);
     int theWidth = !isSelected ? CONDITION_CONN_WIDTH : 
       CONDITION_CONN_WIDTH + DELTA_WIDTH;
-    dc.SetPen(wxPen(theColor, theWidth, wxSOLID));
+    dc.SetPen(wxPen(theColor, theWidth, wxPENSTYLE_SOLID));
     wxPoint cloc = TreeToDC(CalcLoc(aCondition));
     (this->*GetDrawConditionLinesFns()[aCondition->GetTag()])(
       dc, aCondition, isSelected, cloc);
@@ -2406,7 +2392,7 @@ void tmwxDesignCanvas::OnDraw(wxDC& dc)
   // Set the font and size for all drawing and record its metrics in member
   // variables
   wxFont theFont;
-  theFont.SetFamily(wxSWISS);
+  theFont.SetFamily(wxFONTFAMILY_SWISS);
   theFont.SetPointSize(PixelsToDC(LABEL_TEXT_SIZE));
   dc.SetFont(theFont);
   wxString text = wxT("m");
@@ -2416,7 +2402,7 @@ void tmwxDesignCanvas::OnDraw(wxDC& dc)
   // But if we're printing, we don't need to draw the background at all.
   if (!mPrinting) {
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(wxBrush(BACKGROUND_COLOR, wxSOLID));
+    dc.SetBrush(wxBrush(BACKGROUND_COLOR, wxBRUSHSTYLE_SOLID));
     wxCoord w, h;
     GetVirtualSize(&w, &h);
     dc.DrawRectangle(0, 0, w, h);
@@ -2454,9 +2440,9 @@ void tmwxDesignCanvas::OnDraw(wxDC& dc)
   
   // Paper text gets drawn last; this includes the printing header
   wxFont headerFont;
-  headerFont.SetFamily(wxSWISS);
+  headerFont.SetFamily(wxFONTFAMILY_SWISS);
   headerFont.SetPointSize(PixelsToDC(HEADER_TEXT_SIZE));
-  headerFont.SetWeight(wxBOLD);
+  headerFont.SetWeight(wxFONTWEIGHT_BOLD);
   dc.SetFont(headerFont);
   DrawPaper<Text>(dc);
   dc.SetFont(theFont);  
@@ -2466,7 +2452,7 @@ void tmwxDesignCanvas::OnDraw(wxDC& dc)
        mDragging &&
       (mMovingNodes.size() == 0) &&
       (mDragOffset.x != 0 || mDragOffset.y != 0)) {
-    dc.SetPen(wxPen(wxT("BLACK"), 1, wxDOT_DASH));
+    dc.SetPen(wxPen(wxT("BLACK"), 1, wxPENSTYLE_DOT_DASH));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(mDragStart.x, mDragStart.y, mDragOffset.x, mDragOffset.y);
   }

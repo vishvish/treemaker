@@ -1,0 +1,427 @@
+<html>
+<head>
+<title>mac - scan-build results</title>
+<link type="text/css" rel="stylesheet" href="scanview.css"/>
+<script src="sorttable.js"></script>
+<script language='javascript' type="text/javascript">
+function SetDisplay(RowClass, DisplayVal)
+{
+  var Rows = document.getElementsByTagName("tr");
+  for ( var i = 0 ; i < Rows.length; ++i ) {
+    if (Rows[i].className == RowClass) {
+      Rows[i].style.display = DisplayVal;
+    }
+  }
+}
+
+function CopyCheckedStateToCheckButtons(SummaryCheckButton) {
+  var Inputs = document.getElementsByTagName("input");
+  for ( var i = 0 ; i < Inputs.length; ++i ) {
+    if (Inputs[i].type == "checkbox") {
+      if(Inputs[i] != SummaryCheckButton) {
+        Inputs[i].checked = SummaryCheckButton.checked;
+        Inputs[i].onclick();
+      }
+    }
+  }
+}
+
+function returnObjById( id ) {
+    if (document.getElementById)
+        var returnVar = document.getElementById(id);
+    else if (document.all)
+        var returnVar = document.all[id];
+    else if (document.layers)
+        var returnVar = document.layers[id];
+    return returnVar;
+}
+
+var NumUnchecked = 0;
+
+function ToggleDisplay(CheckButton, ClassName) {
+  if (CheckButton.checked) {
+    SetDisplay(ClassName, "");
+    if (--NumUnchecked == 0) {
+      returnObjById("AllBugsCheck").checked = true;
+    }
+  }
+  else {
+    SetDisplay(ClassName, "none");
+    NumUnchecked++;
+    returnObjById("AllBugsCheck").checked = false;
+  }
+}
+</script>
+<!-- SUMMARYENDHEAD -->
+</head>
+<body>
+<h1>mac - scan-build results</h1>
+
+<table>
+<tr><th>User:</th><td>root@hobbes-xi</td></tr>
+<tr><th>Working Directory:</th><td>/Users/vish/git/software/TreeMaker/mac</td></tr>
+<tr><th>Command Line:</th><td>clang++ -std=c++11 -O0 -g -DTMWX -I/opt/homebrew/lib/wx/include/osx_cocoa-unicode-3.2 -I/opt/homebrew/include/wx-3.2 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__ -I../Source -I../Source/about -I../Source/help -I../Source/images -I../Source/test -I../Source/tmModel -I../Source/tmwxGUI -I../Source/test/tmModelTester -I../Source/test/tmNLCOTester -I../Source/tmModel/tmNLCO -I../Source/tmModel/tmOptimizers -I../Source/tmModel/tmPtrClasses -I../Source/tmModel/tmSolvers -I../Source/tmModel/tmTreeClasses -I../Source/tmModel/wnlib -I../Source/tmwxGUI/tmwxCommon -I../Source/tmwxGUI/tmwxDocView -I../Source/tmwxGUI/tmwxFoldedForm -I../Source/tmwxGUI/tmwxHtmlHelp -I../Source/tmwxGUI/tmwxInspector -I../Source/tmwxGUI/tmwxLogFrame -I../Source/tmwxGUI/tmwxOptimizerDialog -I../Source/tmwxGUI/tmwxPalette -I../Source/tmwxGUI/tmwxViewSettings -I../Source/tmModel/wnlib/cmp -I../Source/tmModel/wnlib/conjdir -I../Source/tmModel/wnlib/cpy -I../Source/tmModel/wnlib/list -I../Source/tmModel/wnlib/low -I../Source/tmModel/wnlib/mat -I../Source/tmModel/wnlib/mem -I../Source/tmModel/wnlib/random -I../Source/tmModel/wnlib/vect -Wno-deprecated-register -Wno-deprecated-declarations -Wno-int-to-void-pointer-cast -Wno-format -Wno-writable-strings -mmacosx-version-min=10.13 -c ../Source/tmModel/tmTreeClasses/tmEdgeOwner.cpp ../Source/tmModel/tmTreeClasses/tmPathOwner.cpp ../Source/tmModel/tmTreeClasses/tmPolyOwner.cpp ../Source/tmModel/tmTreeClasses/tmConditionEdgesSameStrain.cpp ../Source/tmModel/tmTreeClasses/tmPath.cpp ../Source/tmModel/tmTreeClasses/tmTree_IO.cpp ../Source/tmModel/tmTreeClasses/tmVertexOwner.cpp ../Source/tmModel/tmTreeClasses/tmCluster.cpp ../Source/tmModel/tmTreeClasses/tmEdge.cpp ../Source/tmModel/tmTreeClasses/tmConditionEdgeLengthFixed.cpp ../Source/tmModel/tmTreeClasses/tmConditionPathCombo.cpp ../Source/tmModel/tmTreeClasses/tmFacet.cpp ../Source/tmModel/tmTreeClasses/tmConditionPathActive.cpp ../Source/tmModel/tmTreeClasses/tmTree_FacetOrder.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodeFixed.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodeOnEdge.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodeCombo.cpp ../Source/tmModel/tmTreeClasses/tmPart.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodesPaired.cpp ../Source/tmModel/tmTreeClasses/tmCreaseOwner.cpp ../Source/tmModel/tmTreeClasses/tmConditionOwner.cpp ../Source/tmModel/tmTreeClasses/tmPoint.cpp ../Source/tmModel/tmTreeClasses/tmConditionPathAngleFixed.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodeOnCorner.cpp ../Source/tmModel/tmTreeClasses/tmFacetOwner.cpp ../Source/tmModel/tmTreeClasses/tmCrease.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodesCollinear.cpp ../Source/tmModel/tmTreeClasses/tmCondition.cpp ../Source/tmModel/tmTreeClasses/tmConditionNodeSymmetric.cpp ../Source/tmModel/tmTreeClasses/tmTree.cpp ../Source/tmModel/tmTreeClasses/tmNodeOwner.cpp ../Source/tmModel/tmTreeClasses/tmVertex.cpp ../Source/tmModel/tmTreeClasses/tmTree_TestTrees.cpp ../Source/tmModel/tmTreeClasses/tmConditionPathAngleQuant.cpp ../Source/tmModel/tmTreeClasses/tmNode.cpp ../Source/tmModel/tmTreeClasses/tmTreeCleaner.cpp ../Source/tmModel/tmTreeClasses/tmPoly.cpp ../Source/tmModel/tmSolvers/tmStubFinder.cpp ../Source/tmModel/wnlib/conjdir/wnparvect.cpp ../Source/tmModel/tmOptimizers/tmScaleOptimizer.cpp ../Source/tmModel/tmOptimizers/tmEdgeOptimizer.cpp ../Source/tmModel/tmOptimizers/tmStrainOptimizer.cpp ../Source/tmModel/tmOptimizers/tmConstraintFns.cpp ../Source/tmModel/tmOptimizers/tmOptimizer.cpp ../Source/tmModel/tmPtrClasses/tmDpptrTarget.cpp ../Source/tmModel/tmNLCO/tmNLCO_alm.cpp ../Source/tmModel/tmNLCO/tmNLCO.cpp ../Source/tmModel/tmNLCO/tmNLCO_rfsqp.cpp ../Source/tmModel/tmNLCO/tmNLCO_wnlibStub.cpp ../Source/tmModel/tmNLCO/tmNLCO_wnlib.cpp ../Source/tmModel/tmNLCO/tmNLCO_cfsqp.cpp ../Source/tmHeader.cpp ../Source/tmwxGUI/tmwxPalette/tmwxTextCtrl.cpp ../Source/tmwxGUI/tmwxPalette/tmwxCheckBox.cpp ../Source/tmwxGUI/tmwxPalette/tmwxRadioBoxSmall.cpp ../Source/tmwxGUI/tmwxPalette/tmwxButtonSmall.cpp ../Source/tmwxGUI/tmwxPalette/tmwxPalettePanel.cpp ../Source/tmwxGUI/tmwxPalette/tmwxStaticText.cpp ../Source/tmwxGUI/tmwxPalette/tmwxButtonMini.cpp ../Source/tmwxGUI/tmwxPalette/tmwxCheckBoxSmall.cpp ../Source/tmwxGUI/tmwxPalette/tmwxPaletteFrame.cpp ../Source/tmwxGUI/tmwxHtmlHelp/tmwxHtmlHelpController.cpp ../Source/tmwxGUI/tmwxHtmlHelp/tmwxHtmlHelpFrame.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp ../Source/tmwxGUI/tmwxInspector/tmwxNodePanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionEdgeLengthFixedPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionPathActivePanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodeOnCornerPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxCreasePanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodeComboPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodeFixedPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionEdgesSameStrainPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxFacetPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionPathComboPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionPathAngleFixedPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxTreePanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxInspectorFrame.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodesCollinearPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodeOnEdgePanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxPolyPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxInspectorPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodeSymmetricPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxEdgePanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxPathPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionPathAngleQuantPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxConditionNodesPairedPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxVertexPanel.cpp ../Source/tmwxGUI/tmwxInspector/tmwxGroupPanel.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc_Edit.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc_Action.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc_Condition.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc_View.cpp ../Source/tmwxGUI/tmwxDocView/tmwxView.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc_Debug.cpp ../Source/tmwxGUI/tmwxDocView/tmwxPrintout.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDoc_File.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp ../Source/tmwxGUI/tmwxDocView/tmwxDesignFrame.cpp ../Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp ../Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsFrame.cpp ../Source/tmwxGUI/tmwxViewSettings/tmwxViewSettings.cpp ../Source/tmwxGUI/tmwxCommon/tmwxStr.cpp ../Source/tmwxGUI/tmwxCommon/tmwxApp.cpp ../Source/tmwxGUI/tmwxCommon/tmwxGetUserInputDialog.cpp ../Source/tmwxGUI/tmwxCommon/tmwxDocManager.cpp ../Source/tmwxGUI/tmwxCommon/tmwxPersistentFrame.cpp ../Source/tmwxGUI/tmwxCommon/tmwxCommand.cpp ../Source/tmwxGUI/tmwxOptimizerDialog/tmwxOptimizerDialog_msw.cpp ../Source/tmwxGUI/tmwxOptimizerDialog/tmwxOptimizerDialog_gtk.cpp ../Source/tmwxGUI/tmwxOptimizerDialog/tmwxOptimizerDialog_cmn.cpp ../Source/tmwxGUI/tmwxOptimizerDialog/tmwxOptimizerDialog_mac.cpp ../Source/tmwxGUI/tmwxLogFrame/tmwxLogFrame.cpp ../Source/tmwxGUI/tmwxFoldedForm/tmwxFoldedFormFrame.cpp ../Source/tmPrec.cpp</td></tr>
+<tr><th>Clang Version:</th><td>Apple clang version 16.0.0 (clang-1600.0.26.6)
+</td></tr>
+<tr><th>Date:</th><td>Wed Jan 29 22:29:16 2025</td></tr>
+</table>
+<h2>Bug Summary</h2><table>
+<thead><tr><td>Bug Type</td><td>Quantity</td><td class="sorttable_nosort">Display?</td></tr></thead>
+<tr style="font-weight:bold"><td class="SUMM_DESC">All Bugs</td><td class="Q">105</td><td><center><input type="checkbox" id="AllBugsCheck" onClick="CopyCheckedStateToCheckButtons(this);" checked/></center></td></tr>
+<tr><th>Logic error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Branch condition evaluates to a garbage value</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_branch_condition_evaluates_to_a_garbage_value');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Called C++ object pointer is null</td><td class="Q">56</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_called_c++_object_pointer_is_null');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dereference of null pointer</td><td class="Q">22</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_dereference_of_null_pointer');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dereference of undefined pointer value</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_dereference_of_undefined_pointer_value');" checked/></center></td></tr>
+<tr><th>Memory error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Memory leak</td><td class="Q">9</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_memory_error_memory_leak');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Use-after-free</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_memory_error_use-after-free');" checked/></center></td></tr>
+<tr><th>Security</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">'rand' is a poor random number generator</td><td class="Q">2</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_security_rand_is_a_poor_random_number_generator');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Potential insecure memory buffer bounds restriction in call 'strcat'</td><td class="Q">5</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcat_');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td class="Q">6</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_');" checked/></center></td></tr>
+<tr><th>Unused code</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Dead assignment</td><td class="Q">2</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_unused_code_dead_assignment');" checked/></center></td></tr>
+</table>
+
+<h2>Filter Results by File</h2>
+<input
+  type="text"
+  id="file_input"
+  onkeyup="searchFiles()"
+  placeholder="Enter a path or filename"
+  title="Enter a path or filename">
+
+<h2>Reports</h2>
+
+<table id="reports_table" class="sortable" style="table-layout:automatic">
+<thead><tr>
+  <td>Bug Group</td>
+  <td class="sorttable_sorted">Bug Type<span id="sorttable_sortfwdind">&nbsp;&#x25BE;</span></td>
+  <td>File</td>
+  <td>Function/Method</td>
+  <td class="Q">Line</td>
+  <td class="Q">Path Length</td>
+  <td class="sorttable_nosort"></td>
+  <!-- REPORTBUGCOL -->
+</tr></thead>
+<tbody>
+<tr class="bt_security_rand_is_a_poor_random_number_generator"><td class="DESC">Security</td><td class="DESC">'rand' is a poor random number generator</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">PerturbNodes</td><td class="Q">1332</td><td class="Q">1</td><td><a href="report-07761a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-07761a.html" -->
+</tr>
+<tr class="bt_security_rand_is_a_poor_random_number_generator"><td class="DESC">Security</td><td class="DESC">'rand' is a poor random number generator</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">PerturbNodes</td><td class="Q">1330</td><td class="Q">1</td><td><a href="report-cc47b3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-cc47b3.html" -->
+</tr>
+<tr class="bt_logic_error_branch_condition_evaluates_to_a_garbage_value"><td class="DESC">Logic error</td><td class="DESC">Branch condition evaluates to a garbage value</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionPathComboPanel.cpp</td><td class="DESC">OnApply</td><td class="Q">247</td><td class="Q">36</td><td><a href="report-98e941.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-98e941.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">620</td><td class="Q">12</td><td><a href="report-056db6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-056db6.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">693</td><td class="Q">2</td><td><a href="report-08ab75.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-08ab75.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathActive.cpp</td><td class="DESC">SetNodes</td><td class="Q">64</td><td class="Q">2</td><td><a href="report-16497c.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-16497c.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">144</td><td class="Q">3</td><td><a href="report-19a293.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-19a293.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">667</td><td class="Q">2</td><td><a href="report-1bb4b6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1bb4b6.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">771</td><td class="Q">2</td><td><a href="report-1c8244.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1c8244.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionLines</td><td class="Q">2172</td><td class="Q">3</td><td><a href="report-248289.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-248289.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathActive.cpp</td><td class="DESC">SetNodes</td><td class="Q">66</td><td class="Q">4</td><td><a href="report-24c031.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-24c031.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">641</td><td class="Q">2</td><td><a href="report-25e58f.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-25e58f.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathCombo.cpp</td><td class="DESC">SetNodes</td><td class="Q">85</td><td class="Q">4</td><td><a href="report-262e97.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-262e97.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">614</td><td class="Q">6</td><td><a href="report-365715.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-365715.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">177</td><td class="Q">3</td><td><a href="report-3672a9.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3672a9.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionLines</td><td class="Q">2244</td><td class="Q">3</td><td><a href="report-36960a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-36960a.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">209</td><td class="Q">3</td><td><a href="report-3ccede.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3ccede.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">797</td><td class="Q">2</td><td><a href="report-3d79ba.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3d79ba.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">195</td><td class="Q">3</td><td><a href="report-411956.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-411956.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxInspectorFrame.cpp</td><td class="DESC">SetSelectionP</td><td class="Q">434</td><td class="Q">4</td><td><a href="report-412f4b.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-412f4b.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">622</td><td class="Q">14</td><td><a href="report-468ead.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-468ead.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxHtmlHelp/tmwxHtmlHelpFrame.cpp</td><td class="DESC">OnPrintPreview</td><td class="Q">85</td><td class="Q">3</td><td><a href="report-491a78.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-491a78.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree_FacetOrder.cpp</td><td class="DESC">CalcFacetOrder</td><td class="Q">634</td><td class="Q">21</td><td><a href="report-4ce979.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-4ce979.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxInspectorPanel.cpp</td><td class="DESC">AddStatTextGridExtra</td><td class="Q">155</td><td class="Q">2</td><td><a href="report-5777ac.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5777ac.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPoly.cpp</td><td class="DESC">GetIncidentInteriorFacet</td><td class="Q">1281</td><td class="Q">2</td><td><a href="report-62f8db.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-62f8db.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree_FacetOrder.cpp</td><td class="DESC">CalcFacetOrder</td><td class="Q">580</td><td class="Q">17</td><td><a href="report-65834a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-65834a.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">43</td><td class="Q">3</td><td><a href="report-676870.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-676870.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree_FacetOrder.cpp</td><td class="DESC">CalcFacetOrder</td><td class="Q">604</td><td class="Q">15</td><td><a href="report-69dd73.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-69dd73.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionText</td><td class="Q">1899</td><td class="Q">3</td><td><a href="report-6d9c0c.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6d9c0c.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">618</td><td class="Q">10</td><td><a href="report-6df1ee.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6df1ee.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionLines</td><td class="Q">2229</td><td class="Q">3</td><td><a href="report-73b1d5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-73b1d5.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionText</td><td class="Q">2031</td><td class="Q">3</td><td><a href="report-815503.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-815503.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">784</td><td class="Q">2</td><td><a href="report-81b13d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-81b13d.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathActive.cpp</td><td class="DESC">SetNode1</td><td class="Q">82</td><td class="Q">2</td><td><a href="report-86872e.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-86872e.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">719</td><td class="Q">2</td><td><a href="report-9665b2.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9665b2.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">732</td><td class="Q">2</td><td><a href="report-9a4c41.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9a4c41.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">654</td><td class="Q">2</td><td><a href="report-a61f24.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a61f24.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionLines</td><td class="Q">2120</td><td class="Q">3</td><td><a href="report-a80be7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a80be7.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">706</td><td class="Q">2</td><td><a href="report-a97f8b.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a97f8b.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">GetCrease</td><td class="Q">374</td><td class="Q">5</td><td><a href="report-ac2c7d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ac2c7d.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">758</td><td class="Q">2</td><td><a href="report-ace567.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ace567.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmVertex.cpp</td><td class="DESC">SwapLinks</td><td class="Q">303</td><td class="Q">6</td><td><a href="report-adf40a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-adf40a.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">745</td><td class="Q">2</td><td><a href="report-bb1282.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-bb1282.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">127</td><td class="Q">3</td><td><a href="report-bfdb80.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-bfdb80.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">96</td><td class="Q">3</td><td><a href="report-c01c94.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-c01c94.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxInspector/tmwxConditionListBox.cpp</td><td class="DESC">AddCondition</td><td class="Q">68</td><td class="Q">3</td><td><a href="report-c2ebd0.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-c2ebd0.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">616</td><td class="Q">8</td><td><a href="report-c7fc6e.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-c7fc6e.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">CalcLoc</td><td class="Q">680</td><td class="Q">2</td><td><a href="report-cbbaf5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-cbbaf5.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDesignCanvas.cpp</td><td class="DESC">DrawConditionLines</td><td class="Q">2215</td><td class="Q">3</td><td><a href="report-cccfe7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-cccfe7.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathActive.cpp</td><td class="DESC">SetNode2</td><td class="Q">96</td><td class="Q">2</td><td><a href="report-d789f2.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-d789f2.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPoly.cpp</td><td class="DESC">GetIncidentInteriorCrease</td><td class="Q">1301</td><td class="Q">8</td><td><a href="report-e2dfcb.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-e2dfcb.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathCombo.cpp</td><td class="DESC">SetNode1</td><td class="Q">101</td><td class="Q">2</td><td><a href="report-e5e5d3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-e5e5d3.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxHtmlHelp/tmwxHtmlHelpFrame.cpp</td><td class="DESC">OnPrint</td><td class="Q">64</td><td class="Q">3</td><td><a href="report-e80f8d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-e80f8d.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathCombo.cpp</td><td class="DESC">SetNodes</td><td class="Q">83</td><td class="Q">2</td><td><a href="report-ea2906.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ea2906.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">GetCrease</td><td class="Q">372</td><td class="Q">3</td><td><a href="report-ee5967.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ee5967.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathCombo.cpp</td><td class="DESC">SetNode2</td><td class="Q">115</td><td class="Q">2</td><td><a href="report-f4a82c.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f4a82c.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">612</td><td class="Q">4</td><td><a href="report-f4d650.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f4d650.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmVertex.cpp</td><td class="DESC">SwapLinks</td><td class="Q">301</td><td class="Q">6</td><td><a href="report-fe1a70.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-fe1a70.html" -->
+</tr>
+<tr class="bt_logic_error_called_c++_object_pointer_is_null"><td class="DESC">Logic error</td><td class="DESC">Called C++ object pointer is null</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPoly.cpp</td><td class="DESC">GetRidgelineNodesAndPaths</td><td class="Q">520</td><td class="Q">22</td><td><a href="report-ff5a16.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ff5a16.html" -->
+</tr>
+<tr class="bt_unused_code_dead_assignment"><td class="DESC">Unused code</td><td class="DESC">Dead assignment</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">SplitEdge</td><td class="Q">588</td><td class="Q">1</td><td><a href="report-95f5d4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-95f5d4.html" -->
+</tr>
+<tr class="bt_unused_code_dead_assignment"><td class="DESC">Unused code</td><td class="DESC">Dead assignment</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">SplitEdge</td><td class="Q">589</td><td class="Q">1</td><td><a href="report-b9af52.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-b9af52.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">773</td><td class="Q">40</td><td><a href="report-007374.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-007374.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">753</td><td class="Q">36</td><td><a href="report-0475e7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0475e7.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">727</td><td class="Q">32</td><td><a href="report-09d502.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-09d502.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathActive.cpp</td><td class="DESC">SetPath</td><td class="Q">48</td><td class="Q">2</td><td><a href="report-0a2ad8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0a2ad8.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPolyOwner.cpp</td><td class="DESC">GetNextPathAndNode</td><td class="Q">106</td><td class="Q">24</td><td><a href="report-1b4a83.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1b4a83.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">716</td><td class="Q">30</td><td><a href="report-3a93c9.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3a93c9.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">707</td><td class="Q">28</td><td><a href="report-4f6750.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-4f6750.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">664</td><td class="Q">22</td><td><a href="report-5a023e.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5a023e.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnRadioBox</td><td class="Q">833</td><td class="Q">2</td><td><a href="report-5a44d7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5a44d7.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">762</td><td class="Q">38</td><td><a href="report-687753.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-687753.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmConditionPathCombo.cpp</td><td class="DESC">SetPath</td><td class="Q">67</td><td class="Q">2</td><td><a href="report-6bf7af.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6bf7af.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">626</td><td class="Q">16</td><td><a href="report-7062b8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-7062b8.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">690</td><td class="Q">26</td><td><a href="report-897297.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-897297.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">783</td><td class="Q">42</td><td><a href="report-926aa8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-926aa8.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">676</td><td class="Q">24</td><td><a href="report-99297d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-99297d.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">804</td><td class="Q">46</td><td><a href="report-b1d857.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-b1d857.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">639</td><td class="Q">18</td><td><a href="report-c57552.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-c57552.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">739</td><td class="Q">34</td><td><a href="report-d5e8a8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-d5e8a8.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">654</td><td class="Q">20</td><td><a href="report-dcd8b6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-dcd8b6.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">ReadPanel</td><td class="Q">509</td><td class="Q">4</td><td><a href="report-f0b182.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f0b182.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxViewSettings/tmwxViewSettingsPanel.cpp</td><td class="DESC">OnButton</td><td class="Q">795</td><td class="Q">44</td><td><a href="report-f78a2d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f78a2d.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPathOwner.cpp</td><td class="DESC">FindLeafPath</td><td class="Q">44</td><td class="Q">3</td><td><a href="report-fc7de7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-fc7de7.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_undefined_pointer_value"><td class="DESC">Logic error</td><td class="DESC">Dereference of undefined pointer value</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">AddStub</td><td class="Q">886</td><td class="Q">12</td><td><a href="report-bf0ab1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-bf0ab1.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPath.cpp</td><td class="DESC">Getv3Self</td><td class="Q">780</td><td class="Q">5</td><td><a href="report-0d663a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0d663a.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">SplitEdge</td><td class="Q">594</td><td class="Q">15</td><td><a href="report-2cc90a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2cc90a.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmPath.cpp</td><td class="DESC">BuildSelfVertices</td><td class="Q">521</td><td class="Q">29</td><td><a href="report-4a775f.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-4a775f.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">SetPathsActivev4</td><td class="Q">1673</td><td class="Q">12</td><td><a href="report-8137ef.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-8137ef.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">AddNode</td><td class="Q">497</td><td class="Q">16</td><td><a href="report-9f8b9d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9f8b9d.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">SplitEdge</td><td class="Q">594</td><td class="Q">15</td><td><a href="report-a43b83.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a43b83.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDoc_Condition.cpp</td><td class="DESC">OnNodesPairedAboutSymmetryLine</td><td class="Q">398</td><td class="Q">10</td><td><a href="report-a93464.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a93464.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmTree.cpp</td><td class="DESC">SetEdgesSameStrain</td><td class="Q">1614</td><td class="Q">14</td><td><a href="report-b862b5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-b862b5.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>Users/vish/git/software/TreeMaker/Source/tmwxGUI/tmwxDocView/tmwxDoc_Condition.cpp</td><td class="DESC">OnNodesCollinear</td><td class="Q">422</td><td class="Q">10</td><td><a href="report-f48bf0.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f48bf0.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcat_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcat'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcat</td><td class="Q">300</td><td class="Q">1</td><td><a href="report-0db5b5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0db5b5.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcat_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcat'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcat</td><td class="Q">293</td><td class="Q">1</td><td><a href="report-2db79b.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2db79b.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcat_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcat'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcat</td><td class="Q">312</td><td class="Q">1</td><td><a href="report-b21d5f.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-b21d5f.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcat_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcat'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcat</td><td class="Q">303</td><td class="Q">1</td><td><a href="report-d61157.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-d61157.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcat_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcat'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcat</td><td class="Q">298</td><td class="Q">1</td><td><a href="report-f18552.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f18552.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcpy</td><td class="Q">218</td><td class="Q">1</td><td><a href="report-38c576.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-38c576.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcpy</td><td class="Q">220</td><td class="Q">1</td><td><a href="report-745fa4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-745fa4.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td>Users/vish/git/software/TreeMaker/Source/tmModel/tmTreeClasses/tmEdge.cpp</td><td class="DESC">tmEdge</td><td class="Q">77</td><td class="Q">1</td><td><a href="report-913c3f.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-913c3f.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcpy</td><td class="Q">223</td><td class="Q">1</td><td><a href="report-9ab615.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9ab615.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcpy</td><td class="Q">213</td><td class="Q">1</td><td><a href="report-b73186.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-b73186.html" -->
+</tr>
+<tr class="bt_security_potential_insecure_memory_buffer_bounds_restriction_in_call_strcpy_"><td class="DESC">Security</td><td class="DESC">Potential insecure memory buffer bounds restriction in call 'strcpy'</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/wxcrt.h</td><td class="DESC">wxStrcpy</td><td class="Q">232</td><td class="Q">1</td><td><a href="report-d364b6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-d364b6.html" -->
+</tr>
+<tr class="bt_memory_error_use-after-free"><td class="DESC">Memory error</td><td class="DESC">Use-after-free</td><td>opt/homebrew/Cellar/wxwidgets/3.2.6/include/wx-3.2/wx/buffer.h</td><td class="DESC">DecRef</td><td class="Q">206</td><td class="Q">22</td><td><a href="report-a4073f.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a4073f.html" -->
+</tr>
+</tbody>
+</table>
+
+</body></html>

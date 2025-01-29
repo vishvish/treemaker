@@ -1,0 +1,46 @@
+# macOS system files
+.DS_Store
+**/.DS_Store
+
+# Build directories
+build/
+**/build/
+
+# IDE specific files
+.vscode/
+.idea/
+*.xcodeproj/
+*.xcworkspace/
+*.swp
+*~
+
+# Compiled Object files
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# wxWidgets generated files
+*.hhc
+*.hhk
+*.hhp

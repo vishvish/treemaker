@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmwxPersistentFrame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-02-19
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxPersistentFrame.h"
@@ -15,6 +15,24 @@ Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
 class tmwxPersistentFrame
 A wxFrame that remembers its position and size in wxConfig.
 **********/
+
+/*****
+Event table entries for tmwxPersistentFrame<wxFrame>
+*****/
+template <>
+const wxEventTableEntry tmwxPersistentFrame<wxFrame>::sm_eventTableEntries[] = {
+  EVT_MOVE(tmwxPersistentFrame<wxFrame>::OnMove)
+  EVT_SIZE(tmwxPersistentFrame<wxFrame>::OnSize)
+END_EVENT_TABLE()
+
+/*****
+Event table entries for tmwxPersistentFrame<tmwxDocParentFrame>
+*****/
+template <>
+const wxEventTableEntry tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventTableEntries[] = {
+  EVT_MOVE(tmwxPersistentFrame<tmwxDocParentFrame>::OnMove)
+  EVT_SIZE(tmwxPersistentFrame<tmwxDocParentFrame>::OnSize)
+END_EVENT_TABLE()
 
 /*****
 Constructor for ordinary wxFrame with persistence
@@ -66,11 +84,6 @@ wxEventHashTable tmwxPersistentFrame<wxFrame>::sm_eventHashTable(tmwxPersistentF
 template <>
 wxEventHashTable &tmwxPersistentFrame<wxFrame>::GetEventHashTable() const
     { return tmwxPersistentFrame<wxFrame>::sm_eventHashTable; }
-template <>
-const wxEventTableEntry tmwxPersistentFrame<wxFrame>::sm_eventTableEntries[] = {
- EVT_MOVE(tmwxPersistentFrame<wxFrame>::OnMove)
- EVT_SIZE(tmwxPersistentFrame<wxFrame>::OnSize)
-END_EVENT_TABLE()
 
 
 /*****
@@ -87,8 +100,3 @@ wxEventHashTable tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventHashTable(tmwx
 template <>
 wxEventHashTable &tmwxPersistentFrame<tmwxDocParentFrame>::GetEventHashTable() const
     { return tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventHashTable; }
-template <>
-const wxEventTableEntry tmwxPersistentFrame<tmwxDocParentFrame>::sm_eventTableEntries[] = {
-  EVT_MOVE(tmwxPersistentFrame<tmwxDocParentFrame>::OnMove)
-  EVT_SIZE(tmwxPersistentFrame<tmwxDocParentFrame>::OnSize)
-END_EVENT_TABLE()

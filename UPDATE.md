@@ -190,3 +190,10 @@ Total estimated time: 7-12 weeks
 
 - Original Author: Robert J. Lang
 - Current Maintainers: TBD
+
+## Change Log
+
+### 2025-01-29
+- Fixed circular dependencies between tmTree and tmTreeCleaner by introducing tmTree_fwd.h and tmTreeIncludes.h
+- Moved tmTreeCleaner class definition to tmTree_fwd.h to break dependency cycle
+- Fixed template specialization ordering in tmwxPersistentFrame.cpp

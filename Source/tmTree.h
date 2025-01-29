@@ -1,35 +1,15 @@
-/*******************************************************************************
-File:         tmTree.h
-Project:      TreeMaker 5.x
-Purpose:      Header file for class tmTree
-Author:       Robert J. Lang
-Modified by:  
-Created:      2003-11-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
-*******************************************************************************/
-
 #ifndef _TMTREE_H_
 #define _TMTREE_H_
-
-// Standard TreeMaker header
-#include "tmHeader.h"
 
 // Standard libraries
 #include <iostream>
 
 // TreeMaker classes
-#include "tmModel_fwd.h"
-#include "tmPart.h"
-#include "tmCluster.h"
-#include "tmEdgeOwner.h"
-#include "tmPolyOwner.h"
-#include "tmFacetOwner.h"
-#include "tmConditionOwner.h"
-#include "tmPoint.h"
+#include "tmTree_fwd.h"
+#include "tmTreeIncludes.h"
 #include "tmArray.h"
 #include "tmArrayIterator.h"
 #include "tmCondition.h"
-
 
 /**********
 class tmTree
@@ -48,7 +28,7 @@ public:
     // requested location was outside of the edge
   };
   class EX_BAD_ABSORB_NODE {
-    // requested node was not eligible for absorption
+    // attempted AbsorbNode would break the tree
   };
   class EX_BAD_REMOVE_STUB {
     // requested edge was not truly a stub
@@ -446,6 +426,9 @@ public:
   void Exportv4(std::ostream& os);
 
 private:
+  friend class tmTreeCleaner;
+  bool mNeedsCleanup;  // Flag indicating whether cleanup is needed after editing
+
   // User-settable data
   tmFloat mPaperWidth;
   tmFloat mPaperHeight;
@@ -461,7 +444,6 @@ private:
   bool mIsVertexDepthValid;
   bool mIsFacetDataValid;
   bool mIsLocalRootConnectable;
-  bool mNeedsCleanup;
 
   // Ownership
   tmTree* NodeOwnerAsTree() {return this;};

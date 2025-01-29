@@ -5,7 +5,7 @@ Purpose:      Header file for class tmwxPersistentFrame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-02-19
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXPERSISTENTFRAME_H_
@@ -62,7 +62,7 @@ public:
   // Event handling
   void OnMove(wxMoveEvent& event);
   void OnSize(wxSizeEvent& event);
-  DECLARE_EVENT_TABLE()
+  wxDECLARE_EVENT_TABLE();
 protected:
   virtual void InitPositionAndSize();
   virtual void GetPositionSizeInfo(Key key, wxString& keystr, int& val);
@@ -70,6 +70,12 @@ private:
   bool mPositionAndSizeInitialized;
 };
 
+// Event table implementation for template class
+template<class Frame>
+wxBEGIN_EVENT_TABLE_TEMPLATE1(tmwxPersistentFrame, Frame)
+  EVT_MOVE(tmwxPersistentFrame::OnMove)
+  EVT_SIZE(tmwxPersistentFrame::OnSize)
+wxEND_EVENT_TABLE()
 
 /**********
 Template functions

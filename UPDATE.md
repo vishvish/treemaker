@@ -205,3 +205,4 @@ Total estimated time: 7-12 weeks
 - Updated deprecated wxWidgets style constants in tmwxFoldedFormFrame.cpp
 - Fixed wxHtmlHelpController to use GetHelpData() instead of m_data
 - Updated tmwxHtmlHelpFrame to use proper accessors for HTML window and printer
+- Fixed template event table declaration in tmwxPersistentFrame.h

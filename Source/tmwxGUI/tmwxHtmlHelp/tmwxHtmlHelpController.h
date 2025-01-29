@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker help controller class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-11-23
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXHTMLHELPCONTROLLER_H_
@@ -29,8 +29,9 @@ public:
   wxHtmlEasyPrinting* mHtmlEasyPrinting;
 
   tmwxHtmlHelpController();
-  wxHtmlHelpFrame* CreateHelpFrame(wxHtmlHelpData* data);
-  void CreateHelpWindow();
+  wxHtmlHelpFrame* CreateHelpFrame(wxHtmlHelpData* data) override;
+  // Override from base class to create our own help frame
+  wxWindow* CreateHelpWindow() override;
 };
 
 

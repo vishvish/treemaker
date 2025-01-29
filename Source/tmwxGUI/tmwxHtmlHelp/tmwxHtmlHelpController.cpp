@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmwxHtmlHelpController
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-11-23
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxHtmlHelpController.h"
@@ -43,32 +43,11 @@ wxHtmlHelpFrame* tmwxHtmlHelpController::CreateHelpFrame(wxHtmlHelpData* data)
 
 
 /*****
-Create the help window. Overridden so that on Mac we can replace the menu bar
-of the frame.
+Override from base class to create our own help frame
 *****/
-void tmwxHtmlHelpController::CreateHelpWindow()
+wxWindow* tmwxHtmlHelpController::CreateHelpWindow()
 {
-#ifdef __WXMAC__
-  // Here we simply reproduce the ancestor method, except for the extra call
-  // to replace the menu bar partway through.
-  if (m_helpFrame) {
-    m_helpFrame->Raise();
-    return ;
-  }
-  if (m_Config == NULL) {
-    m_Config = wxConfigBase::Get(false);
-    if (m_Config != NULL)
-      m_ConfigRoot = _T("wxWindows/wxHtmlHelpController");
-  }
-  m_helpFrame = CreateHelpFrame(&m_helpData);
-  m_helpFrame->SetController(this);
-  if (m_Config)
-    m_helpFrame->UseConfig(m_Config, m_ConfigRoot);
-  m_helpFrame->Create(NULL, wxID_HTML_HELPFRAME, wxEmptyString, m_FrameStyle);
-  gApp->MakeMenuBar(m_helpFrame);  // replaced menu bar with our own
-  m_helpFrame->SetTitleFormat(m_titleFormat);
-  m_helpFrame->Show(true);
-#else
-  wxHtmlHelpController::CreateHelpWindow();
-#endif // __WXMAC__
+  wxHtmlHelpFrame* frame = CreateHelpFrame(m_data);
+  frame->SetController(this);
+  return frame;
 }

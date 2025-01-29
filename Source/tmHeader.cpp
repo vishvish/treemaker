@@ -5,7 +5,7 @@ Purpose:      Defines failed assertion behavior for Development builds
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-08-24
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 #include "tmHeader.h"
 #ifdef TMWX
@@ -113,7 +113,8 @@ void tmOnAssert(int cond, const char* szFile, int nLine,
   wxString strFile;  strFile.FromAscii(szFile);
   wxString strCond;  strCond.FromAscii(szCond);
   wxString strMsg;   strMsg.FromAscii(szMsg);
-  tmOnAssert(cond, strFile.c_str(), nLine, strCond.c_str(), strMsg.c_str());
+  tmOnAssert(cond, (const TM_UI_CHAR*)strFile.c_str(), nLine, 
+             (const TM_UI_CHAR*)strCond.c_str(), (const TM_UI_CHAR*)strMsg.c_str());
 }
 #endif // wxUSE_UNICODE
 

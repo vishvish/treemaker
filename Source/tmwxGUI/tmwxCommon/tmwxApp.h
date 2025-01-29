@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker application class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXAPP_H_
@@ -13,6 +13,8 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 
 // Include standard Treemaker and wxWidgets headers
 #include "tmHeader.h"
+#include "wx/wx.h"
+#include "wx/print.h"
 
 // Forward declarations
 #include "tmwxGUI_fwd.h"

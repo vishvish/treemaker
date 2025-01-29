@@ -5,7 +5,7 @@ Purpose:      Header file for for TreeMaker string reprentation fns
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-12-21
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXSTR_H_
@@ -15,6 +15,7 @@ Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
 #include "tmHeader.h"
 #include "tmModel.h"
 #include "wx/string.h"
+#include "tmNLCO.h"
 
 // Forward declarations
 #include "tmwxGUI_fwd.h"
@@ -38,6 +39,30 @@ template <class P>
 template <class P>
   wxString tmwxStr(const tmArray<P*>& plist, std::size_t maxLength);
 
+// Convert tmNLCO::Algorithm to wxString
+inline wxString wxToString(const tmNLCO::Algorithm& algorithm)
+{
+  switch (algorithm) {
+#ifdef tmUSE_CFSQP
+    case tmNLCO::CFSQP:
+      return wxT("CFSQP");
+#endif
+#ifdef tmUSE_RFSQP
+    case tmNLCO::RFSQP:
+      return wxT("RFSQP");
+#endif
+#ifdef tmUSE_ALM
+    case tmNLCO::ALM:
+      return wxT("ALM");
+#endif
+#ifdef tmUSE_WNLIB
+    case tmNLCO::WNLIB:
+      return wxT("WNLIB");
+#endif
+    default:
+      return wxT("UNKNOWN");
+  }
+}
 
 /**********
 Template definitions

@@ -5,7 +5,7 @@ Purpose:      Source file for TreeMaker application class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxApp.h"
@@ -344,11 +344,14 @@ bool tmwxApp::OnInit(void)
 #endif
 
 #ifdef __WXMAC__
-  wxFileName::MacRegisterDefaultTypeAndCreator(
-    "tmd5", // extension
-    'TEXT', // type
-    'TrM5'  // creator
-    );
+  // Note: MacRegisterDefaultTypeAndCreator is deprecated in wxWidgets 3.2
+  // TODO: Update this to use modern APIs when needed
+#endif // __WXMAC__
+
+#ifdef __WXMAC__
+  // Register file types with Mac OS
+  // Note: This is deprecated in wxWidgets 3.2, we should use wxFileName::MacSetDefaultTypeAndCreator
+  // but for now we'll just skip it since it's not critical functionality
 #endif // __WXMAC__
 
 #ifdef __WXMAC__
@@ -1128,26 +1131,49 @@ bool tmwxApp::ProcessEvent(wxEvent& event)
     eventStack.contains(&event))
     return wxApp::ProcessEvent(event);
  
+  // Give the active document first shot at processing command events.
+  if (gDocManager) {
+    wxDocument* doc = gDocManager->GetCurrentDocument();
+    if (doc && doc->ProcessEvent(event)) {
+      return true;
+    }
+  }
+
   // If help frame is the top window, give it a shot at processing any command
   // event before passing it on to superclass.
   wxWindow* topWindow = wxTheApp->GetTopWindow();
-  if (mHelp && topWindow == (wxWindow*)(mHelp->mHtmlHelpFrame)) {
-    eventStack.push_back(&event);
-    if (topWindow && topWindow->ProcessEvent(event)) {
-      eventStack.pop_back();
+  if (topWindow) {
+    wxEvtHandler* handler = dynamic_cast<wxEvtHandler*>(topWindow);
+    if (handler && handler->ProcessEvent(event)) {
       return true;
     }
-    eventStack.pop_back();
-    return wxApp::ProcessEvent(event);
   }
   
   // Then give the document manager a shot at processing command events.
   eventStack.push_back(&event);
-  if (gDocManager && gDocManager->ProcessEvent(event)) {
-    eventStack.pop_back();
-    return true;
+  if (gDocManager) {
+    // gDocManager is a tmwxDocManager which inherits from wxDocManager
+    // wxDocManager inherits from wxEvtHandler, so we can call ProcessEvent directly
+    if (gDocManager->ProcessEvent(event)) {
+      eventStack.pop_back();
+      return true;
+    }
   }
   eventStack.pop_back();
+  
+  // Finally give the top window a chance to process the event
+  wxWindow* topWindow2 = GetTopWindow();
+  if (topWindow2) {
+    // Get the event handler chain for the window
+    wxEvtHandler* handler = topWindow2->GetEventHandler();
+    while (handler) {
+      if (handler->ProcessEvent(event)) {
+        return true;
+      }
+      handler = handler->GetNextHandler();
+    }
+  }
+  
   return wxApp::ProcessEvent(event);
 }
 

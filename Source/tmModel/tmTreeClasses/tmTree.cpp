@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmTree
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmTree.h"
@@ -775,20 +775,25 @@ void tmTree::AbsorbEdge(tmEdge* aEdge)
   for (size_t i = mOwnedPaths.size(); i > 0; --i) {
     tmPath* thePath = mOwnedPaths[i - 1];
     // Paths that end on killNode are deleted.
-    if (thePath->StartsOrEndsWith(killNode))
+    if (thePath->StartsOrEndsWith(killNode)) {
       delete thePath;
-    else if (thePath->mNodes.contains(killNode))
-      if (thePath->mNodes.contains(keepNode))
+    }
+    else if (thePath->mNodes.contains(killNode)) {
+      if (thePath->mNodes.contains(keepNode)) {
         // Paths that contain killNode and keepNode get the reference to 
         // killNode removed. 
         thePath->mNodes.erase_remove(killNode);
-      else
+      }
+      else {
         // Paths that only contain killNode get the reference replaced by
         // a reference to keepNode.
         thePath->mNodes.replace_with(killNode, keepNode);
+      }
+    }
     // Remove the edge from the path
-    if (thePath->mEdges.contains(aEdge))
+    if (thePath->mEdges.contains(aEdge)) {
       thePath->mEdges.erase_remove(aEdge);
+    }
   }
   
   // Now for all edges, replace any references to killNode with keepNode.

@@ -72,9 +72,9 @@ private:
 
 // Event table implementation for template class
 template<class Frame>
-wxBEGIN_EVENT_TABLE_TEMPLATE1(tmwxPersistentFrame, Frame)
-  EVT_MOVE(tmwxPersistentFrame::OnMove)
-  EVT_SIZE(tmwxPersistentFrame::OnSize)
+wxBEGIN_TEMPLATE_EVENT_TABLE(tmwxPersistentFrame<Frame>, Frame)
+  EVT_MOVE(tmwxPersistentFrame<Frame>::OnMove)
+  EVT_SIZE(tmwxPersistentFrame<Frame>::OnSize)
 wxEND_EVENT_TABLE()
 
 /**********

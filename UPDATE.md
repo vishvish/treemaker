@@ -200,3 +200,4 @@ Total estimated time: 7-12 weeks
 - Updated deprecated wxWidgets style constants in tmwxDesignCanvas.cpp
 - Added GetPrintableName method to tmwxDoc
 - Fixed OnActivate event handling in tmwxDesignFrame
+- Updated wxMetafileDC::Ok() to IsOk() in tmwxDoc_Edit.cpp

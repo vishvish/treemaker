@@ -5,7 +5,7 @@ Purpose:      Source file for TreeMaker document class, Edit menu commands
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-12-10
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxDoc.h"
@@ -442,7 +442,7 @@ void tmwxDoc::OnCopy(wxCommandEvent&)
 {
 #if wxUSE_METAFILE  // wxGTK doesn't support metafile
   wxMetafileDC dc;
-  if (dc.Ok()) {
+  if (dc.IsOk()) {
     GetDesignCanvas()->OnDraw(dc);
     wxMetafile *mf = dc.Close();
     if (mf) {

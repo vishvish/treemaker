@@ -62,20 +62,12 @@ public:
   // Event handling
   void OnMove(wxMoveEvent& event);
   void OnSize(wxSizeEvent& event);
-  wxDECLARE_EVENT_TABLE();
 protected:
   virtual void InitPositionAndSize();
   virtual void GetPositionSizeInfo(Key key, wxString& keystr, int& val);
 private:
   bool mPositionAndSizeInitialized;
 };
-
-// Event table implementation for template class
-template<class Frame>
-wxBEGIN_TEMPLATE_EVENT_TABLE(tmwxPersistentFrame<Frame>, Frame)
-  EVT_MOVE(tmwxPersistentFrame<Frame>::OnMove)
-  EVT_SIZE(tmwxPersistentFrame<Frame>::OnSize)
-wxEND_EVENT_TABLE()
 
 /**********
 Template functions

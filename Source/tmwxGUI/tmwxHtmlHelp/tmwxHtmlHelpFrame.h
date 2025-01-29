@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker help frame class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-11-23
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXHTMLHELPFRAME_H_
@@ -34,6 +34,9 @@ public:
   void OnPrintPreviewUpdateUI(wxUpdateUIEvent& event);
   void OnPrintPreview(wxCommandEvent& event);
   DECLARE_EVENT_TABLE()
+
+private:
+  wxHtmlEasyPrinting* mPrinter;
 };
 
 

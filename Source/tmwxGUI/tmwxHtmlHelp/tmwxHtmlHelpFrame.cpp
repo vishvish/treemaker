@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmwxHtmlHelpFrame
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-11-23
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxHtmlHelpFrame.h"
@@ -15,7 +15,8 @@ Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
 Constructor
 *****/
 tmwxHtmlHelpFrame::tmwxHtmlHelpFrame(wxHtmlHelpData* data) : 
-  wxHtmlHelpFrame(data)
+  wxHtmlHelpFrame(data),
+  mPrinter(nullptr)
 {
 }
 
@@ -38,8 +39,8 @@ from within the tmwxHtmlHelpController class.
 *****/
 void tmwxHtmlHelpFrame::SetHtmlHelpPrinter(wxHtmlEasyPrinting* printer)
 {
-  if (m_Printer) delete m_Printer;
-  m_Printer = printer;
+  if (mPrinter) delete mPrinter;
+  mPrinter = printer;
 }
 
 
@@ -57,9 +58,10 @@ Perform the File->Print... command
 *****/
 void tmwxHtmlHelpFrame::OnPrint(wxCommandEvent& event)
 {
-  TMASSERT(m_Printer);
-  TMASSERT(!!m_HtmlWin->GetOpenedPage());
-  m_Printer->PrintFile(m_HtmlWin->GetOpenedPage());
+  TMASSERT(mPrinter);
+  wxHtmlWindow* htmlWin = GetHelpWindow()->GetHtmlWindow();
+  TMASSERT(!!htmlWin->GetOpenedPage());
+  mPrinter->PrintFile(htmlWin->GetOpenedPage());
 }
 
 
@@ -77,9 +79,10 @@ Perform the File->Print Preview... command
 *****/
 void tmwxHtmlHelpFrame::OnPrintPreview(wxCommandEvent& event)
 {
-  TMASSERT(m_Printer);
-  TMASSERT(!!m_HtmlWin->GetOpenedPage());
-  m_Printer->PreviewFile(m_HtmlWin->GetOpenedPage());
+  TMASSERT(mPrinter);
+  wxHtmlWindow* htmlWin = GetHelpWindow()->GetHtmlWindow();
+  TMASSERT(!!htmlWin->GetOpenedPage());
+  mPrinter->PreviewFile(htmlWin->GetOpenedPage());
 }
 
 

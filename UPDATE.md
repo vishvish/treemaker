@@ -204,3 +204,4 @@ Total estimated time: 7-12 weeks
 - Updated wxFileDialog flags and removed deprecated Mac code in tmwxDoc_File.cpp
 - Updated deprecated wxWidgets style constants in tmwxFoldedFormFrame.cpp
 - Fixed wxHtmlHelpController to use GetHelpData() instead of m_data
+- Updated tmwxHtmlHelpFrame to use proper accessors for HTML window and printer

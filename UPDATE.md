@@ -201,3 +201,4 @@ Total estimated time: 7-12 weeks
 - Added GetPrintableName method to tmwxDoc
 - Fixed OnActivate event handling in tmwxDesignFrame
 - Updated wxMetafileDC::Ok() to IsOk() in tmwxDoc_Edit.cpp
+- Updated wxFileDialog flags and removed deprecated Mac code in tmwxDoc_File.cpp

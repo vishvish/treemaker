@@ -17,9 +17,9 @@ needs to be changed.
 *****/
 
 #define TM_VERSION_MAJOR 5
-#define TM_VERSION_MINOR 0
-#define TM_VERSION_RELEASE 1
-#define TM_VERSION_BUILD 20060413
+#define TM_VERSION_MINOR 1M
+#define TM_VERSION_RELEASE beta
+#define TM_VERSION_BUILD 20250130
 
 /******************************************************************************/
  

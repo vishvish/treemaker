@@ -1,3 +1,45 @@
+TreeMaker 5.1M - 2025 Mac Update
+=========================
+
+Originally written by Robert Lang, et al.
+
+2025 update for macOS by Vish Vishvanath.
+
+TreeMaker is a program for the design of origami bases, but also a sophisticated tool that helps you create complex origami figures using the tree theory of origami design. This 2025 update brings TreeMaker to modern macOS systems while maintaining its powerful capabilities for origami designers.
+
+This version was built on Apple Silicon and macOS Sonoma 14.7.1
+
+TODO: Panel view UI broken
+
+What's New in the Mac Version
+----------------------------
+- Updated to support modern macOS systems
+- Improved UI compatibility with latest macOS standards
+- Enhanced file dialogs and system integration
+- Fixed various compatibility issues with recent macOS versions
+
+Building on macOS
+----------------
+1. Prerequisites:
+   - Xcode 14.0 or later
+   - wxWidgets 3.2 or later
+   - CMake 3.20 or later
+
+2. Build Steps:
+   ```
+   cd mac
+   ./build-tm-modern.sh
+   ```
+
+3. The built application will be in `mac/build/Release/TreeMaker.app`
+
+Running TreeMaker
+----------------
+- Double-click `TreeMaker.app` in the build directory
+- Or run from terminal: `open build/TreeMaker.app`
+
+Note: You may see some system UI-related warnings in the console - these are harmless and don't affect functionality.
+
 /*******************************************************************************
 TreeMaker 5.0
 

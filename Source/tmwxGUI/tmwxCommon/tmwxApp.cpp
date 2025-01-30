@@ -1131,51 +1131,40 @@ bool tmwxApp::ProcessEvent(wxEvent& event)
   if (mIsStarting || mIsQuitting || !event.IsCommandEvent() || 
     eventStack.contains(&event))
     return wxApp::ProcessEvent(event);
+    
+  // Add event to stack before processing to prevent infinite recursion
+  eventStack.push_back(&event);
  
   // Give the active document first shot at processing command events.
+  bool handled = false;
   if (gDocManager) {
     wxDocument* doc = gDocManager->GetCurrentDocument();
     if (doc && doc->ProcessEvent(event)) {
-      return true;
+      handled = true;
     }
   }
 
   // If help frame is the top window, give it a shot at processing any command
   // event before passing it on to superclass.
-  wxWindow* topWindow = wxTheApp->GetTopWindow();
-  if (topWindow) {
-    wxEvtHandler* handler = dynamic_cast<wxEvtHandler*>(topWindow);
-    if (handler && handler->ProcessEvent(event)) {
-      return true;
+  if (!handled) {
+    wxWindow* topWindow = wxTheApp->GetTopWindow();
+    if (topWindow) {
+      wxEvtHandler* handler = dynamic_cast<wxEvtHandler*>(topWindow);
+      if (handler && handler->ProcessEvent(event)) {
+        handled = true;
+      }
     }
   }
-  
-  // Then give the document manager a shot at processing command events.
-  eventStack.push_back(&event);
-  if (gDocManager) {
-    // gDocManager is a tmwxDocManager which inherits from wxDocManager
-    // wxDocManager inherits from wxEvtHandler, so we can call ProcessEvent directly
-    if (gDocManager->ProcessEvent(event)) {
-      eventStack.pop_back();
-      return true;
-    }
+
+  // If nobody handled it, let the superclass try
+  if (!handled) {
+    handled = wxApp::ProcessEvent(event);
   }
+
+  // Remove event from stack now that we're done processing it
   eventStack.pop_back();
   
-  // Finally give the top window a chance to process the event
-  wxWindow* topWindow2 = GetTopWindow();
-  if (topWindow2) {
-    // Get the event handler chain for the window
-    wxEvtHandler* handler = topWindow2->GetEventHandler();
-    while (handler) {
-      if (handler->ProcessEvent(event)) {
-        return true;
-      }
-      handler = handler->GetNextHandler();
-    }
-  }
-  
-  return wxApp::ProcessEvent(event);
+  return handled;
 }
 
 

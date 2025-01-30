@@ -33,6 +33,8 @@ tmwxInspectorPanel::tmwxInspectorPanel(wxWindow* parent)
 #if tmwxINSPECTOR_EXTRA
   mGridExtraSizer = 0;
 #endif // tmwxINSPECTOR_EXTRA
+  SetSizer(mPanelSizer);
+  Layout();
 }
 
 
@@ -42,12 +44,13 @@ Add a tmwxStaticText caption and tmwxTextCtrl in a single row.
 void tmwxInspectorPanel::AddTextPair(const wxString& caption, 
   tmwxTextCtrl*& textctrl, const wxString& format)
 {
-  wxGridSizer* gridsizer = new wxGridSizer(2);
+  wxFlexGridSizer* gridsizer = new wxFlexGridSizer(2, 2, 2);
+  gridsizer->AddGrowableCol(1, 1);  // Make second column growable
   gridsizer->Add(new tmwxStaticText(this, 11, caption), 
-   0, wxALIGN_CENTER_VERTICAL | wxTOP|wxBOTTOM, 2);
+   0, wxALIGN_CENTER_VERTICAL | wxALL, 2);
   gridsizer->Add(textctrl = new tmwxTextCtrl(this, format), 
-   0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL | wxTOP|wxBOTTOM, 2);
-  mPanelSizer->Add(gridsizer, wxSizerFlags(1).Expand());
+   1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+  mPanelSizer->Add(gridsizer, 0, wxEXPAND | wxALL, 2);
 }
 
 

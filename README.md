@@ -1,9 +1,9 @@
 TreeMaker 5.1M - 2025 Mac Update
 =========================
 
-Originally written by Robert Lang, et al.
+*Originally written by Robert Lang, et al.*
 
-2025 update for macOS by Vish Vishvanath.
+2025 update for macOS by Vish Vishvanath, et al.
 
 TreeMaker is a program for the design of origami bases, but also a sophisticated tool that helps you create complex origami figures using the tree theory of origami design. This 2025 update brings TreeMaker to modern macOS systems while maintaining its powerful capabilities for origami designers.
 
@@ -13,6 +13,7 @@ TODO: Panel view UI broken
 
 What's New in the Mac Version
 ----------------------------
+
 - Updated to support modern macOS systems
 - Improved UI compatibility with latest macOS standards
 - Enhanced file dialogs and system integration
@@ -20,48 +21,61 @@ What's New in the Mac Version
 
 Building on macOS
 ----------------
+
 1. Prerequisites:
 
-   - Xcode 14.0 or later
-   - wxWidgets 3.2 or later
-   - CMake 3.20 or later
+    - Xcode 14.0 or later
+    - wxWidgets 3.2 or later
+    - CMake 3.20 or later
 
 2. Build Steps:
 
-   ```sh
-   mkdir build
-   cd build
-   cmake ..
-   make -j8 (or however many threads)
-   ```
+    ```sh
+    mkdir build
+    cd build
+    cmake ..
+    make -j8 (or however many threads)
+    ```
 
 3. The built application will be in `build/bin/TreeMaker.app`
 
 Running TreeMaker
-----------------
+-----------------
+
 - Double-click `TreeMaker.app` in the build directory
 - Or run from terminal: `open build/TreeMaker.app`
 
 Note: You may see some system UI-related warnings in the console - these are harmless and don't affect functionality.
 
+Debugging TreeMaker after build
+-------------------------------
+
+```sh
+lldb bin/TreeMaker.app/Contents/MacOS/TreeMaker                                                        
+```
+
 /*******************************************************************************
+
 TreeMaker 5.0
 
 A Program for Origami Design
 
 Contact:
-  web: http://www.langorigami.com/treemaker/treemaker.php4
-  email: treemaker@langorigami.com
+  
+- web: <http://www.langorigami.com/treemaker/treemaker.php4>
+- email: <treemaker@langorigami.com>
   
 Developers:
-  Robert J. Lang (lead)
-  Carlos Furuti (Linux port)
-  Wlodzimierz 'ABX' Skiba (MSW port)
+
+- Robert J. Lang (lead)
+- Carlos Furuti (Linux port)
+- Wlodzimierz 'ABX' Skiba (MSW port)
   
 Special thanks:
-  The wxWidgets Team
-  Stefan Csomer (wxMac guru)
-  Will Naylor and Bill Chapman (authors of wnlib)
+
+- The wxWidgets Team
+- Stefan Csomer (wxMac guru)
+- Will Naylor and Bill Chapman (authors of wnlib)
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -74,7 +88,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 this program (in a file called LICENSE.txt); if not, go to
-http://www.gnu.org/copyleft/gpl.html or write to 
+<http://www.gnu.org/copyleft/gpl.html> or write to
 
   Free Software Foundation, Inc.
   59 Temple Place - Suite 330
@@ -83,7 +97,7 @@ http://www.gnu.org/copyleft/gpl.html or write to
 Source code to this program is always available; for more information visit my
 website at:
 
-  http://www.langorigami.com
+  <http://www.langorigami.com>
 
 /*******************************************************************************
 Information for Programmers
@@ -93,17 +107,17 @@ together. Source code and headers for all projects is contained within the
 Source directory. TreeMaker can be built as a model-only library or as the
 full application with GUI. All the code to build the model is in the included
 files. However, you will need to download and build the wxWidgets libraries
-(www.wxwidgets.org) in order to build the TreeMaker application with GUI.
+(<www.wxwidgets.org>) in order to build the TreeMaker application with GUI.
 
 Source contains the following subdirectories:
 
-Source/tmModel contains the complete TreeMaker mathematical model, no GUI code. 
+Source/tmModel contains the complete TreeMaker mathematical model, no GUI code.
 It does not require wxWidgets.
 
 Source/tmwxGUI contains the TreeMaker GUI code, which is built on top of
 wxWidgets.
 
-Source/test contains some test files that allow you to compile and test 
+Source/test contains some test files that allow you to compile and test
 portions of the TreeMaker model. Most of them do not require wxWidgets.
 
 Source/images contains images (like the splash screen).
@@ -121,15 +135,15 @@ best (and easiest) bet is to use one of the build systems we've already set up.
 But if you're using a different build system or building TreeMaker for a
 different platform, the overall process is the following.
 
-Download and build wxWidgets from www.wxWidgets.org, version 2.6.2 or higher.
+Download and build wxWidgets from <www.wxWidgets.org>, version 2.6.2 or higher.
 
 Configure the libraries with the following options:
 
 --enable-std_iostreams --enable-std_string
 
-If you are building wxMac, you will also need 
+If you are building wxMac, you will also need
 
---with-mac --disable-shared --enable-monolithic 
+--with-mac --disable-shared --enable-monolithic
 
 If you are building wxGTK and have GNOME installed, you should use
 
@@ -143,7 +157,7 @@ need
 
 --enable-debug
 
-See the wxWidgets home page (www.wxwidgets.org) for more details on building
+See the wxWidgets home page (<www.wxwidgets.org>) for more details on building
 wxWidgets or see the platform-specific README files for more information.
 
 Once you've built the wxWidgets libraries, create a new wxWidgets project and
@@ -231,15 +245,14 @@ The test files are built as command-line tools and are used to try out and
 debug various pieces of the TreeMaker model (no GUI). The test files don't
 require all of the source code; the required .cpp files are listed below (if a
 folder is listed, compile every .c or .cpp file in the folder). Header search
-paths should always include all folders in Source (recursively). Do NOT
-#define TMWX for any of the test code.
+paths should always include all folders in Source (recursively). Do NOT \# define TMWX for any of the test code.
 
 tmArrayTester.cpp
   Tests the general-purpose container class used throughout TreeMaker.
   Requires:
     tmHeader.cpp
     tmModel/tmPtrClasses
-    
+
 tmDpptrTester.cpp
   Tests the dangle-proof pointer and array classes.
   Requires:
@@ -279,14 +292,13 @@ project file. Note that the wxWidget libraries must be built with Mac-specific
 options; for simplicity, use the script files in the mac subdirectory. Check
 mac/README_mac.txt for further details about building.
 
-Linux -- i386, GCC 4.0.0, GTK+-2.0. Instructions for compiling wxWidget are 
+Linux -- i386, GCC 4.0.0, GTK+-2.0. Instructions for compiling wxWidget are
 included.
 
 Windows -- MinGW run from windows command box. Use msw/makefile.gcc. Note that
 the wxWidget libraries must be built first and that input options passed to
 msw/makefile.gcc should match wxWidgets build settings. Check
 msw/README_msw.txt for further details about building.
-
 
 ********************************************************************************
 Headers, implementations, and comments
@@ -307,13 +319,13 @@ the point of declaration of the class member variable.
 ********************************************************************************
 TreeMaker names and conventions
 
-Classes are implemented in .h and .cpp files. Thus, class MyClass will have its 
+Classes are implemented in .h and .cpp files. Thus, class MyClass will have its
 declaration in "MyClass.h" and its implementation in "MyClass.cpp".
 
 Usually "MyClass.cpp" will contain the full implementation for class MyClass.
-Most modern filesystems can handle long names, so this convention is used even 
-with classes like "tmwxConditionEdgesSameStrainPanel". I tend to favor long 
-names that convey what they're used for, rather than cryptic combinations of 
+Most modern filesystems can handle long names, so this convention is used even
+with classes like "tmwxConditionEdgesSameStrainPanel". I tend to favor long
+names that convey what they're used for, rather than cryptic combinations of
 letters whose only positive feature is that they survive in DOS.
 
 In a few cases, I have broken up implementations into several files; these will
@@ -327,7 +339,7 @@ The TreeMaker code can be divided up into several groups:
 (2) The wxWidgets class library (wxW);
 (3) the TreeMaker GUI (tmwxGUI).
 
-Which group a particular class or file belongs in can (usually) be inferred 
+Which group a particular class or file belongs in can (usually) be inferred
 from its name. The groups are discussed below.
 
 (1) The TreeMaker mathematical model implements the underlying data structure
@@ -339,28 +351,28 @@ exceptions, RTTI, and template specialization and so requires a fairly
 ANSI-compliant compiler. (I have built it with Metrowerks CodeWarrior and gcc
 4.0.)
 
-Every exposed class within tmModel has a class name with a prefix of "tm", 
-e.g., tmPoint, tmFloat, tmNode, etc. So if you see tmDoohickey, you know 
+Every exposed class within tmModel has a class name with a prefix of "tm",
+e.g., tmPoint, tmFloat, tmNode, etc. So if you see tmDoohickey, you know
 that it's part of the model, not the GUI.
 
-(2) The wxWidgets class library is a portable multiplatform GUI tool set. 
-Most of the classes and constants in wxWidgets have a prefix of "wx", 
-e.g., classes wxWindow, wxTextCtrl; constants wxYES, wxNO, and so forth. 
+(2) The wxWidgets class library is a portable multiplatform GUI tool set.
+Most of the classes and constants in wxWidgets have a prefix of "wx",
+e.g., classes wxWindow, wxTextCtrl; constants wxYES, wxNO, and so forth.
 So wxDoohickey is something from wxWidgets.
 
-(3) The TreeMaker GUI (tmwxGUI) is built on top of the wxWidgets tool set and 
-interacts with the TreeMaker mathematical model. I use a prefix scheme for 
-GUI classes that is a hybrid of the TreeMaker "tm" and wxWidgets "wx" 
-prefices: Namely, all such classes have a prefix "tmwx", e.g., classes 
-tmwxApp, tmwxDesignCanvas. If a TreeMaker GUI class has  a name similar 
-to a wxWidgets class, it's a pretty safe bet that the former is directly 
+(3) The TreeMaker GUI (tmwxGUI) is built on top of the wxWidgets tool set and
+interacts with the TreeMaker mathematical model. I use a prefix scheme for
+GUI classes that is a hybrid of the TreeMaker "tm" and wxWidgets "wx"
+prefices: Namely, all such classes have a prefix "tmwx", e.g., classes
+tmwxApp, tmwxDesignCanvas. If a TreeMaker GUI class has  a name similar
+to a wxWidgets class, it's a pretty safe bet that the former is directly
 descended from the latter; e.g.,
 
 class tmwxApp : public wxApp {
 // ...
 };
 
-Within both the tmModel and tmwxGUI, I have adopted a few naming conventions 
+Within both the tmModel and tmwxGUI, I have adopted a few naming conventions
 that are, for the most part, pretty standard.
 
 The two- or four-letter prefix "tm" or "tmwx" is used for the names of classes,
@@ -389,27 +401,27 @@ vs pObj) as it's usually clear which a member variable is.
 
 Static member variables begin with lower-case s, e.g., tmNode::sTag.
 
-There are a few exceptions to the mSomething scheme; some lightweight 
-mathematical objects have member variables that are meant to be directly 
+There are a few exceptions to the mSomething scheme; some lightweight
+mathematical objects have member variables that are meant to be directly
 accessed and have short lower-case names, like tmPoint::x and tmPoint::y.
 
-Function arguments that need no special distinction will usually be named 
+Function arguments that need no special distinction will usually be named
 "a"+classname, e.g., "aMyClass".
 
 Temporary variables within a function (and frequently loop variables) are often
 named "the"+classname, unless, of course, there's more than one, in which case
 more descriptive names are used.
 
-Within the tmModel, most function arguments and member variables are pointers 
-for historical reasons, even though in some cases reference variables 
-might be more appropriate. wxWidgets uses a mixture of pointers and 
+Within the tmModel, most function arguments and member variables are pointers
+for historical reasons, even though in some cases reference variables
+might be more appropriate. wxWidgets uses a mixture of pointers and
 references, and the tmwxGUI similarly uses both.
 
 The following things usually have names in ALL_CAPS:
-	macros
-	constants and enum values
-	classes with no members (e.g., exception and template resolution classes)
-	
+ macros
+ constants and enum values
+ classes with no members (e.g., exception and template resolution classes)
+
 There are exceptions to all these rules. TreeMaker contains code written over
 more than a decade, and if old code works, I don't go back and clean it up,
 even if it's not perfectly consistent with the naming rules.

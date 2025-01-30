@@ -5,7 +5,7 @@ Purpose:      Implementation file for TreeMaker object inspector frame class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxInspectorFrame.h"
@@ -414,7 +414,8 @@ class tmwxInspectorFrame::PanelTraits<tmConditionPathAngleQuant> {
 public:
   typedef tmwxConditionPathAngleQuantPanel panel_t;
   static panel_t* GetProperPanel(tmwxInspectorFrame* frame) {
-    return frame->mConditionPathAngleQuantPanel;};
+    return frame->mConditionPathAngleQuantPanel;
+  }
 };
 
 
@@ -437,6 +438,8 @@ void tmwxInspectorFrame::SetSelectionP(tmPart* p)
   if (mPanel != ppanel) {
     UninstallPanel();
     InstallPanel(ppanel);
+    Layout();  // Force a layout update
+    Refresh(); // Force a redraw
   }
 }
 
@@ -499,6 +502,8 @@ void tmwxInspectorFrame::SetSelection(tmCluster* aCluster)
   if (mPanel != mGroupPanel) {
     UninstallPanel();
     InstallPanel(mGroupPanel);
+    Layout();  // Force a layout update
+    Refresh(); // Force a redraw
   }
 }
 

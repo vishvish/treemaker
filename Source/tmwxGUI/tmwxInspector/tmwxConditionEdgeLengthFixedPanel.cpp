@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionEdgeLengthFixed inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionEdgeLengthFixedPanel.h"
@@ -38,6 +38,8 @@ tmwxConditionEdgeLengthFixedPanel::tmwxConditionEdgeLengthFixedPanel(
 #if tmwxINSPECTOR_EXTRA
 #endif
   SetSizerAndFit(mPanelSizer);
+  Layout();
+  Fit();
 }
 
 

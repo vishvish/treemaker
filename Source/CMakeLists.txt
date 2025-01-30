@@ -22,7 +22,6 @@ target_compile_definitions(tmcore PUBLIC TMWX)
 
 target_link_libraries(tmcore PUBLIC
     tmmodel
-    ${wxWidgets_LIBRARIES}
 )
 
 # Optional: Add test directory
@@ -39,10 +38,7 @@ target_sources(TreeMaker PRIVATE
 )
 
 target_link_libraries(TreeMaker PRIVATE
-    tmcore
-    tmmodel
     tmwxgui
-    ${wxWidgets_LIBRARIES}
 )
 
 # Set macOS bundle properties

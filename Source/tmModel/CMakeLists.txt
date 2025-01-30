@@ -33,10 +33,7 @@ target_include_directories(tmmodel PUBLIC
     ${CMAKE_SOURCE_DIR}/Source
 )
 
-# Add wxWidgets definitions since some model files might use wx types
 target_compile_definitions(tmmodel PUBLIC TMWX)
 
 target_link_libraries(tmmodel PUBLIC
-    tmcore
-    ${wxWidgets_LIBRARIES}
 )

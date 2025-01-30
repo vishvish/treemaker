@@ -38,16 +38,13 @@ target_include_directories(tmwxgui PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/tmwxViewSettings
     ${CMAKE_SOURCE_DIR}/Source
     ${CMAKE_SOURCE_DIR}/Source/tmModel
+    ${wxWidgets_INCLUDE_DIRS}
 )
 
 # Add wxWidgets definitions and includes
 target_compile_definitions(tmwxgui PUBLIC TMWX)
-target_include_directories(tmwxgui PUBLIC 
-    ${wxWidgets_INCLUDE_DIRS}
-)
 
 target_link_libraries(tmwxgui PUBLIC
     tmcore
-    tmmodel
     ${wxWidgets_LIBRARIES}
 )

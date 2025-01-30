@@ -212,7 +212,7 @@ local void lo_get_free_memory_from_big_blocks
   wn_mbtree tree = free_list->big_blocks_tree;
   wn_mbhandle handle;
 
-  wn_mbget(&handle, tree, (ptr) size, WN_MB_GE);
+  wn_mbget(&handle, tree, (ptr)(intptr_t)size, WN_MB_GE);
 
   if (handle  &&  (long int) handle->key < 2*size)
   {

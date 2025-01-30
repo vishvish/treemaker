@@ -7217,7 +7217,7 @@ local void print_state()
       printf("\n");
     }
 
-    printf("0x%lx",state[i]);
+    printf("0x%x",state[i]);
   }
 
   printf("}\n");

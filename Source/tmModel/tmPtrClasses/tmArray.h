@@ -37,15 +37,15 @@ public:
     return *this;
   };
   
-  // Indexing
+// Indexing
   T& operator[](std::size_t n) {
-    TMASSERT(n > 0);
-    return std::vector<T>::operator[](n - 1);
+    TMASSERT(n >= 0 && n < this->size());
+    return std::vector<T>::operator[](n);
   };
-  
+
   const T& operator[](std::size_t n) const {
-    TMASSERT(n > 0);
-    return std::vector<T>::operator[](n - 1);
+    TMASSERT(n >= 0 && n < this->size());
+    return std::vector<T>::operator[](n);
   };
   
   // Add an item to the end of the list if it isn't already in the list

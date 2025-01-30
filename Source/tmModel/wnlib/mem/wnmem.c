@@ -67,6 +67,7 @@ AUTHOR:
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /*[RJL] Use standard library name under CW */
 #ifdef __MWERKS__
@@ -114,7 +115,7 @@ bool wn_gp_fill_flag=FALSE,
      wn_gp_trap_address_flag=FALSE;
 ptr wn_gp_trap_address_address;
 
-ptr wn_system_alloc(/*size*/);
+ptr wn_system_alloc(int size);
 
 void wn_initialize_group_for_general_free(wn_memgp group);
 void wn_initialize_group_for_no_free(wn_memgp group);
@@ -578,7 +579,7 @@ void lo_trace_group_one_line(FILE *out, wn_memgp group)
     /**/      "%waste", "%free", "%leftover", "heapsize");
     fprintf(out, "    %14s  %6s  %5s %9s %16s ------------------\n",
     /**/  "--------------", "------", "-----", "---------",
-    /**/    "----------------", "----------------");
+    /**/    "----------------");
   }
 
   if (!(lo_traces_displayed % 3))

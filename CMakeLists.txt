@@ -13,9 +13,7 @@ foreach(ver ${version_lines})
     endif()
 endforeach()
 
-project(TreeMaker 
-    VERSION ${TM_VERSION_MAJOR}.${TM_VERSION_MINOR}.${TM_VERSION_RELEASE}
-    LANGUAGES CXX)
+project(TreeMaker VERSION ${TM_VERSION_MAJOR}.${TM_VERSION_MINOR}.${TM_VERSION_RELEASE} LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)

@@ -44,3 +44,11 @@ _deps/
 *.hhc
 *.hhk
 *.hhp
+mac/Source/tmModel/Makefile
+mac/Source/tmwxGUI/Makefile
+mac/Source/Makefile
+mac/analysis-results
+mac/bin/TreeMaker.app/Contents
+mac/Makefile
+mac/CPackConfig.cmake
+mac/CPackSourceConfig.cmake

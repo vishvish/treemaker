@@ -21,11 +21,13 @@ What's New in the Mac Version
 Building on macOS
 ----------------
 1. Prerequisites:
+
    - Xcode 14.0 or later
    - wxWidgets 3.2 or later
    - CMake 3.20 or later
 
 2. Build Steps:
+
    ```sh
    mkdir build
    cd build

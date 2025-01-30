@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
+set(TM_VERSION_MAJOR 5)
+set(TM_VERSION_MINOR 1)
+set(TM_VERSION_RELEASE 0)
+
 # Set project name and version from tmVersion.h
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Source/tmVersion.h" version_lines
     REGEX "^#define TM_VERSION_(MAJOR|MINOR|RELEASE)")

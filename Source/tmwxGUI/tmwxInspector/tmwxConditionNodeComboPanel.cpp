@@ -5,7 +5,7 @@ Purpose:      Source file for node inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-04-22
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionNodeComboPanel.h"
@@ -29,8 +29,8 @@ Constructor
 tmwxConditionNodeComboPanel::tmwxConditionNodeComboPanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mConditionNodeCombo(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Node = "), mNode);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("Node = "), mNode, wxT(""));
   AddCheckBox(mToSymmetryLine, wxT("Fixed to Symmetry Line"));
   AddCheckBox(mToPaperEdge, wxT("Fixed to Paper Edge"));
   AddCheckBox(mToPaperCorner, wxT("Fixed to Paper Corner"));
@@ -209,5 +209,3 @@ BEGIN_EVENT_TABLE(tmwxConditionNodeComboPanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxConditionNodeComboPanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxConditionNodeComboPanel::OnApply)
 END_EVENT_TABLE()
-
-

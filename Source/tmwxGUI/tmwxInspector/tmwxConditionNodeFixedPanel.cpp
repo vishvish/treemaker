@@ -5,7 +5,7 @@ Purpose:      Source file for node inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionNodeFixedPanel.h"
@@ -29,8 +29,8 @@ Constructor
 tmwxConditionNodeFixedPanel::tmwxConditionNodeFixedPanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mConditionNodeFixed(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Node = "), mNode);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("Node = "), mNode, wxT(""));
   AddCheckPair(mXFixed, wxT("X Fixed to"), mXFixValue, wxT("%.4f"));
   AddCheckPair(mYFixed, wxT("Y Fixed to"), mYFixValue, wxT("%.4f"));
   AddApplyButton();
@@ -173,5 +173,3 @@ BEGIN_EVENT_TABLE(tmwxConditionNodeFixedPanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxConditionNodeFixedPanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxConditionNodeFixedPanel::OnApply)
 END_EVENT_TABLE()
-
-

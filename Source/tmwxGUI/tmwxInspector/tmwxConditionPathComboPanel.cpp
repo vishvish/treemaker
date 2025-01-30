@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionPathCombo inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-12-10
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionPathComboPanel.h"
@@ -39,9 +39,9 @@ tmwxConditionPathComboPanel::tmwxConditionPathComboPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionPathCombo(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("From Node = "), mNode1);
-  AddTextPair(wxT("To Node = "), mNode2);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("From Node = "), mNode1, wxT(""));
+  AddTextPair(wxT("To Node = "), mNode2, wxT(""));
   
   const wxString choices[3] = {
     wxT("Active Only"),
@@ -52,7 +52,7 @@ tmwxConditionPathComboPanel::tmwxConditionPathComboPanel(
   mPanelSizer->Add(mRadioBox, 0, wxEXPAND | wxLEFT|wxRIGHT, 10);
   
   AddTextPair(wxT("Fix Angle = "), mAngle, wxT("%.2f"));
-  AddTextPair(wxT("Quantization = "), mQuant);
+  AddTextPair(wxT("Quantization = "), mQuant, wxT(""));
   AddTextPair(wxT("Offset = "), mQuantOffset, wxT("%.2f"));
   AddApplyButton();
   AddSpacer(5);
@@ -263,5 +263,3 @@ BEGIN_EVENT_TABLE(tmwxConditionPathComboPanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxConditionPathComboPanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxConditionPathComboPanel::OnApply)
 END_EVENT_TABLE()
-
-

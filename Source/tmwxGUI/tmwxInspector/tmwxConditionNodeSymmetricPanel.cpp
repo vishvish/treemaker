@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionNodeSymmetric inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionNodeSymmetricPanel.h"
@@ -29,8 +29,8 @@ tmwxConditionNodeSymmetricPanel::tmwxConditionNodeSymmetricPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionNodeSymmetric(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Node = "), mNode);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("Node = "), mNode, wxT(""));
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);

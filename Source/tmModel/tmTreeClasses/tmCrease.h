@@ -5,7 +5,7 @@ Purpose:      Header file for tmCrease class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-27
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMCREASE_H_
@@ -48,6 +48,13 @@ public:
     BORDER = 3
   };
   
+  // Constructors & Destructor
+  void InitCrease();
+  tmCrease(tmTree* aTree);
+  tmCrease(tmTree* aTree, tmCreaseOwner* aCreaseOwner, tmVertex* aVertex1,
+    tmVertex* aVertex2, Kind aKind);
+  virtual ~tmCrease();
+
   // Getters
   
   // Structural kind getters
@@ -203,12 +210,6 @@ private:
   // owner
   tmCreaseOwner* mCreaseOwner;
   
-  // Constructors
-  void InitCrease();
-  tmCrease(tmTree* aTree);
-  tmCrease(tmTree* aTree, tmCreaseOwner* aCreaseOwner, tmVertex* aVertex1,
-    tmVertex* aVertex2, Kind aKind);
-    
   // Ownership
   tmPath* GetOwnerAsPath();
   tmPoly* GetOwnerAsPoly();

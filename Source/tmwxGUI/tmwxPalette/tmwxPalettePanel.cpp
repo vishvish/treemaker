@@ -14,8 +14,10 @@ Copyright:    2004 Robert J. Lang. All Rights Reserved.
 /*****
 Constructor
 *****/
-tmwxPalettePanel::tmwxPalettePanel(wxWindow* parent)
-  : wxPanel(parent, wxID_ANY)
+tmwxPalettePanel::tmwxPalettePanel(wxWindow* parent, wxWindowID id,
+                                  const wxPoint& pos, const wxSize& size,
+                                  long style)
+  : wxPanel(parent, id, pos, size, style)
 {
   // Create a default sizer to ensure proper layout
   wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);

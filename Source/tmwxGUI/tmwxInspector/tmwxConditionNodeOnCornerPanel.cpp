@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionNodeOnCorner inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionNodeOnCornerPanel.h"
@@ -28,8 +28,8 @@ Constructor
 tmwxConditionNodeOnCornerPanel::tmwxConditionNodeOnCornerPanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mConditionNodeOnCorner(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Node = "), mNode);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("Node = "), mNode, wxT(""));
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);
@@ -112,5 +112,3 @@ BEGIN_EVENT_TABLE(tmwxConditionNodeOnCornerPanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxConditionNodeOnCornerPanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxConditionNodeOnCornerPanel::OnApply)
 END_EVENT_TABLE()
-
-

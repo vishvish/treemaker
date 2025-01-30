@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionPathAngleFixed inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionPathAngleFixedPanel.h"
@@ -29,9 +29,9 @@ tmwxConditionPathAngleFixedPanel::tmwxConditionPathAngleFixedPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionPathAngleFixed(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("From Node = "), mNode1);
-  AddTextPair(wxT("To Node = "), mNode2);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("From Node = "), mNode1, wxT(""));
+  AddTextPair(wxT("To Node = "), mNode2, wxT(""));
   AddTextPair(wxT("Angle = "), mAngle, wxT("%.2f"));
   AddApplyButton();
   AddSpacer(5);

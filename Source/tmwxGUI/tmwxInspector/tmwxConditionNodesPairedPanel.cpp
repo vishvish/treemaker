@@ -5,7 +5,7 @@ Purpose:      Source file for tmwxConditionNodesPaired inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionNodesPairedPanel.h"
@@ -28,9 +28,9 @@ Constructor
 tmwxConditionNodesPairedPanel::tmwxConditionNodesPairedPanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mConditionNodesPaired(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Node 1 = "), mNode1);
-  AddTextPair(wxT("Node 2 = "), mNode2);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("Node 1 = "), mNode1, wxT(""));
+  AddTextPair(wxT("Node 2 = "), mNode2, wxT(""));
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);

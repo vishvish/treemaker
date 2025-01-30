@@ -5,7 +5,7 @@ Purpose:      Implementation file for tmCrease class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-27
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmCrease.h"
@@ -96,6 +96,25 @@ tmCrease::tmCrease(tmTree* aTree, tmCreaseOwner* aCreaseOwner,
 #ifdef __MWERKS__
   #pragma mark -
 #endif
+
+
+/*****
+Destructor
+*****/
+tmCrease::~tmCrease()
+{
+  // Make a copy of the vertices since we'll be modifying the list while iterating
+  tmArray<tmVertex*> vertices_copy(mVertices);
+  
+  // Remove ourselves from each vertex's crease list and clear our vertex list
+  for (size_t i = 0; i < vertices_copy.size(); ++i) {
+    tmVertex* vertex = vertices_copy[i];
+    if (vertex) {
+      vertex->mCreases.erase_remove(this);
+    }
+  }
+  mVertices.clear();
+}
 
 
 /*****

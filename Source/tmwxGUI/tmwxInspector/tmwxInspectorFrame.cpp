@@ -89,7 +89,7 @@ void tmwxInspectorFrame::DispatchSetSelection(tmTree* aTree,
   size_t n = aCluster.GetNumAllParts();
   if (n == 0) 
     // no items selected, use the tree panel
-    SetSelection((tmPart*)aTree);  
+    SetSelection(aTree);
   else if (n == 1) {
     // exactly one item selected, use the selected item panel
     if (aCluster.mNodes.size() == 1)
@@ -487,6 +487,23 @@ specific type of part. For this we'll use our array of template functions.
 void tmwxInspectorFrame::SetSelection(tmPart* aPart)
 {
   (this->*GetSetSelectionFns()[aPart->GetTag()])(aPart);
+}
+
+
+/*****
+Change selection panel to the tree inspector panel.
+*****/
+void tmwxInspectorFrame::SetSelection(tmTree* aTree)
+{
+  mTreePanel->Fill(aTree);
+  if (mObj == aTree) return;
+  mObj = aTree;
+  if (mPanel != mTreePanel) {
+    UninstallPanel();
+    InstallPanel(mTreePanel);
+    Layout();  // Force a layout update
+    Refresh(); // Force a redraw
+  }
 }
 
 

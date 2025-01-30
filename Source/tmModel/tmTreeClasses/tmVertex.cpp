@@ -103,6 +103,25 @@ tmVertex::tmVertex(tmTree* aTree, tmVertexOwner* aVertexOwner, tmPoint aLoc,
 }
 
 
+/*****
+Destructor
+*****/
+tmVertex::~tmVertex()
+{
+  // Make a copy of the creases since we'll be modifying the list while iterating
+  tmArray<tmCrease*> creases_copy(mCreases);
+  
+  // Remove ourselves from each crease's vertex list and clear our crease list
+  for (size_t i = 0; i < creases_copy.size(); ++i) {
+    tmCrease* crease = creases_copy[i];
+    if (crease) {
+      crease->mVertices.erase_remove(this);
+    }
+  }
+  mCreases.clear();
+}
+
+
 #ifdef __MWERKS__
   #pragma mark -
 #endif

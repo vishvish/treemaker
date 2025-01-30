@@ -5,7 +5,7 @@ Purpose:      Source file for node inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-27
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxNodePanel.h"
@@ -26,10 +26,10 @@ Constructor
 tmwxNodePanel::tmwxNodePanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mNode(0)
 {
-  AddTextPair(wxT("Node Index = "), mIndex);
+  AddTextPair(wxT("Node Index = "), mIndex, wxT(""));
   AddTextPair(wxT("X = "), mLocX, wxT("%.4f"));
   AddTextPair(wxT("Y = "), mLocY, wxT("%.4f"));
-  AddTextPair(wxT("Label = "), mLabel);
+  AddTextPair(wxT("Label = "), mLabel, wxT(""));
   AddApplyButton();
   AddStatLine();
   AddConditionListBox(mConditions, wxSize(10, 150));
@@ -180,5 +180,3 @@ BEGIN_EVENT_TABLE(tmwxNodePanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxNodePanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxNodePanel::OnApply)
 END_EVENT_TABLE()
-
-

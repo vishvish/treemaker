@@ -5,7 +5,7 @@ Purpose:      Source file for tmwxConditionEdgesSameStrain inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionEdgesSameStrainPanel.h"
@@ -29,9 +29,9 @@ tmwxConditionEdgesSameStrainPanel::tmwxConditionEdgesSameStrainPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionEdgesSameStrain(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Edge 1 = "), mEdge1);
-  AddTextPair(wxT("Edge 2 = "), mEdge2);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxEmptyString);
+  AddTextPair(wxT("Edge 1 = "), mEdge1, wxEmptyString);
+  AddTextPair(wxT("Edge 2 = "), mEdge2, wxEmptyString);
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);
@@ -129,5 +129,3 @@ BEGIN_EVENT_TABLE(tmwxConditionEdgesSameStrainPanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxConditionEdgesSameStrainPanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxConditionEdgesSameStrainPanel::OnApply)
 END_EVENT_TABLE()
-
-

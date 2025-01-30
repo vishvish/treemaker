@@ -5,7 +5,7 @@ Purpose:      Header file for any panel that goes in a tool palette
 Author:       Robert J. Lang
 Modified by:  
 Created:      2005-12-07
-Copyright:    ©2005 Robert J. Lang. All Rights Reserved.
+Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXINSPECTORPANEL_H_
@@ -42,19 +42,23 @@ provides a couple of useful utility routines for building up the panel.
 class tmwxInspectorPanel : public tmwxPalettePanel {
 public:
   tmwxInspectorPanel(wxWindow* parent);
+  virtual void Fill() override;
+  
 protected:
   wxStaticBoxSizer* mPanelSizer;
+  wxBoxSizer* mContentSizer;
   wxStaticBox* mPanelBox;
 
 #if tmwxINSPECTOR_EXTRA
-  wxGridSizer* mGridExtraSizer;
+  wxFlexGridSizer* mGridExtraSizer;
 #endif // tmwxINSPECTOR_EXTRA
 
-  void AddTextPair(const wxString& caption, tmwxTextCtrl*& textctrl, 
-    const wxString& format = wxEmptyString);
+  // Panel building utilities
+  void AddTextPair(const wxString& caption, tmwxTextCtrl*& textctrl,
+    const wxString& format);
   void AddCheckBox(wxCheckBox*& checkbox, const wxString& caption);
-  void AddCheckPair(wxCheckBox*& checkbox, const wxString& caption, 
-    tmwxTextCtrl*& textctrl, const wxString format = wxEmptyString);
+  void AddCheckPair(wxCheckBox*& checkbox, const wxString& caption,
+    tmwxTextCtrl*& textctrl, const wxString& format);
   void AddStaticText(tmwxStaticText*& stattext);
   void AddApplyButton();
   void AddConditionListBox(tmwxConditionListBox*& clistbox, 
@@ -67,6 +71,9 @@ protected:
   void AddStatTextGridExtra(tmwxStaticText*& stattext);
   void AddStatTextRowExtra(tmwxStaticText*& stattext);
 #endif // tmwxINSPECTOR_EXTRA
+
+private:
+  wxDECLARE_EVENT_TABLE();
 };
 
 #endif //_TMWXINSPECTORPANEL_H_

@@ -30,8 +30,8 @@ tmwxConditionEdgeLengthFixedPanel::tmwxConditionEdgeLengthFixedPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionEdgeLengthFixed(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Edge = "), mEdge);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxEmptyString);
+  AddTextPair(wxT("Edge = "), mEdge, wxEmptyString);
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);

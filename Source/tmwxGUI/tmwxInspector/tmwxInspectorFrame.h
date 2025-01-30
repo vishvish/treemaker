@@ -5,7 +5,7 @@ Purpose:      Header file for TreeMaker object inspector class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXINSPECTORFRAME_H_
@@ -36,6 +36,7 @@ public:
   void SetSelection();
   void SetSelection(tmCluster* aCluster);
   void SetSelection(tmPart* aPart);
+  void SetSelection(tmTree* aTree);
   
   // Event handling
   void OnClose(wxCloseEvent& event);

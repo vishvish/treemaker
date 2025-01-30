@@ -5,7 +5,7 @@ Purpose:      Header file for any panel that goes in a tool palette
 Author:       Robert J. Lang
 Modified by:  
 Created:      2004-04-14
-Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
+Copyright:    2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMWXPALETTEPANEL_H_
@@ -25,7 +25,10 @@ provides a couple of useful utility routines for building up the panel.
 
 class tmwxPalettePanel : public wxPanel {
 public:
-  tmwxPalettePanel(wxWindow* parent);
+  tmwxPalettePanel(wxWindow* parent, wxWindowID id = wxID_ANY,
+                   const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxDefaultSize,
+                   long style = wxTAB_TRAVERSAL);
   virtual void Fill();
 };
 

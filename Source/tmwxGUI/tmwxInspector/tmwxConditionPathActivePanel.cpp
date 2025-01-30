@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionPathActive inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionPathActivePanel.h"
@@ -28,9 +28,9 @@ Constructor
 tmwxConditionPathActivePanel::tmwxConditionPathActivePanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mConditionPathActive(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("From Node "), mNode1);
-  AddTextPair(wxT("To Node "), mNode2);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("From Node "), mNode1, wxT(""));
+  AddTextPair(wxT("To Node "), mNode2, wxT(""));
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);

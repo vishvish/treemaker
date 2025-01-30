@@ -5,7 +5,7 @@ Purpose:      Source file for tmConditionPathAngleQuant inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionPathAngleQuantPanel.h"
@@ -29,10 +29,10 @@ tmwxConditionPathAngleQuantPanel::tmwxConditionPathAngleQuantPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionPathAngleQuant(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("From Node = "), mNode1);
-  AddTextPair(wxT("To Node = "), mNode2);
-  AddTextPair(wxT("Quantization = "), mQuant);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("From Node = "), mNode1, wxT(""));
+  AddTextPair(wxT("To Node = "), mNode2, wxT(""));
+  AddTextPair(wxT("Quantization = "), mQuant, wxT(""));
   AddTextPair(wxT("Offset = "), mQuantOffset, wxT("%.2f"));
   AddApplyButton();
   AddSpacer(5);

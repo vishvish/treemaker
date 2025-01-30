@@ -5,7 +5,7 @@ Purpose:      Source file for node inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-27
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxEdgePanel.h"
@@ -29,11 +29,11 @@ Constructor
 tmwxEdgePanel::tmwxEdgePanel(wxWindow* parent)
   : tmwxInspectorPanel(parent), mEdge(0)
 {
-  AddTextPair(wxT("Edge Index = "), mIndex);
+  AddTextPair(wxT("Edge Index = "), mIndex, wxT(""));
   AddTextPair(wxT("Length = "), mLength, wxT("%.4f"));
   AddTextPair(wxT("Strain = "), mStrain, wxT("%.4f"));
   AddTextPair(wxT("Stiffness = "), mStiffness, wxT("%.4f"));
-  AddTextPair(wxT("Label = "), mLabel);
+  AddTextPair(wxT("Label = "), mLabel, wxT(""));
   AddApplyButton();
   AddStatLine();
   AddConditionListBox(mConditions, wxSize(10, 150));
@@ -164,5 +164,3 @@ BEGIN_EVENT_TABLE(tmwxEdgePanel, wxPanel)
   EVT_BUTTON(wxID_APPLY, tmwxEdgePanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxEdgePanel::OnApply)
 END_EVENT_TABLE()
-
-

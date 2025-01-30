@@ -5,7 +5,7 @@ Purpose:      Source file for tmwxConditionNodesCollinear inspector panel
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-12-22
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmwxConditionNodesCollinearPanel.h"
@@ -29,10 +29,10 @@ tmwxConditionNodesCollinearPanel::tmwxConditionNodesCollinearPanel(
   wxWindow* parent) : 
   tmwxInspectorPanel(parent), mConditionNodesCollinear(0)
 {
-  AddTextPair(wxT("Condition Index = "), mIndex);
-  AddTextPair(wxT("Node 1 = "), mNode1);
-  AddTextPair(wxT("Node 2 = "), mNode2);
-  AddTextPair(wxT("Node 3 = "), mNode3);
+  AddTextPair(wxT("Condition Index = "), mIndex, wxT(""));
+  AddTextPair(wxT("Node 1 = "), mNode1, wxT(""));
+  AddTextPair(wxT("Node 2 = "), mNode2, wxT(""));
+  AddTextPair(wxT("Node 3 = "), mNode3, wxT(""));
   AddApplyButton();
   AddSpacer(5);
   AddStaticText(mIsFeasible);

@@ -20,6 +20,16 @@ target_include_directories(tmmodel PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/tmOptimizers
     ${CMAKE_CURRENT_SOURCE_DIR}/tmTreeClasses
     ${CMAKE_CURRENT_SOURCE_DIR}/tmPtrClasses
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/cmp
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/conjdir
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/cpy
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/list
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/low
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/mat
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/mem
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/random
+    ${CMAKE_CURRENT_SOURCE_DIR}/wnlib/vect
     ${CMAKE_SOURCE_DIR}/Source
 )
 

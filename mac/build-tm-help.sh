@@ -3,6 +3,9 @@
 # from the source code and puts it in the build directory, where it will be
 # copied into the app the next time the XCode project TreeMaker.xcodeproj is built.
 
+# Change to the script's directory
+cd "$(dirname "$0")"
+
 if [ ! -d build ]; then
   mkdir build
 fi

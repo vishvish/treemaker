@@ -26,12 +26,14 @@ Building on macOS
    - CMake 3.20 or later
 
 2. Build Steps:
-   ```
-   cd mac
-   ./build-tm-modern.sh
+   ```sh
+   mkdir build
+   cd build
+   cmake ..
+   make -j8 (or however many threads)
    ```
 
-3. The built application will be in `mac/build/Release/TreeMaker.app`
+3. The built application will be in `build/bin/TreeMaker.app`
 
 Running TreeMaker
 ----------------

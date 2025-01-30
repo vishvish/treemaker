@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
+set(TM_VERSION_MAJOR 5)
+set(TM_VERSION_MINOR 1)
+set(TM_VERSION_RELEASE 0)
+
 # Set project name and version from tmVersion.h
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Source/tmVersion.h" version_lines
     REGEX "^#define TM_VERSION_(MAJOR|MINOR|RELEASE)")
@@ -82,6 +86,47 @@ if(APPLE)
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
     set(MACOSX_BUNDLE_COPYRIGHT " 2003-2025 Robert J. Lang")
-endif()
+
+    # paths for the resources
+    set(BUILD_HELP "${CMAKE_SOURCE_DIR}/mac/build-tm-help.sh")
+    set(RESOURCE_DIR "${CMAKE_SOURCE_DIR}/mac/resources")
+    set(SHARED_SUPPORT_DIR "${CMAKE_BINARY_DIR}/bin/TreeMaker.app/Contents/SharedSupport")
+    set(RESOURCES_DIR "${CMAKE_BINARY_DIR}/bin/TreeMaker.app/Contents/Resources")
+    set(HELP_DIR "${CMAKE_SOURCE_DIR}/mac/build/TreeMaker.build/help")
+
+    # Build help
+    add_custom_command(
+       OUTPUT ${HELP_DIR}/help.zip
+       COMMAND ${CMAKE_COMMAND} -E echo "Building help..."
+       COMMAND ${BUILD_HELP}
+       COMMENT "Building help..."
+    )
+    add_custom_target(help_files ALL
+       DEPENDS ${HELP_DIR}/help.zip
+    )
+
+    # Copy resources
+    add_custom_command(
+       OUTPUT ${RESOURCES_DIR}/Icon_app.icns ${RESOURCES_DIR}/Icon_doc.icns ${HELP_DIR}/help.zip
+       COMMAND ${CMAKE_COMMAND} -E echo "Copying resources..."
+       COMMAND ${CMAKE_COMMAND} -E make_directory ${RESOURCES_DIR}
+       COMMAND ${CMAKE_COMMAND} -E make_directory ${SHARED_SUPPORT_DIR}
+       COMMAND ${CMAKE_COMMAND} -E copy ${RESOURCE_DIR}/Icon_app.icns ${RESOURCES_DIR}/Icon_app.icns
+       COMMAND ${CMAKE_COMMAND} -E copy ${RESOURCE_DIR}/Icon_doc.icns ${RESOURCES_DIR}/Icon_doc.icns
+       COMMAND ${CMAKE_COMMAND} -E copy ${HELP_DIR}/help.zip ${SHARED_SUPPORT_DIR}/help.zip
+       COMMAND ${CMAKE_COMMAND} -E copy ${HELP_DIR}/help.zip_zip_treemaker.hhp.cached ${SHARED_SUPPORT_DIR}/help.zip_zip_treemaker.hhp.cached
+       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/Source/images/SplashScreen.png ${SHARED_SUPPORT_DIR}/SplashScreen.png
+       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/Source/about/about.htm ${SHARED_SUPPORT_DIR}/about.htm
+       DEPENDS ${RESOURCE_DIR}/Icon_app.icns ${RESOURCE_DIR}/Icon_doc.icns
+    )
+
+    add_custom_target(copy_resources ALL
+       DEPENDS ${RESOURCES_DIR}/Icon_app.icns ${RESOURCES_DIR}/Icon_doc.icns
+    )
+
+    add_dependencies(copy_resources help_files)
+    add_dependencies(TreeMaker copy_resources)
+
+ endif()
 
 include(CPack)

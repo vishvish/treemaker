@@ -52,3 +52,7 @@ mac/bin/TreeMaker.app/Contents
 mac/Makefile
 mac/CPackConfig.cmake
 mac/CPackSourceConfig.cmake
+.aider*
+.env
+cmake-build-debug
+.python-version

@@ -73,7 +73,17 @@ all text values
 *****/
 void tmwxConditionEdgeLengthFixedPanel::OnApply(wxCommandEvent&)
 {
+  if (!mConditionEdgeLengthFixed) return;
+  
   tmTree* theTree = mConditionEdgeLengthFixed->GetTree();
+  if (!theTree) return;
+
+  // Validate edge exists before accessing
+  tmEdge* currentEdge = mConditionEdgeLengthFixed->GetEdge();
+  if (!currentEdge) {
+    mEdge->SetValue(static_cast<tmFloat>(-1));
+    return;
+  }
 
   // Validation
   size_t newIndex;
@@ -83,14 +93,14 @@ void tmwxConditionEdgeLengthFixedPanel::OnApply(wxCommandEvent&)
   }
   tmEdge* newEdge;
   if (!mEdge->ValidateEdgeIndexForCondition(theTree, newEdge)) {
-    mEdge->SetValue(mConditionEdgeLengthFixed->GetEdge()->GetIndex());
+    mEdge->SetValue(currentEdge->GetIndex());
     return;
   }
   
   // Updating
   bool modIndex = !mIndex->SameValue(mConditionEdgeLengthFixed->GetIndex());
   bool modEdge = 
-    !mEdge->SameValue(mConditionEdgeLengthFixed->GetEdge()->GetIndex());
+    !mEdge->SameValue(currentEdge->GetIndex());
   bool modSomething = modIndex || modEdge;
   if (modSomething) {
     {

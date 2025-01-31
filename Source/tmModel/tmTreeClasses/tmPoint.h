@@ -5,7 +5,7 @@ Purpose:      Header file for class tmPoint, floating-point cartesian points
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMPOINT_H_
@@ -14,6 +14,7 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 // Standard libraries
 #include <cmath>
 #include <vector>
+#include <iostream> // Added for std::cout
 
 // Common TreeMaker header
 #include "tmHeader.h"
@@ -103,6 +104,11 @@ public:
   // Normalize in place
   tmPoint& Normalize() {
     return *this /= Mag();};
+  
+  // Destructor with debug logging
+  ~tmPoint() {
+    std::cout << "Destroying tmPoint at: " << this << std::endl;
+  }
 };
 
 // Arithmetic with scalars, scalar first

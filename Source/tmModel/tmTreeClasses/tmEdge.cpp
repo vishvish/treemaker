@@ -5,11 +5,12 @@ Purpose:      Implementation file for tmEdge class
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-25
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmEdge.h"
-#include "tmModel.h"
+#include "tmNode.h"
+#include "tmTree.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void tmEdge::InitEdge()
   
   // Set settings
   mLength = 0;
-  strcpy(mLabel, "");
+  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", "");
   mStrain = 0;
   mStiffness = 1;
 
@@ -74,7 +75,7 @@ tmEdge::tmEdge(tmTree* aTree, tmNode* node1, tmNode* node2, tmFloat aLength,
   
   // Set settings
   mLength = aLength;
-  strcpy(mLabel, aLabel);
+  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", aLabel);
 
   // Fill with tmNode references
   mNodes.push_back(node1);
@@ -110,7 +111,7 @@ space.
 void tmEdge::SetLabel(const char* aLabel)
 {
   TMASSERT(strlen(aLabel) <= MAX_LABEL_LEN);
-  strncpy(mLabel, aLabel, MAX_LABEL_LEN);
+  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", aLabel);
 }
 
 

@@ -5,13 +5,14 @@ Purpose:      Implementation file for tmTree test tree routines
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-21
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmTree.h"
 #include "tmModel.h"
 
 #include <cstdlib>
+#include <format>
 
 using namespace std;
 
@@ -46,48 +47,48 @@ tmTree* tmTree::MakeTreeUnoptimized()
   tmNode* aNode1;
   tmEdge* aEdge1;
   theTree->AddNode(NULL, tmPoint(0.40, 0.80), aNode1, aEdge1);
-  strcpy(aNode1->mLabel, "node1");
+  std::format_to_n(aNode1->mLabel, MAX_LABEL_LEN, "{}", "node1");
   
   tmNode* aNode2;
   theTree->AddNode(aNode1, tmPoint(0.45, 0.60), aNode2, aEdge1);
-  strcpy(aNode2->mLabel, "node2");
-  strcpy(aEdge1->mLabel, "edge1");
+  std::format_to_n(aNode2->mLabel, MAX_LABEL_LEN, "{}", "node2");
+  std::format_to_n(aEdge1->mLabel, MAX_LABEL_LEN, "{}", "edge1");
   
   tmNode* aNode3;
   tmEdge* aEdge2;
   theTree->AddNode(aNode2, tmPoint(0.55, 0.35), aNode3, aEdge2);
-  strcpy(aNode3->mLabel, "node3");
-  strcpy(aEdge2->mLabel, "edge2");
+  std::format_to_n(aNode3->mLabel, MAX_LABEL_LEN, "{}", "node3");
+  std::format_to_n(aEdge2->mLabel, MAX_LABEL_LEN, "{}", "edge2");
   
   tmNode* aNode4;
   tmEdge* aEdge3;
   theTree->AddNode(aNode3, tmPoint(0.55, 0.01), aNode4, aEdge3);
-  strcpy(aNode4->mLabel, "node4");
-  strcpy(aEdge3->mLabel, "edge3");
+  std::format_to_n(aNode4->mLabel, MAX_LABEL_LEN, "{}", "node4");
+  std::format_to_n(aEdge3->mLabel, MAX_LABEL_LEN, "{}", "edge3");
   
   tmNode* aNode5;
   tmEdge* aEdge4;
   theTree->AddNode(aNode2, tmPoint(0.05, 0.95), aNode5, aEdge4);
-  strcpy(aNode5->mLabel, "node5");
-  strcpy(aEdge4->mLabel, "edge4");
+  std::format_to_n(aNode5->mLabel, MAX_LABEL_LEN, "{}", "node5");
+  std::format_to_n(aEdge4->mLabel, MAX_LABEL_LEN, "{}", "edge4");
   
   tmNode* aNode6;
   tmEdge* aEdge5;
   theTree->AddNode(aNode2, tmPoint(0.95, 0.95), aNode6, aEdge5);
-  strcpy(aNode6->mLabel, "node6");
-  strcpy(aEdge5->mLabel, "edge5");
+  std::format_to_n(aNode6->mLabel, MAX_LABEL_LEN, "{}", "node6");
+  std::format_to_n(aEdge5->mLabel, MAX_LABEL_LEN, "{}", "edge5");
   
   tmNode* aNode7;
   tmEdge* aEdge6;
   theTree->AddNode(aNode3, tmPoint(0.05, 0.05), aNode7, aEdge6);
-  strcpy(aNode7->mLabel, "node7");
-  strcpy(aEdge6->mLabel, "edge6");
+  std::format_to_n(aNode7->mLabel, MAX_LABEL_LEN, "{}", "node7");
+  std::format_to_n(aEdge6->mLabel, MAX_LABEL_LEN, "{}", "edge6");
   
   tmNode* aNode8;
   tmEdge* aEdge7;
   theTree->AddNode(aNode3, tmPoint(0.95, 0.05), aNode8, aEdge7);
-  strcpy(aNode8->mLabel, "node8");
-  strcpy(aEdge7->mLabel, "edge7");
+  std::format_to_n(aNode8->mLabel, MAX_LABEL_LEN, "{}", "node8");
+  std::format_to_n(aEdge7->mLabel, MAX_LABEL_LEN, "{}", "edge7");
   
   // Add some symmetry to the tree: a mirror line in the center at 90 degrees
   theTree->mHasSymmetry = true;
@@ -119,56 +120,56 @@ tmTree* tmTree::MakeTreeOptimized()
   tmNode* aNode1;
   tmEdge* aEdge1;
   theTree->AddNode(NULL, tmPoint(0.5, 0.812792), aNode1, aEdge1);
-  strcpy(aNode1->mLabel, "node1");
+  std::format_to_n(aNode1->mLabel, MAX_LABEL_LEN, "{}", "node1");
   
   tmNode* aNode2;
   theTree->AddNode(aNode1, tmPoint(0.45, 0.60), aNode2, aEdge1);
-  strcpy(aNode2->mLabel, "node2");
-  strcpy(aEdge1->mLabel, "edge1");
+  std::format_to_n(aNode2->mLabel, MAX_LABEL_LEN, "{}", "node2");
+  std::format_to_n(aEdge1->mLabel, MAX_LABEL_LEN, "{}", "edge1");
   
   tmNode* aNode2a;
   tmEdge* aEdge1a;
   theTree->AddNode(aNode2, tmPoint(0.52, 0.48), aNode2a, aEdge1a);
-  strcpy(aNode2a->mLabel, "node2a");
-  strcpy(aEdge1a->mLabel, "edge1a");
+  std::format_to_n(aNode2a->mLabel, MAX_LABEL_LEN, "{}", "node2a");
+  std::format_to_n(aEdge1a->mLabel, MAX_LABEL_LEN, "{}", "edge1a");
   aEdge1a->mLength = 0.5;
   
   tmNode* aNode3;
   tmEdge* aEdge2;
   theTree->AddNode(aNode2a, tmPoint(0.55, 0.35), aNode3, aEdge2);
-  strcpy(aNode3->mLabel, "node3");
-  strcpy(aEdge2->mLabel, "edge2");
+  std::format_to_n(aNode3->mLabel, MAX_LABEL_LEN, "{}", "node3");
+  std::format_to_n(aEdge2->mLabel, MAX_LABEL_LEN, "{}", "edge2");
   aEdge2->mLength = 0.5;
   
   tmNode* aNode4;
   tmEdge* aEdge3;
   theTree->AddNode(aNode3, tmPoint(0.5, 0.0), aNode4, aEdge3);
-  strcpy(aNode4->mLabel, "node4");
-  strcpy(aEdge3->mLabel, "edge3");
+  std::format_to_n(aNode4->mLabel, MAX_LABEL_LEN, "{}", "node4");
+  std::format_to_n(aEdge3->mLabel, MAX_LABEL_LEN, "{}", "edge3");
   
   tmNode* aNode5;
   tmEdge* aEdge4;
   theTree->AddNode(aNode2, tmPoint(0.0, 1.0), aNode5, aEdge4);
-  strcpy(aNode5->mLabel, "node5");
-  strcpy(aEdge4->mLabel, "edge4");
+  std::format_to_n(aNode5->mLabel, MAX_LABEL_LEN, "{}", "node5");
+  std::format_to_n(aEdge4->mLabel, MAX_LABEL_LEN, "{}", "edge4");
   
   tmNode* aNode6;
   tmEdge* aEdge5;
   theTree->AddNode(aNode2, tmPoint(1.0, 1.0), aNode6, aEdge5);
-  strcpy(aNode6->mLabel, "node6");
-  strcpy(aEdge5->mLabel, "edge5");
+  std::format_to_n(aNode6->mLabel, MAX_LABEL_LEN, "{}", "node6");
+  std::format_to_n(aEdge5->mLabel, MAX_LABEL_LEN, "{}", "edge5");
   
   tmNode* aNode7;
   tmEdge* aEdge6;
   theTree->AddNode(aNode3, tmPoint(0.0, 0.187208), aNode7, aEdge6);
-  strcpy(aNode7->mLabel, "node7");
-  strcpy(aEdge6->mLabel, "edge6");
+  std::format_to_n(aNode7->mLabel, MAX_LABEL_LEN, "{}", "node7");
+  std::format_to_n(aEdge6->mLabel, MAX_LABEL_LEN, "{}", "edge6");
   
   tmNode* aNode8;
   tmEdge* aEdge7;
   theTree->AddNode(aNode3, tmPoint(1.0, 0.187208), aNode8, aEdge7);
-  strcpy(aNode8->mLabel, "node8");
-  strcpy(aEdge7->mLabel, "edge7");
+  std::format_to_n(aNode8->mLabel, MAX_LABEL_LEN, "{}", "node8");
+  std::format_to_n(aEdge7->mLabel, MAX_LABEL_LEN, "{}", "edge7");
   
   theTree->mScale = 0.266949;
   theTree->CleanupAfterEdit();
@@ -189,33 +190,33 @@ tmTree* tmTree::MakeTreeGusset()
   tmNode* aNode1;
   tmEdge* aEdge1;
   theTree->AddNode(NULL, tmPoint(0.0, 0.0), aNode1, aEdge1);
-  strcpy(aNode1->mLabel, "node1");
+  std::format_to_n(aNode1->mLabel, MAX_LABEL_LEN, "{}", "node1");
   
   tmNode* aNode2;
   theTree->AddNode(aNode1, tmPoint(0.45, 0.50), aNode2, aEdge1);
-  strcpy(aNode2->mLabel, "node2");
-  strcpy(aEdge1->mLabel, "edge1");
+  std::format_to_n(aNode2->mLabel, MAX_LABEL_LEN, "{}", "node2");
+  std::format_to_n(aEdge1->mLabel, MAX_LABEL_LEN, "{}", "edge1");
   aEdge1->mLength = 0.6;
   
   tmNode* aNode3;
   tmEdge* aEdge2;
   theTree->AddNode(aNode2, tmPoint(1.0, 0.0), aNode3, aEdge2);
-  strcpy(aNode3->mLabel, "node3");
-  strcpy(aEdge2->mLabel, "edge2");
+  std::format_to_n(aNode3->mLabel, MAX_LABEL_LEN, "{}", "node3");
+  std::format_to_n(aEdge2->mLabel, MAX_LABEL_LEN, "{}", "edge2");
   aEdge2->mLength = 0.4;
   
   tmNode* aNode4;
   tmEdge* aEdge3;
   theTree->AddNode(aNode2, tmPoint(0.0, 1.0), aNode4, aEdge3);
-  strcpy(aNode4->mLabel, "node4");
-  strcpy(aEdge3->mLabel, "edge3");
+  std::format_to_n(aNode4->mLabel, MAX_LABEL_LEN, "{}", "node4");
+  std::format_to_n(aEdge3->mLabel, MAX_LABEL_LEN, "{}", "edge3");
   aEdge3->mLength = 0.4;
   
   tmNode* aNode5;
   tmEdge* aEdge4;
   theTree->AddNode(aNode2, tmPoint(1.0, 1.0), aNode5, aEdge4);
-  strcpy(aNode5->mLabel, "node5");
-  strcpy(aEdge4->mLabel, "edge4");
+  std::format_to_n(aNode5->mLabel, MAX_LABEL_LEN, "{}", "node5");
+  std::format_to_n(aEdge4->mLabel, MAX_LABEL_LEN, "{}", "edge4");
   aEdge4->mLength = 0.6;
 
   theTree->mScale = 1.0;

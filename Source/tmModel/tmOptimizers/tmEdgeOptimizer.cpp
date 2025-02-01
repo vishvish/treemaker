@@ -9,7 +9,7 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmEdgeOptimizer.h"
-#include "tmModel.h"
+#include "tmConstraintFns.h"
 
 using namespace std;
 
@@ -21,7 +21,9 @@ class tmEdgeOptimizer
 Constructor
 *****/
 tmEdgeOptimizer::tmEdgeOptimizer(tmTree* aTree, tmNLCO* aNLCO)
-  : tmOptimizer(aTree, aNLCO)
+  : tmOptimizer(aTree, aNLCO),
+    mMovingNodes(*(new tmDpptrArray<tmNode>())),
+    mStretchyEdges(*(new tmDpptrArray<tmEdge>()))
 {  
 }
 
@@ -32,112 +34,107 @@ Initialize the calculation.
 void tmEdgeOptimizer::Initialize(tmDpptrArray<tmNode>& movingNodes, 
     tmDpptrArray<tmEdge>& stretchyEdges)
 {
-  tmTree* theTree = GetTree(); // to have on hand
-  
-  // Filter the list to retain only unpinned nodes and unpinned edges
-  theTree->FilterMovableParts(movingNodes, stretchyEdges);  
-  
-  // If there are no moving nodes or edges left, throw an exception.
-  if (movingNodes.empty()) throw EX_NO_MOVING_NODES();
-  if (stretchyEdges.empty()) throw EX_NO_MOVING_EDGES();
-  
-  // Copy list into our member variables so they'll be accessible to other
-  // member fns.
-  mMovingNodes = movingNodes;
-  mStretchyEdges = stretchyEdges;
-
-  // Set up our state vector
-  size_t n = mMovingNodes.size();
-  mNumVars = 1 + 2 * n;
-  mNLCO->SetSize(mNumVars);
-  mCurrentStateVec.resize(mNumVars);
-  TreeToData();
-  
-  // Set the bounds on the optimization
-  std::vector<double> bl(mNumVars, 0);      // lower bounds = 0 for all nodes
-  std::vector<double> bu(mNumVars);        // upper bounds depend on paper size
-  
-  bl[0] = -0.999;            // min strain
-  bu[0] = 10.0;            // max strain
-
-  double w = theTree->GetPaperWidth();      // set other bounds from width and height
-  double h = theTree->GetPaperHeight();
-
-  for (size_t i = 0; i < n; ++i) {
-    bu[2 * i + 1] = w;
-    bu[2 * i + 2] = h;
-  }
-  mNLCO->SetBounds(bl, bu);
+    tmTree* theTree = GetTree();
     
-  // Create our objective function
-  mNLCO->SetObjective(new tmEdgeOptimizerObjective(this));
+    theTree->FilterMovableParts(movingNodes, stretchyEdges);
+    
+    if (movingNodes.empty()) throw EX_NO_MOVING_NODES();
+    if (stretchyEdges.empty()) throw EX_NO_MOVING_EDGES();
+    
+    mMovingNodes = std::ref(movingNodes);     // Use reference
+    mStretchyEdges = std::ref(stretchyEdges); // Use reference
+    
+    size_t n = mMovingNodes.size();
+    mNumVars = 1 + 2 * n;
+    mNLCO->SetSize(mNumVars);
+    mCurrentStateVec.resize(mNumVars);
+    TreeToData();
+    
+    // Set the bounds on the optimization
+    std::vector<double> bl(mNumVars, 0);      // lower bounds = 0 for all nodes
+    std::vector<double> bu(mNumVars);        // upper bounds depend on paper size
+    
+    bl[0] = -0.999;            // min strain
+    bu[0] = 10.0;            // max strain
 
-  // Go through the leaf paths and add a constraint for each path that includes
-  // one or more moving nodes or stretchy edges.
-  {
-    tmArrayIterator<tmPath*> iOwnedPaths(theTree->GetOwnedPaths());
-    tmPath* aPath;
-    while (iOwnedPaths.Next(&aPath)) {
-      if (aPath->IsLeafPath()) {
-        
-        // If there's a path condition joining these nodes, then the
-        // standard path condition is unnecessary. So we won't apply it.
-        if (theTree->IsConditioned<tmConditionPathActive>(aPath)) 
-          continue;
-        
-        // Get nodes at each end of the path and their indices
-        tmNode* node1 = aPath->GetNodes().front();
-        size_t ix = GetBaseOffset(node1);
-        size_t iy = ix + 1;  
-        bool iMovable = (ix != tmArray<tmNode*>::BAD_OFFSET);      
-        
-        tmNode* node2 = aPath->GetNodes().back();
-        size_t jx = GetBaseOffset(node2);
-        size_t jy = jx + 1;
-        bool jMovable = (jx != tmArray<tmNode*>::BAD_OFFSET);
-        
-        // Note that GetBaseOffset returned 0 if node1 or node2 aren't in
-        // mMovingNodes; Thus, we can use the index as a check on whether it's
-        // moving.
-        
-        // Get the fixed and variable lengths for this path and multiply them
-        // by the scale of the tree. Note that we need constraints even if no
-        // nodes are moving; the edge length might be fixed by fixed nodes.
-        double lfix, lvar;
-        GetFixVarLengths(aPath, lfix, lvar);
-      
-        if (iMovable && jMovable)   // both nodes moving
-          mNLCO->AddNonlinearInequality(new StrainPathFn1(ix, iy, jx, jy, lfix, lvar));
-        
-        else if (iMovable)       // only tmNode 1 moving
-          mNLCO->AddNonlinearInequality(new StrainPathFn2(ix, iy,
-            node2->GetLocX(), node2->GetLocY(), lfix, lvar));
-        
-        else if (jMovable)       // only tmNode 2 moving
-          mNLCO->AddNonlinearInequality(new StrainPathFn2(jx, jy,
-            node1->GetLocX(), node1->GetLocY(), lfix, lvar));
-        
-        else {            // neither tmNode moving
-        
-          // make sure the path contains a stretchy edge (there's a nonzero
-          // variable part); if it doesn't, there's no point in adding a
-          // constraint.
-          if (lvar == 0) continue;
-          mNLCO->AddNonlinearInequality(new StrainPathFn3(node1->GetLocX(), node1->GetLocY(),
-            node2->GetLocX(), node2->GetLocY(), lfix, lvar));
-        }
-      }
+    double w = theTree->GetPaperWidth();      // set other bounds from width and height
+    double h = theTree->GetPaperHeight();
+
+    for (size_t i = 0; i < n; ++i) {
+        bu[2 * i + 1] = w;
+        bu[2 * i + 2] = h;
     }
-  }
+    mNLCO->SetBounds(bl, bu);
+    
+    // Create our objective function
+    mNLCO->SetObjective(new tmEdgeOptimizerObjective(this));
+
+    // Go through the leaf paths and add a constraint for each path that includes
+    // one or more moving nodes or stretchy edges.
+    {
+        tmArrayIterator<tmPath*> iOwnedPaths(theTree->GetOwnedPaths());
+        tmPath* aPath;
+        while (iOwnedPaths.Next(&aPath)) {
+            if (aPath->IsLeafPath()) {
+        
+                // If there's a path condition joining these nodes, then the
+                // standard path condition is unnecessary. So we won't apply it.
+                if (theTree->IsConditioned<tmConditionPathActive>(aPath)) 
+                    continue;
+        
+                // Get nodes at each end of the path and their indices
+                tmNode* node1 = aPath->GetNodes().front();
+                size_t ix = GetBaseOffset(node1);
+                size_t iy = ix + 1;  
+                bool iMovable = (ix != tmArray<tmNode*>::BAD_OFFSET);      
+        
+                tmNode* node2 = aPath->GetNodes().back();
+                size_t jx = GetBaseOffset(node2);
+                size_t jy = jx + 1;
+                bool jMovable = (jx != tmArray<tmNode*>::BAD_OFFSET);
+        
+                // Note that GetBaseOffset returned 0 if node1 or node2 aren't in
+                // mMovingNodes; Thus, we can use the index as a check on whether it's
+                // moving.
+        
+                // Get the fixed and variable lengths for this path and multiply them
+                // by the scale of the tree. Note that we need constraints even if no
+                // nodes are moving; the edge length might be fixed by fixed nodes.
+                double lfix, lvar;
+                GetFixVarLengths(aPath, lfix, lvar);
+      
+                if (iMovable && jMovable)   // both nodes moving
+                    mNLCO->AddNonlinearInequality(new StrainPathFn1(ix, iy, jx, jy, lfix, lvar));
+        
+                else if (iMovable)       // only tmNode 1 moving
+                    mNLCO->AddNonlinearInequality(new StrainPathFn2(ix, iy,
+                        node2->GetLocX(), node2->GetLocY(), lfix, lvar));
+        
+                else if (jMovable)       // only tmNode 2 moving
+                    mNLCO->AddNonlinearInequality(new StrainPathFn2(jx, jy,
+                        node1->GetLocX(), node1->GetLocY(), lfix, lvar));
+        
+                else {            // neither tmNode moving
+        
+                    // make sure the path contains a stretchy edge (there's a nonzero
+                    // variable part); if it doesn't, there's no point in adding a
+                    // constraint.
+                    if (lvar == 0) continue;
+                    mNLCO->AddNonlinearInequality(new StrainPathFn3(node1->GetLocX(), node1->GetLocY(),
+                        node2->GetLocX(), node2->GetLocY(), lfix, lvar));
+                }
+            }
+        }
+    }
   
-  // Go through all Conditions and add constraints for each.
-  tmArrayIterator<tmCondition*> iConditions(theTree->GetConditions());
-  tmCondition* aCondition;
-  while (iConditions.Next(&aCondition)) aCondition->AddConstraints(this);
+    // Go through all Conditions and add constraints for each.
+    tmArrayIterator<tmCondition*> iConditions(theTree->GetConditions());
+    tmCondition* aCondition;
+    while (iConditions.Next(&aCondition)) aCondition->AddConstraints(this);
   
-  // Ready to go. User should probably check whether the number of equalities
-  // exceeds the number of variables.
-  mInitialized = true;
+    // Ready to go. User should probably check whether the number of equalities
+    // exceeds the number of variables.
+    mInitialized = true;
 }
 
 

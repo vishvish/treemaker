@@ -36,8 +36,8 @@ public:
   void TreeToData();
 private:
   std::size_t mNumVars;               // number of variables
-  tmArray<tmNode*> mMovingNodes;      // list of moving nodes
-  tmArray<tmEdge*> mStretchyEdges;    // list of stretchy edges
+  tmDpptrArray<tmNode>& mMovingNodes;  // Change to reference
+  tmDpptrArray<tmEdge>& mStretchyEdges;  // Change to references
   
   friend class tmEdgeOptimizerObjective;
 };

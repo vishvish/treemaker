@@ -185,6 +185,7 @@ const tmDpptrArray<T>& tmDpptrArray<T>::operator=(const tmDpptrArray<T>& aList)
 {
   clear();
   merge_with(aList);
+  return *this;  // Add this line to fix the issue
 }
 
 

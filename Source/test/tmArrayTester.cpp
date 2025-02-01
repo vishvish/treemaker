@@ -11,13 +11,9 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 // Standard libraries
 
 #include <iostream>
-#include <sstream>
-using namespace std;
-
 // My libraries
 #include "tmArray.h"          // my general-purposes container class
 #include "tmArrayIterator.h"  // my redefinition of PowerPlant tmArrayIterator
-
 
 // tmArrayIterator test
 void test1(tmArray<const char*>& aList);
@@ -36,7 +32,7 @@ void test2(tmArray<const char*>& aList)
 {
   char ch;
   size_t nmax = aList.size();
-  for (size_t i = 1; i <= nmax; ++i) ch = *(aList.NthItem(i));
+  for (size_t i = 1; i <= nmax; ++i) *(aList.NthItem(i));
 }
 
 
@@ -45,22 +41,22 @@ void test2a(tmArray<const char*>& aList);
 void test2a(tmArray<const char*>& aList)
 {
   char ch;
-  for (size_t i = 1; i <= aList.size(); ++i) ch = *(aList.NthItem(i));
+  for (size_t i = 1; i <= aList.size(); ++i) *(aList.NthItem(i));
 }
 
 
 // class for test of stored pointers
 class Foo {
   public:
-    void DoSomething() {cout << "foo!" << endl;}
+    void DoSomething() const {std::cout << "foo!" << std::endl;}
 };
 
 
 // stream output for a list (helps in testing)
 template <class T>
-ostream& operator<<(ostream& os, tmArray<T>& aList);
+std::ostream& operator<<(std::ostream& os, tmArray<T>& aList);
 template <class T>
-ostream& operator<<(ostream& os, tmArray<T>& aList)
+std::ostream& operator<<(std::ostream& os, tmArray<T>& aList)
 {
   os << "<";
   for (size_t i = 0; i < aList.size(); ++i) {
@@ -75,7 +71,7 @@ ostream& operator<<(ostream& os, tmArray<T>& aList)
 // Main test program
 int main(void)
 {
-  cout << "Hello World.\n";
+  std::cout << "Hello World.\n";
   
   const char* a = "A";
   const char* b = "B";
@@ -92,73 +88,80 @@ int main(void)
   alist.push_back(c);
   alist.push_front(a);
   
-  cout << "alist is " << alist << endl;
-  cout << "size() is " << alist.size() << endl;
-  cout << "front = " << *(alist.front()) << endl;
-  cout << "NthItem(2) = " << *(alist.NthItem(2)) << endl;
-  cout << "back = " << *(alist.back()) << endl;
-  cout << endl;
+  std::cout << "alist is " << alist << std::endl;
+  std::cout << "size() is " << alist.size() << std::endl;
+  std::cout << "front = " << *(alist.front()) << std::endl;
+  std::cout << "NthItem(2) = " << *(alist.NthItem(2)) << std::endl;
+  std::cout << "back = " << *(alist.back()) << std::endl;
+  std::cout << std::endl;
   
   alist.union_with(a);
   alist.union_with(d);
-  cout << "After union_with(a, d) the list is " << alist << endl;
+  std::cout << "After union_with(a, d) the list is " << alist << std::endl;
   
   alist.erase_remove(d);
-  cout << "After erase_remove(d) the list is " << alist << endl;
+  std::cout << "After erase_remove(d) the list is " << alist << std::endl;
   
   
   alist.erase_remove(b);
-  cout << "After erase_remove(b) the list is " << alist << endl;
-  cout << "2nd item is now " << *(alist.NthItem(2)) << endl;
-  cout << "size() is now " << alist.size() << endl;
-  cout << endl;
+  std::cout << "After erase_remove(b) the list is " << alist << std::endl;
+  if (alist.size() >= 2) {
+    std::cout << "2nd item is now " << *(alist.NthItem(2)) << std::endl;
+  }
+  std::cout << "size() is now " << alist.size() << std::endl;
+  std::cout << std::endl;
   
-  cout << "list contains a? " << (int) alist.contains(a) << endl;
-  cout << "list contains b? " << (int) alist.contains(b) << endl;
-  cout << "list contains c? " << (int) alist.contains(c) << endl;
-  cout << endl;
+  std::cout << "list contains a? " << (alist.contains(a) ? 1 : 0) << std::endl;
+  std::cout << "list contains b? " << (alist.contains(b) ? 1 : 0) << std::endl;
+  std::cout << "list contains c? " << (alist.contains(c) ? 1 : 0) << std::endl;
+  std::cout << std::endl;
   
-  alist.ReplaceItemAt(1, d);
-  cout << "After ReplaceItemAt(1, d) the list is " << alist << endl;
-  cout << "1st item is now " << *(alist.NthItem(1)) << endl;
-  cout << "Index of 'd' is " << alist.GetIndex(d) << endl;
-  cout << "Offset of 'd' is " << alist.GetOffset(d) << endl;
-  cout << "alist[0] = " << *(alist[0]) << endl;
-  cout << endl;
+  if (alist.size() > 1) {
+    alist.ReplaceItemAt(1, d);
+    std::cout << "After ReplaceItemAt(1, d) the list is " << alist << std::endl;
+    std::cout << "1st item is now " << *(alist.NthItem(1)) << std::endl;
+    std::cout << "Index of 'd' is " << alist.GetIndex(d) << std::endl;
+    std::cout << "Offset of 'd' is " << alist.GetOffset(d) << std::endl;
+  }
+  
+  if (!alist.empty()) {
+    std::cout << "alist[0] = " << *(alist[0]) << std::endl;
+  }
+  std::cout << std::endl;
   
   alist.push_back(e);
-  cout << "After push_back(e) the list is " << alist << endl;
+  std::cout << "After push_back(e) the list is " << alist << std::endl;
   
   alist.replace_with(d, a);
-  cout << "After replace_with(d, a) the list is " << alist << endl;
+  std::cout << "After replace_with(d, a) the list is " << alist << std::endl;
   
   // tmArrayIterator/tmArrayIterator test
   tmArrayIterator<const char*> i(alist);
   const char* dp;
-  cout << "Forward iterator test." << endl;
-  while (i.Next(&dp)) cout << "an element is " << dp << endl;
-  cout << "Backward iterator test." << endl;
+  std::cout << "Forward iterator test." << std::endl;
+  while (i.Next(&dp)) std::cout << "an element is " << dp << std::endl;
+  std::cout << "Backward iterator test." << std::endl;
   i.ResetTo(tmArray_END);
-  while (i.Previous(&dp)) cout << "an element is " << dp << endl;
-  cout << endl;
+  while (i.Previous(&dp)) std::cout << "an element is " << dp << std::endl;
+  std::cout << std::endl;
   
   // operator[] returns an lvalue 
-  cout << endl;
+  std::cout << std::endl;
   alist[0] = f;
-  cout << "Set alist[0] = f; alist = " << alist << endl;
-  cout << endl;
+  std::cout << "Set alist[0] = f; alist = " << alist << std::endl;
+  std::cout << std::endl;
   
   // combinational routines 
   tmArray<const char*> blist;
   blist.push_back(f);
   blist.push_back(g);
   blist.push_back(h);
-  cout << "alist = " << alist << endl;
-  cout << "blist = " << blist << endl;
+  std::cout << "alist = " << alist << std::endl;
+  std::cout << "blist = " << blist << std::endl;
   blist.intersect_with(alist);
-  cout << "blist.intersect_with(alist) = " << blist << endl;
+  std::cout << "blist.intersect_with(alist) = " << blist << std::endl;
   blist.union_with(alist);
-  cout << "blist.union_with(alist) = " << blist << endl;
+  std::cout << "blist.union_with(alist) = " << blist << std::endl;
   
   // intersection routines
   tmArray<int> clist;
@@ -169,8 +172,8 @@ int main(void)
   tmArray<int> dlist;
   dlist.push_back(5);
   dlist.push_back(4);
-  cout << "clist = " << clist << endl;
-  cout << "dlist = " << dlist << endl;
-  cout << "clist.intersects(dlist) = " << (clist.intersects(dlist)) << endl;
-  cout << "dlist.intersects(clist) = " << (dlist.intersects(clist)) << endl;
+  std::cout << "clist = " << clist << std::endl;
+  std::cout << "dlist = " << dlist << std::endl;
+  std::cout << "clist.intersects(dlist) = " << (clist.intersects(dlist)) << std::endl;
+  std::cout << "dlist.intersects(clist) = " << (dlist.intersects(clist)) << std::endl;
 }

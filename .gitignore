@@ -56,3 +56,5 @@ mac/CPackSourceConfig.cmake
 .env
 cmake-build-debug
 .python-version
+.cache/clangd
+mac/static_analysis.txt

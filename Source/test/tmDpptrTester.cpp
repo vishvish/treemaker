@@ -10,6 +10,7 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 
 #include <iostream>
 #include <string>
+#include <format>
 
 #include "tmDpptr.h"
 #include "tmDpptrArray.h"
@@ -65,7 +66,7 @@ class B : public virtual tmDpptrTarget
 class D : public virtual tmDpptrTarget
 {
   public:
-    D(char* aName) : tmDpptrTarget() {strcpy(mName, aName); 
+    D(char* aName) : tmDpptrTarget() {std::format_to_n(mName, 20, "{}", aName); 
       cout << mName << " created" << endl;}
     virtual ~D() {cout << mName << " deleted" << endl;}
   private:

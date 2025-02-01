@@ -11,8 +11,6 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 #include "tmNode.h"
 #include "tmModel.h"
 
-using namespace std;
-
 /**********
 class tmNode
 **********/
@@ -27,7 +25,7 @@ void tmNode::InitNode()
   mIndex = mTree->mNodes.size();
 
   // Initialize member data
-  strcpy(mLabel, "");
+  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", "");
   mLoc = tmPoint(0. ,0.);
   mDepth = DEPTH_NOT_SET;
   mElevation = 0.0;
@@ -102,7 +100,7 @@ space.
 void tmNode::SetLabel(const char* aLabel)
 {
   TMASSERT(strlen(aLabel) <= MAX_LABEL_LEN);
-  strncpy(mLabel, aLabel, MAX_LABEL_LEN);
+  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", aLabel);
 }
 
 

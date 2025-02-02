@@ -9,7 +9,6 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include <iostream>
-#include <string>
 #include <format>
 
 #include "tmDpptr.h"
@@ -43,33 +42,34 @@ class B;
 
 // Classes A and B hold references to each other.
 
-class A : public tmDpptrTarget
-{
-  public:
-    A() {cout << "member of class A created" << endl;}
-    virtual ~A() {cout << "member of class A deleted" << endl;}
+class A : public tmDpptrTarget {  // Remove virtual
+public:
+    A() { cout << "member of class A created" << endl; }
+    ~A() override { cout << "member of class A deleted" << endl; }
     tmDpptr<B> ab;
 };
 
 
-class B : public tmDpptrTarget
-{
-  public:
-    B() {cout << "member of class B created" << endl;}
-    virtual ~B() {cout << "member of class B deleted" << endl;}
+class B : public tmDpptrTarget {  // Remove virtual
+public:
+    B() { cout << "member of class B created" << endl; }
+    ~B() override { cout << "member of class B deleted" << endl; }
     tmDpptr<A> ba;
     
-    void Test() {cout << "test B!" << endl;}
+    void Test() { cout << "test B!" << endl; }
 };
 
 
-class D : public tmDpptrTarget
-{
-  public:
-    D(char* aName) : tmDpptrTarget() {std::format_to_n(mName, 20, "{}", aName); 
-      cout << mName << " created" << endl;}
-    virtual ~D() {cout << mName << " deleted" << endl;}
-  private:
+class D : public tmDpptrTarget {
+public:
+    D(char* aName) : tmDpptrTarget() {
+        std::format_to_n(mName, 20, "{}", aName);
+        cout << mName << " created" << endl;
+    }
+    ~D() override {
+        cout << mName << " deleted" << endl;
+    }
+private:
     char mName[20];
 };
 
@@ -105,33 +105,32 @@ int main(void)
   cout << "Test of pointer usage:" << endl;
   
   ((B*) c)->Test(); // cast to a pointer
-  (*c).Test();    // dereference
-  c->Test();      // indirect dereference
-
-  c = 0;    // Reassigning c removes the last reference to b.
+  (*c).Test();      // dereference
+  c->Test();        // arrow operator
   
-  cout << endl;
+  // Remove unused variable rd1 declaration
+  // Create test objects and use them
+  D* d1 = new D(const_cast<char*>("d1"));
+  tmDpptr<D> rd2(new D(const_cast<char*>("d2")));
+  
+  delete d1;
   
   // Now try out a tmDpptrArray that automatically removes objects as they are
   // are deleted.
   
+  // Create test objects and populate array
   tmDpptrArray<D> rld;    // create a list of references
 
-  D* d1 = new D(const_cast<char*>("d1"));  // create a bunch of objects to put into the list
+  D* d11 = new D(const_cast<char*>("d1"));
   D* d2 = new D(const_cast<char*>("d2"));
   D* d3 = new D(const_cast<char*>("d3"));
-  
-  tmDpptrTarget* rd1 = d1;
-  tmDpptrTarget* rd2 = d2;
-  tmDpptrTarget* rd3 = d3;
-  
-  rld.push_back(d1);    // put them into the list.
+
+  rld.push_back(d11);    // put them into the list
   rld.push_back(d2);
   rld.push_back(d3);
-  rld.push_back(d1);    // also check out effect of multiple references.
-  
-  // Now we'll delete the original objects one by one and watch as they are
-  // automatically removed from the list.
+  rld.push_back(d11);    // test multiple references
+
+  // Now delete objects and watch auto-removal
   
   cout << "Initially rld has " << rld.size() << " elements." << endl;
   

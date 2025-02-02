@@ -16,8 +16,8 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 #include "tmArrayIterator.h"  // my redefinition of PowerPlant tmArrayIterator
 
 // tmArrayIterator test
-void test1(tmArray<const char*>& aList);
-void test1(tmArray<const char*>& aList)
+void test1(const tmArray<const char*>& aList);
+void test1(const tmArray<const char*>& aList)
 {
   tmArrayIterator i(aList);  // Let compiler deduce template argument
   const char* c;
@@ -27,8 +27,8 @@ void test1(tmArray<const char*>& aList)
 
 
 // for loop test
-void test2(tmArray<const char*>& aList);
-void test2(tmArray<const char*>& aList)
+void test2(const tmArray<const char*>& aList);  
+void test2(const tmArray<const char*>& aList)
 {
   size_t nmax = aList.size();
   for (size_t i = 1; i <= nmax; ++i) *(aList.NthItem(i));
@@ -37,8 +37,8 @@ void test2(tmArray<const char*>& aList)
 
 
 // for loop with repeated size()
-void test2a(tmArray<const char*>& aList);
-void test2a(tmArray<const char*>& aList)
+void test2a(const tmArray<const char*>& aList);
+void test2a(const tmArray<const char*>& aList)
 {
   for (size_t i = 1; i <= aList.size(); ++i) *(aList.NthItem(i));
 }

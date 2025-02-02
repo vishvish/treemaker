@@ -9,12 +9,16 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmTree.h"
-#include "tmModel.h"
+#include "tmConditionNodeCombo.h"
+#include "tmConditionNodeFixed.h"
+#include "tmConditionPathAngleFixed.h"
+#include "tmConditionPathCombo.h"
+#include "tmNode.h"
+#include "tmPath.h"
+#include "tmPoly.h"
 
 #ifdef TMDEBUG
-  #include <fstream>
 #endif
-#include <algorithm>
 
 using namespace std;
 
@@ -1854,7 +1858,7 @@ tmTree::CPStatus tmTree::GetCPStatus(tmArray<tmEdge*>& badEdges,
     // vertices in the passed list.
     for (size_t i = 0; i < mVertices.size(); ++i) {
       tmVertex* theVertex = mVertices[i];
-      if (theVertex->mDepth == tmVertex::DEPTH_NOT_SET)
+      if (theVertex->mDepth == static_cast<tmFloat>(tmVertex::DEPTH_NOT_SET))
         badVertices.push_back(theVertex);
     }
     return VERTICES_LACK_DEPTH;
@@ -2500,7 +2504,7 @@ void tmTree::CalcDepthAndBend()
   // we can't go any farther in computing the bend status or the crease
   // pattern. So we'll return.
   for (size_t i = 0; i < mVertices.size(); ++i)
-    if (mVertices[i]->mDepth == DEPTH_NOT_SET) return;
+    if (mVertices[i]->mDepth == static_cast<tmFloat>(DEPTH_NOT_SET)) return;
   
   // And with depth in place, we can now calculate the crease bend, that is,
   // which creases are folded.
@@ -2519,7 +2523,7 @@ void tmTree::CalcVertexDepthValidity()
   mIsVertexDepthValid = false;
   if (mVertices.empty()) return;
   for (size_t i = 0; i < mVertices.size(); ++i)
-    if (mVertices[i]->mDepth == DEPTH_NOT_SET) return;
+    if (mVertices[i]->mDepth == static_cast<tmFloat>(DEPTH_NOT_SET)) return;
   mIsVertexDepthValid = true;
 }
 

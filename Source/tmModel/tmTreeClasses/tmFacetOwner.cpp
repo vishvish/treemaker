@@ -9,7 +9,9 @@ Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmFacetOwner.h"
-#include "tmModel.h"
+#include "tmCrease.h"
+#include "tmPoly.h"
+#include "tmTree.h"
 
 #ifdef TMDEBUG
   #include <fstream>

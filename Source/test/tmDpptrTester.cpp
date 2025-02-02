@@ -121,27 +121,23 @@ int main(void)
   // Create test objects and populate array
   tmDpptrArray<D> rld;    // create a list of references
 
-  D* d11 = new D(const_cast<char*>("d1"));
-  D* d2 = new D(const_cast<char*>("d2"));
-  D* d3 = new D(const_cast<char*>("d3"));
+  // Create objects with clear ownership
+  std::unique_ptr<D> d1(new D(const_cast<char*>("d1")));
+  std::unique_ptr<D> d2(new D(const_cast<char*>("d2")));
+  std::unique_ptr<D> d3(new D(const_cast<char*>("d3")));
 
-  rld.push_back(d11);    // put them into the list
-  rld.push_back(d2);
-  rld.push_back(d3);
-  rld.push_back(d11);    // test multiple references
+  // Add to array without transferring ownership
+  rld.push_back(d1.get());
+  rld.push_back(d2.get());
+  rld.push_back(d3.get());
+  rld.push_back(d1.get());    // test multiple references
 
-  // Now delete objects and watch auto-removal
-  
   cout << "Initially rld has " << rld.size() << " elements." << endl;
-  
-  delete d1;
-  cout << "After delete d1 rld has " << rld.size() << " elements." << endl;
-  
-  delete d2;
-  cout << "After delete d2 rld has " << rld.size() << " elements." << endl;
-  
-  delete d3;
-  cout << "After delete d3 rld has " << rld.size() << " elements." << endl;
+
+  // Let smart pointers handle cleanup
+  d1.reset();
+  d2.reset();
+  d3.reset();
   
   // Try it again but this time test the clear() command
   

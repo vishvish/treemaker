@@ -12,6 +12,7 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 #include "tmDpptrSrc.h"
 
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -77,7 +78,7 @@ tmDpptrTarget::~tmDpptrTarget()
       theDpptrSrc->RemoveDpptrTarget(this);
     }
   } catch (...) {
-    // Handle or log the exception as needed
+    std::cout << "Exception caught while cleaning up tmDpptrTarget" << std::endl;
   }
 }
 

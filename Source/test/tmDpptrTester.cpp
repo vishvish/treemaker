@@ -44,7 +44,40 @@ class B;
 
 class A : public tmDpptrTarget {  // Remove virtual
 public:
+    // Default constructor
     A() { cout << "member of class A created" << endl; }
+    
+    // Copy constructor - deep copy the tmDpptr
+    A(const A& other) : tmDpptrTarget(other) {
+        ab = other.ab;  // tmDpptr has its own copy semantics
+        cout << "member of class A copied" << endl;
+    }
+    
+    // Copy assignment - deep copy the tmDpptr
+    A& operator=(const A& other) {
+        if (this != &other) {
+            tmDpptrTarget::operator=(other);
+            ab = other.ab;  // tmDpptr has its own copy semantics
+            cout << "member of class A copy assigned" << endl;
+        }
+        return *this;
+    }
+    
+    // Move constructor - transfer ownership
+    A(A&& other) noexcept : tmDpptrTarget(std::move(other)), ab(std::move(other.ab)) {
+        cout << "member of class A moved" << endl;
+    }
+    
+    // Move assignment - transfer ownership
+    A& operator=(A&& other) noexcept {
+        if (this != &other) {
+            tmDpptrTarget::operator=(std::move(other));
+            ab = std::move(other.ab);
+            cout << "member of class A move assigned" << endl;
+        }
+        return *this;
+    }
+    
     ~A() override { cout << "member of class A deleted" << endl; }
     tmDpptr<B> ab;
 };
@@ -52,7 +85,40 @@ public:
 
 class B : public tmDpptrTarget {  // Remove virtual
 public:
+    // Default constructor
     B() { cout << "member of class B created" << endl; }
+    
+    // Copy constructor - deep copy the tmDpptr
+    B(const B& other) : tmDpptrTarget(other) {
+        ba = other.ba;  // tmDpptr has its own copy semantics
+        cout << "member of class B copied" << endl;
+    }
+    
+    // Copy assignment - deep copy the tmDpptr
+    B& operator=(const B& other) {
+        if (this != &other) {
+            tmDpptrTarget::operator=(other);
+            ba = other.ba;  // tmDpptr has its own copy semantics
+            cout << "member of class B copy assigned" << endl;
+        }
+        return *this;
+    }
+    
+    // Move constructor - transfer ownership
+    B(B&& other) noexcept : tmDpptrTarget(std::move(other)), ba(std::move(other.ba)) {
+        cout << "member of class B moved" << endl;
+    }
+    
+    // Move assignment - transfer ownership
+    B& operator=(B&& other) noexcept {
+        if (this != &other) {
+            tmDpptrTarget::operator=(std::move(other));
+            ba = std::move(other.ba);
+            cout << "member of class B move assigned" << endl;
+        }
+        return *this;
+    }
+    
     ~B() override { cout << "member of class B deleted" << endl; }
     tmDpptr<A> ba;
     
@@ -62,13 +128,50 @@ public:
 
 class D : public tmDpptrTarget {
 public:
+    // Constructor
     D(char* aName) : tmDpptrTarget() {
         std::format_to_n(mName, 20, "{}", aName);
         cout << mName << " created" << endl;
     }
+    
+    // Copy constructor
+    D(const D& other) : tmDpptrTarget(other) {
+        std::copy_n(other.mName, 20, mName);
+        cout << mName << " copied" << endl;
+    }
+    
+    // Copy assignment operator
+    D& operator=(const D& other) {
+        if (this != &other) {
+            tmDpptrTarget::operator=(other);
+            std::copy_n(other.mName, 20, mName);
+            cout << mName << " copy assigned" << endl;
+        }
+        return *this;
+    }
+    
+    // Move constructor
+    D(D&& other) noexcept : tmDpptrTarget(std::move(other)) {
+        std::copy_n(other.mName, 20, mName);
+        other.mName[0] = '\0';  // Clear the source name
+        cout << mName << " moved" << endl;
+    }
+    
+    // Move assignment operator
+    D& operator=(D&& other) noexcept {
+        if (this != &other) {
+            tmDpptrTarget::operator=(std::move(other));
+            std::copy_n(other.mName, 20, mName);
+            other.mName[0] = '\0';  // Clear the source name
+            cout << mName << " move assigned" << endl;
+        }
+        return *this;
+    }
+    
     ~D() override {
         cout << mName << " deleted" << endl;
     }
+
 private:
     char mName[20];
 };

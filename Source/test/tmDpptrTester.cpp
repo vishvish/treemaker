@@ -122,22 +122,22 @@ int main(void)
   tmDpptrArray<D> rld;    // create a list of references
 
   // Create objects with clear ownership
-  std::unique_ptr<D> d1(new D(const_cast<char*>("d1")));
-  std::unique_ptr<D> d2(new D(const_cast<char*>("d2")));
-  std::unique_ptr<D> d3(new D(const_cast<char*>("d3")));
+  std::unique_ptr<D> up1(new D(const_cast<char*>("d1")));
+  std::unique_ptr<D> up2(new D(const_cast<char*>("d2")));
+  std::unique_ptr<D> up3(new D(const_cast<char*>("d3")));
 
   // Add to array without transferring ownership
-  rld.push_back(d1.get());
-  rld.push_back(d2.get());
-  rld.push_back(d3.get());
-  rld.push_back(d1.get());    // test multiple references
+  rld.push_back(up1.get());
+  rld.push_back(up2.get());
+  rld.push_back(up3.get());
+  rld.push_back(up1.get());    // test multiple references
 
   cout << "Initially rld has " << rld.size() << " elements." << endl;
 
   // Let smart pointers handle cleanup
-  d1.reset();
-  d2.reset();
-  d3.reset();
+  up1.reset();
+  up2.reset();
+  up3.reset();
   
   // Try it again but this time test the clear() command
   

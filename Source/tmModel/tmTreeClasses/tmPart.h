@@ -185,7 +185,7 @@ private:
     static void CheckTagStr(std::istream& is);
   
   // Dynamic type system implementation
-  static const std::string& TagToStr(std::size_t tag);
+  static const std::string& TagToStr(std::size_t tagValue);
   static std::size_t StrToTag(const std::string& tagstr);
 
   static tmArray<std::string>& GetTagStrs();

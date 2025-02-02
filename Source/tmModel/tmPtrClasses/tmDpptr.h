@@ -144,7 +144,7 @@ template <class T>
 tmDpptr<T>::~tmDpptr()
 {
   // Store both pointers as const before any operations
-  tmDpptrSrc* const self = this;
+  const tmDpptrSrc* const self = this;
   T* const target = mTarget;
   
   // Validate pointers before use

@@ -207,7 +207,7 @@ template <class T>
 tmDpptrArray<T>::~tmDpptrArray()
 {
   // Store self pointer as const
-  tmDpptrSrc* const self = this;
+  const tmDpptrSrc* const self = this;
   
   for (std::size_t i = 0; i < this->size(); ++i) {
     // Store target pointer as const
@@ -260,7 +260,7 @@ template <class T>
 void tmDpptrArray<T>::erase_remove(T* pt)
 {
   // Store pointers as const
-  tmDpptrSrc* const self = this;
+  const tmDpptrSrc* const self = this;
   T* const target = pt;
   
   if (self && target && this->contains(target)) {
@@ -280,7 +280,7 @@ void tmDpptrArray<T>::replace_with(T*& told, T*& tnew)
   if (told == tnew) return;
   
   // Store pointers as const
-  tmDpptrSrc* const self = this;
+  const tmDpptrSrc* const self = this;
   T* const oldTarget = told;
   T* const newTarget = tnew;
   
@@ -307,7 +307,7 @@ template <class T>
 void tmDpptrArray<T>::clear()
 {
   // Store self pointer as const
-  tmDpptrSrc* const self = this;
+  const tmDpptrSrc* const self = this;
   
   for (std::size_t i = 0; i < this->size(); ++i) {
     // Store target pointer as const 
@@ -338,7 +338,7 @@ template <class T>
 void tmDpptrArray<T>::ReplaceItemAt(std::size_t n, T* pt)
 {
   // Store pointers as const
-  tmDpptrSrc* const self = this;
+  const tmDpptrSrc* const self = this;
   T* const oldTarget = this->NthItem(n);
   T* const newTarget = pt;
   

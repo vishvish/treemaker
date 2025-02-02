@@ -520,9 +520,10 @@ void tmPath::BuildSelfVertices()
     // Step through the nodes and edges of the path. Only create a vertex if
     // the position falls within the path.
     TMASSERT(maxOutsetPath->mEdges.not_empty());
-    for (size_t i = 0; i < maxOutsetPath->mEdges.size(); ++i) {
-      tmNode* curNode = maxOutsetPath->mNodes[i + 1];
-      curPos += maxOutsetPath->mEdges[i]->GetStrainedScaledLength();
+    size_t nodeIndex = 1;
+    for (const auto& edge : maxOutsetPath->mEdges) {
+      tmNode* curNode = maxOutsetPath->mNodes[nodeIndex++];
+      curPos += edge->GetStrainedScaledLength();
       if (curPos <= 0.0) continue;
       if (curPos >= mActPaperLength) break;
       GetOrMakeVertex(q1 + qu * curPos, curNode);

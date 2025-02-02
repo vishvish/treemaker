@@ -19,30 +19,30 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 void test1(tmArray<const char*>& aList);
 void test1(tmArray<const char*>& aList)
 {
-  char ch;
   tmArrayIterator<const char*> i(aList);
   const char* c;
-  while (i.Next(&c)) ch = *c;
+  while (i.Next(&c)) *c; // Keep dereferencing to prevent unused variable warning for c
 }
+
 
 
 // for loop test
 void test2(tmArray<const char*>& aList);
 void test2(tmArray<const char*>& aList)
 {
-  char ch;
   size_t nmax = aList.size();
   for (size_t i = 1; i <= nmax; ++i) *(aList.NthItem(i));
 }
+
 
 
 // for loop with repeated size()
 void test2a(tmArray<const char*>& aList);
 void test2a(tmArray<const char*>& aList)
 {
-  char ch;
   for (size_t i = 1; i <= aList.size(); ++i) *(aList.NthItem(i));
 }
+
 
 
 // class for test of stored pointers

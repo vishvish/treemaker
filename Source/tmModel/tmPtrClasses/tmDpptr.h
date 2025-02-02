@@ -143,7 +143,13 @@ Destructor. Notify the tmDpptrTarget that it no longer has me pointing at it
 template <class T>
 tmDpptr<T>::~tmDpptr()
 {
-  if (T* target = mTarget; target) {
+  // Store both pointers as const before any operations
+  tmDpptrSrc* const self = this;
+  T* const target = mTarget;
+  
+  // Validate pointers before use
+  if (self && target) {
+    mTarget = nullptr;  // Clear pointer before potential deletion
     DstRemoveMeAsDpptrSrc(target);
   }
 }

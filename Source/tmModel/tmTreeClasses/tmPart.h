@@ -36,8 +36,9 @@ public:\
   virtual const std::size_t& GetTag() const {return Tag();};\
   virtual const std::string& GetTagStr() const {return TagStr();};\
 protected:\
-  static std::size_t& Tag();\
-  static const std::string& TagStr();
+  static inline std::size_t tag = std::size_t(-1);\
+  static const std::string& TagStr();\
+  static const std::size_t& Tag() { return tag; }
   
 
 /*****
@@ -45,12 +46,10 @@ Implementation. Note that some classes (tmPart, tmCondition) handle this
 themselves.
 *****/
 #define TM_IMPLEMENT_TAG(PART_CLASS, PART_STRING) \
-size_t& PART_CLASS::Tag() {\
-  static size_t sTag = std::size_t(-1);\
-  return sTag;}\
 const string& PART_CLASS::TagStr() {\
   static const string sTagStr(PART_STRING);\
   return sTagStr;}
+
 
 
 /**********

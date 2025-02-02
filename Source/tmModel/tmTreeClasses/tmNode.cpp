@@ -488,12 +488,10 @@ void tmNode::Getv3Self(std::istream& is)
   mNodeOwner = mTree;
 }
 
-std::size_t& tmNode::Tag() {
-    static std::size_t tag = 0;
-    return tag;
-}
+inline std::size_t tmNode::tag = 0;
 
 const std::string& tmNode::TagStr() {
+
     static const std::string tagStr = "node";
     return tagStr;
 }

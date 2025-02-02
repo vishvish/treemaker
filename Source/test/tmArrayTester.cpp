@@ -19,7 +19,7 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 void test1(tmArray<const char*>& aList);
 void test1(tmArray<const char*>& aList)
 {
-  tmArrayIterator<const char*> i(aList);
+  tmArrayIterator i(aList);  // Let compiler deduce template argument
   const char* c;
   while (i.Next(&c)) *c; // Keep dereferencing to prevent unused variable warning for c
 }
@@ -136,7 +136,7 @@ int main(void)
   std::cout << "After replace_with(d, a) the list is " << alist << std::endl;
   
   // tmArrayIterator/tmArrayIterator test
-  tmArrayIterator<const char*> i(alist);
+  tmArrayIterator i(alist);  // Let compiler deduce template argument
   const char* dp;
   std::cout << "Forward iterator test." << std::endl;
   while (i.Next(&dp)) std::cout << "an element is " << dp << std::endl;

@@ -80,7 +80,7 @@ void DoReadFile(tmTree* theTree, const string& filename)
   try {
     theTree->GetSelf(fin);
   }
-  catch(...) {
+  catch (...) {
     cout << "Unexpected exception reading file " << fullname << endl;
     exit(1);
   }
@@ -106,11 +106,11 @@ void DoScaleOptimization(char* name)
   try {
     theOptimizer->Optimize();
   }
-  catch (tmNLCO::EX_BAD_CONVERGENCE ex) {
+  catch (const tmNLCO::EX_BAD_CONVERGENCE& ex) {
     cout << "Scale optimization failed with result code " << 
       ex.GetReason() << endl;
   }
-  catch(tmScaleOptimizer::EX_BAD_SCALE) {
+  catch (const tmScaleOptimizer::EX_BAD_SCALE&) {
     cout << "Scale optimization failed with scale too small. " << endl;
   }
   stopTime = clock();
@@ -135,7 +135,7 @@ Read in a file and perform an edge optimization on it.
 template <class NLCO>
 void DoEdgeOptimization(char* name)
 {
-      if(!name)return;
+    if(!name)return;
   const string filename = name;
   tmTree* theTree = new tmTree();
   DoReadFile(theTree, filename);
@@ -150,26 +150,31 @@ void DoEdgeOptimization(char* name)
   try {
     theOptimizer->Optimize();
   }
-  catch (tmNLCO::EX_BAD_CONVERGENCE ex) {
+  catch (const tmNLCO::EX_BAD_CONVERGENCE& ex) {
     cout << "Edge optimization failed with result code " << 
       ex.GetReason() << endl;
-  stopTime = clock();
-  ReportCalls((filename + " objective").c_str(), 
-    theOptimizer->GetNLCO()->GetObjective());
-  ReportCalls((filename + " constraint").c_str(), 
-    theOptimizer->GetNLCO()->GetConstraints());
-  delete theOptimizer;
-  delete theNLCO;
-  cout << "Optimized over " << movingNodes.size() << " nodes and " <<
-    stretchyEdges.size() << " edges. " << endl;
-  cout << "Edge strain is " << stretchyEdges.front()->GetStrain() << endl;
-  }
-  if (stopTime < 0)
     stopTime = clock();
+  }
+
+  if (stopTime < 0) {
+  stopTime = clock();
+  }
+
+  ReportCalls((filename + " objective").c_str(), 
+  theOptimizer->GetNLCO()->GetObjective());
+  ReportCalls((filename + " constraint").c_str(), 
+  theOptimizer->GetNLCO()->GetConstraints());
+
+  cout << "Optimized over " << movingNodes.size() << " nodes and " <<
+  stretchyEdges.size() << " edges. " << endl;
+  cout << "Edge strain is " << stretchyEdges.front()->GetStrain() << endl;
   cout << "Feasibility after optimization is " << 
-    (theTree->IsFeasible() ? "true " : "false") << endl;
+  (theTree->IsFeasible() ? "true " : "false") << endl;
   cout << "Elapsed time = " << (stopTime - startTime) << " ticks" << endl;
   cout << endl;
+
+  delete theOptimizer;
+  delete theNLCO;
   delete theTree;
 }
 
@@ -195,7 +200,7 @@ void DoStrainOptimization(char* name)
   try {
     theOptimizer->Optimize();
   }
-  catch (tmNLCO::EX_BAD_CONVERGENCE ex) {
+  catch (const tmNLCO::EX_BAD_CONVERGENCE& ex) {
     cout << "Strain optimization failed with result code " << 
       ex.GetReason() << endl;
   }

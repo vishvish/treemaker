@@ -5,7 +5,7 @@ Purpose:      Implementation file for class tmPath
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-25
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmPath.h"
@@ -512,17 +512,17 @@ void tmPath::BuildSelfVertices()
     tmPoint q2 = backVertex->mLoc;
     tmPoint qu = q2 - q1;
     qu /= mActPaperLength;
-    tmPath* maxOutsetPathPtr;
+    tmPath* maxOutsetPath;
     tmFloat maxFrontReduction, maxBackReduction;
-    GetMaxOutsetPath(maxOutsetPathPtr, maxFrontReduction, maxBackReduction);
-    tmPath& maxOutsetPath = *maxOutsetPathPtr; // Use reference to prevent memory leak
+    GetMaxOutsetPath(maxOutsetPath, maxFrontReduction, maxBackReduction);
+    // maxOutsetPath is a view into an existing path, no ownership transfer
     tmFloat curPos = -maxFrontReduction;
     // Step through the nodes and edges of the path. Only create a vertex if
     // the position falls within the path.
-    TMASSERT(maxOutsetPath.mEdges.not_empty());
-    for (size_t i = 0; i < maxOutsetPath.mEdges.size(); ++i) {
-      tmNode* curNode = maxOutsetPath.mNodes[i + 1];
-      curPos += maxOutsetPath.mEdges[i]->GetStrainedScaledLength();
+    TMASSERT(maxOutsetPath->mEdges.not_empty());
+    for (size_t i = 0; i < maxOutsetPath->mEdges.size(); ++i) {
+      tmNode* curNode = maxOutsetPath->mNodes[i + 1];
+      curPos += maxOutsetPath->mEdges[i]->GetStrainedScaledLength();
       if (curPos <= 0.0) continue;
       if (curPos >= mActPaperLength) break;
       GetOrMakeVertex(q1 + qu * curPos, curNode);

@@ -9,10 +9,12 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmPath.h"
-#include "tmModel.h"
+#include "tmConditionPathActive.h"
+#include "tmConditionPathAngleFixed.h"
+#include "tmNode.h"
+#include "tmPoly.h"
 
 #ifdef TMDEBUG
-  #include <fstream>
 #endif
 
 using namespace std;
@@ -385,10 +387,8 @@ tmVertex* tmPath::GetOrMakeVertex(const tmPoint& p, tmNode* aTreeNode)
   // Check front end of path
   if (tmVertex::VerticesSameLoc(p, frontNode->mLoc))
     theVertex = frontNode->GetOrMakeVertexSelf();
-  else
-    // Check back end of path
-    if (tmVertex::VerticesSameLoc(p, backNode->mLoc))
-      theVertex = backNode->GetOrMakeVertexSelf();
+  else if (tmVertex::VerticesSameLoc(p, backNode->mLoc))  // Check back end of path
+    theVertex = backNode->GetOrMakeVertexSelf();
   else
     // Check for existing vertex owned by the path (i.e., a vertex somewhere along
     // the path).
@@ -424,9 +424,9 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
   tmFloat elevation = (1 - x) * mNodes.front()->mElevation + x * mNodes.back()->mElevation;
   
   // Create vertex and transfer ownership to mOwnedVertices
-  auto vertex = std::make_unique<tmVertex>(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
-  auto theVertex = vertex.get(); // Keep raw pointer for return value
-  mOwnedVertices.push_back(vertex.release()); // Transfer ownership to mOwnedVertices
+  tmVertex* theVertex = new tmVertex(mTree, this, p, elevation, static_cast<bool>(mIsBorderPath), aTreeNode);
+  mOwnedVertices.push_back(theVertex);
+
   
   // Insert vertex at correct position
   for (size_t i = 0; i < mOwnedVertices.size() - 1; ++i) {

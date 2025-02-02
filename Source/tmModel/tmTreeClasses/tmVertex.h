@@ -101,6 +101,10 @@ public:
   // Destructor
   virtual ~tmVertex();
 
+  // Constructor for paths
+  tmVertex(tmTree* aTree, tmVertexOwner* aVertexOwner, tmPoint aLoc,
+           double& aElevation, bool& aIsBorderPath, tmNode*& aTreeNode);
+
 private:
   // computed at construction
   tmPoint mLoc;

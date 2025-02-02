@@ -110,7 +110,7 @@ void DoScaleOptimization(char* name)
     cout << "Scale optimization failed with result code " << 
       ex.GetReason() << endl;
   }
-  catch (const tmScaleOptimizer::EX_BAD_SCALE& ex) {
+  catch (const tmScaleOptimizer::EX_BAD_SCALE&) {
     cout << "Scale optimization failed with scale too small. " << endl;
   }
   stopTime = clock();

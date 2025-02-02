@@ -424,7 +424,7 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
   tmFloat elevation = (1 - x) * mNodes.front()->mElevation + x * mNodes.back()->mElevation;
   
   // Create vertex with automatic memory management
-  std::unique_ptr<tmVertex> vertex(new tmVertex(mTree, this, p, elevation, mIsBorderPath, aTreeNode));
+  auto vertex = std::make_unique<tmVertex>(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
   auto theVertex = vertex.get(); // Keep raw pointer for return value
   vertex.release(); // Release ownership as mOwnedVertices takes control
   
@@ -450,10 +450,10 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
     
     if (x > 0 && x < 1) {
       TMLOG("tmPath::MakeVertex(..) -- crease split during vertex creation");
-      std::unique_ptr<tmCrease> frontCrease(new tmCrease(mTree, this, frontVertex, theVertex, theCrease->mKind));
-      std::unique_ptr<tmCrease> backCrease(new tmCrease(mTree, this, theVertex, backVertex, theCrease->mKind));
-      frontCrease.release(); // ownership transferred to tmCreaseOwner
-      backCrease.release(); // ownership transferred to tmCreaseOwner
+      // The tmCrease constructor will add the crease to mOwnedCreases of tmCreaseOwner
+      std::make_unique<tmCrease>(mTree, this, frontVertex, theVertex, theCrease->mKind);
+      std::make_unique<tmCrease>(mTree, this, theVertex, backVertex, theCrease->mKind);
+      // Now that new creases are created and owned, we can safely delete the old one
       delete theCrease;
       break;
     }

@@ -43,7 +43,7 @@ class B;
 
 // Classes A and B hold references to each other.
 
-class A : public virtual tmDpptrTarget
+class A : public tmDpptrTarget
 {
   public:
     A() {cout << "member of class A created" << endl;}
@@ -52,7 +52,7 @@ class A : public virtual tmDpptrTarget
 };
 
 
-class B : public virtual tmDpptrTarget
+class B : public tmDpptrTarget
 {
   public:
     B() {cout << "member of class B created" << endl;}
@@ -63,7 +63,7 @@ class B : public virtual tmDpptrTarget
 };
 
 
-class D : public virtual tmDpptrTarget
+class D : public tmDpptrTarget
 {
   public:
     D(char* aName) : tmDpptrTarget() {std::format_to_n(mName, 20, "{}", aName); 

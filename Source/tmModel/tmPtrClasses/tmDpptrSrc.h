@@ -30,10 +30,17 @@ protected:
     }
   };
   void DstRemoveMeAsDpptrSrc(tmDpptrTarget* aDpptrTarget) {
+    // Early return for null pointer
     if (!aDpptrTarget) return;
-    tmDpptrTarget* target = aDpptrTarget;  // Store target pointer
-    tmDpptrSrc* self = this;  // Store this pointer
-    target->RemoveDpptrSrc(self);  // Use stored pointers
+    
+    // Store both pointers as const before any operations
+    tmDpptrSrc* const self = this;
+    tmDpptrTarget* const target = aDpptrTarget;
+    
+    // Validate pointers before use
+    if (self && target) {
+      target->RemoveDpptrSrc(self);
+    }
   };
 
   // Implemented by subclasses

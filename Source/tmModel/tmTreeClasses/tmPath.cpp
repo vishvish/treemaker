@@ -423,11 +423,9 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
   tmFloat x = dist_p / Mag(p2 - p1);
   tmFloat elevation = (1 - x) * mNodes.front()->mElevation + x * mNodes.back()->mElevation;
   
-  // Create vertex and store it in a vector to track ownership
-  std::vector<tmVertex*> newVertices;
-  std::unique_ptr<tmVertex> theVertex = std::make_unique<tmVertex>(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
-  newVertices.push_back(theVertex);
-
+  // Create vertex
+  tmVertex* theVertex = new tmVertex(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
+  
   // Insert vertex at correct position
   for (size_t i = 0; i < mOwnedVertices.size() - 1; ++i) {
     tmVertex* testVertex = mOwnedVertices[i];
@@ -451,8 +449,8 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
     
     if (x > 0 && x < 1) {
       TMLOG("tmPath::MakeVertex(..) -- crease split during vertex creation");
-      std::make_unique<tmCrease>(mTree, this, frontVertex, theVertex, theCrease->mKind);
-      auto newCrease2 = std::make_unique<tmCrease>(mTree, this, theVertex, backVertex, theCrease->mKind);
+      new tmCrease(mTree, this, frontVertex, theVertex, theCrease->mKind);
+      new tmCrease(mTree, this, theVertex, backVertex, theCrease->mKind);
       delete theCrease;
       break;
     }
@@ -460,6 +458,7 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
 
   return theVertex;
 }
+
 
 /*****
 Return front vertex in the path, i.e., the vertex corresponding to the front

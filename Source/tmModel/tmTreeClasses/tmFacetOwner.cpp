@@ -64,7 +64,10 @@ inside of the poly.
 *****/
 bool tmFacetOwner::CanStartFacetFwd(tmCrease* aCrease)
 {
-  if (aCrease->mFwdFacet) return false;
+  if (!aCrease || !aCrease->mVertices.front() || !aCrease->mVertices.back() || 
+      !FacetOwnerAsPoly() || aCrease->mFwdFacet) {
+    return false;
+  }
   if (!aCrease->IsAxialCrease()) return true;
   return AreCCW(aCrease->mVertices.front()->mLoc, 
     aCrease->mVertices.back()->mLoc, FacetOwnerAsPoly()->mCentroid);
@@ -77,7 +80,10 @@ CanStartFacetBkd(), we will only start facets on non-axial creases.
 *****/
 bool tmFacetOwner::CanStartFacetBkd(tmCrease* aCrease)
 {
-  if (aCrease->mBkdFacet) return false;
+  if (!aCrease || !aCrease->mVertices.front() || !aCrease->mVertices.back() || 
+      !FacetOwnerAsPoly() || aCrease->mBkdFacet) {
+    return false;
+  }
   if (!aCrease->IsAxialCrease()) return true;
   return AreCW(aCrease->mVertices.front()->mLoc, 
     aCrease->mVertices.back()->mLoc, FacetOwnerAsPoly()->mCentroid);
@@ -133,40 +139,50 @@ counterclockwise. Also return the tmVertex (nextVertex) at the opposite end of
 the crease. 
 *****/
 void tmFacetOwner::GetNextCreaseAndVertex(tmCrease* thisCrease, 
-  tmVertex* thisVertex,  tmCrease*& nextCrease, tmVertex*& nextVertex)
+  tmVertex* thisVertex, tmCrease*& nextCrease, tmVertex*& nextVertex)
 {
+  // Validate input pointers
+  if (!thisCrease || !thisVertex || !thisCrease->mVertices.front() || !thisCrease->mVertices.back()) {
+    nextCrease = nullptr;
+    nextVertex = nullptr;
+    return;
+  }
+
   // Get the angle of thisCrease.
   tmVertex* thatVertex = thisCrease->mVertices.front();
-  if (thatVertex == thisVertex) thatVertex = thisCrease->mVertices.back();
+  if (thatVertex == thisVertex) {
+    thatVertex = thisCrease->mVertices.back();
+  }
+  
+  // Validate vertices
+  if (!thatVertex || !thisVertex) {
+    nextCrease = nullptr;
+    nextVertex = nullptr;
+    return;
+  }
+  
   tmFloat thisAngle = Angle(thatVertex->mLoc - thisVertex->mLoc);
   
-  // delta is the increment in angle from thisCrease to nextCrease. Start with
-  // the largest possible value. Then go through each of the Creases emanating
-  // from thisVertex and compare its angle to the angle of thisCrease. We'll
-  // keep the smallest positive angle we find.
   tmFloat delta = TWO_PI;
   nextCrease = thisCrease;
-  nextVertex = 0;
+  nextVertex = nullptr;
+  
   for (size_t i = 0; i < thisVertex->mCreases.size(); ++i) {
     tmCrease* thatCrease = thisVertex->mCreases[i];
-    if (thatCrease == thisCrease) continue;
+    if (!thatCrease || thatCrease == thisCrease) continue;
     
-    // Get the angle of thatCrease and the tmVertex at the other end of
-    // thatCrease (thatVertex).
+    // Get vertices and validate
     thatVertex = thatCrease->mVertices.front();
-    if (thatVertex == thisVertex) thatVertex = thatCrease->mVertices.back();
-    tmFloat nextAngle = Angle(thatVertex->mLoc - thisVertex->mLoc);
+    if (!thatVertex || thatVertex == thisVertex) {
+      thatVertex = thatCrease->mVertices.back();
+    }
+    if (!thatVertex) continue;
     
-      // Find the angular increment to the new crease. Constrain it to lie
-      // between 0 and 2 PI.
+    tmFloat nextAngle = Angle(thatVertex->mLoc - thisVertex->mLoc);
     tmFloat newDelta = thisAngle - nextAngle;
     while (newDelta < 0) newDelta += TWO_PI;
     while (newDelta >= TWO_PI) newDelta -= TWO_PI;
     
-    // If the angular increment is less than our current champion, we'll
-    // replace the current values with those of the new tmCrease. When we're
-    // done, we'll be left with the tmCrease that makes the smallest angle with
-    // the current tmCrease.
     if (newDelta < delta) {
       delta = newDelta;
       nextCrease = thatCrease;
@@ -178,6 +194,7 @@ void tmFacetOwner::GetNextCreaseAndVertex(tmCrease* thisCrease,
   TMASSERT(nextCrease != thisCrease);
   TMASSERT(nextVertex);
 }
+
 
 
 /*****

@@ -222,11 +222,11 @@ void tmStubFinder::TestOneCombo(tmArray<tmStubInfo>& sInfoList)
   try {
     SolveEqns(10, u, 1.0e-8, 1.0e-8);
   }
-  catch(EX_TOO_MANY_ITERATIONS) {
+  catch(const EX_TOO_MANY_ITERATIONS&) {
     // no solution, so go on to the next case
     return;
   }
-  catch(EX_SINGULAR_MATRIX) {
+  catch(const EX_SINGULAR_MATRIX&) {
     // no solution, so go on to the next case
     return;
   }

@@ -106,11 +106,11 @@ void DoScaleOptimization(char* name)
   try {
     theOptimizer->Optimize();
   }
-  catch (tmNLCO::EX_BAD_CONVERGENCE ex) {
+  catch (const tmNLCO::EX_BAD_CONVERGENCE& ex) {
     cout << "Scale optimization failed with result code " << 
       ex.GetReason() << endl;
   }
-  catch(tmScaleOptimizer::EX_BAD_SCALE) {
+  catch(const tmScaleOptimizer::EX_BAD_SCALE&) {
     cout << "Scale optimization failed with scale too small. " << endl;
   }
   stopTime = clock();
@@ -150,7 +150,7 @@ void DoEdgeOptimization(char* name)
   try {
     theOptimizer->Optimize();
   }
-  catch (tmNLCO::EX_BAD_CONVERGENCE ex) {
+  catch (const tmNLCO::EX_BAD_CONVERGENCE& ex) {
     cout << "Edge optimization failed with result code " << 
       ex.GetReason() << endl;
   stopTime = clock();
@@ -195,7 +195,7 @@ void DoStrainOptimization(char* name)
   try {
     theOptimizer->Optimize();
   }
-  catch (tmNLCO::EX_BAD_CONVERGENCE ex) {
+  catch (const tmNLCO::EX_BAD_CONVERGENCE& ex) {
     cout << "Strain optimization failed with result code " << 
       ex.GetReason() << endl;
   }

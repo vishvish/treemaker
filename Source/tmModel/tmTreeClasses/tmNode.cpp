@@ -489,9 +489,9 @@ void tmNode::Getv3Self(std::istream& is)
 }
 
 inline std::size_t tmNode::tag = 0;
+static inline const std::string tagStr = "node";
 
 const std::string& tmNode::TagStr() {
-
-    static const std::string tagStr = "node";
-    return tagStr;
+  return tagStr;
 }
+

@@ -30,11 +30,11 @@ protected:
     }
   };
   void DstRemoveMeAsDpptrSrc(tmDpptrTarget* aDpptrTarget) {
-    tmDpptrTarget* target = aDpptrTarget;  // Store pointer before potential deletion
-    if (target) {
+    if (tmDpptrTarget* target = aDpptrTarget; target) {
       target->RemoveDpptrSrc(this);
     }
   };
+
   // Implemented by subclasses
   virtual void RemoveDpptrTarget(tmDpptrTarget*) {};
 private:

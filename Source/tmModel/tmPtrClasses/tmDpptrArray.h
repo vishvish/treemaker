@@ -207,8 +207,9 @@ template <class T>
 tmDpptrArray<T>::~tmDpptrArray()
 {
   for (std::size_t i = 0; i < this->size(); ++i) {
-    T* target = (*this)[i];  // Store pointer before potential deletion
-    if (target) DstRemoveMeAsDpptrSrc(target);
+    if (T* target = (*this)[i]; target) {
+      DstRemoveMeAsDpptrSrc(target);
+    }
   }
 }
 
@@ -253,12 +254,12 @@ Remove all copies of this item from the list.
 template <class T>
 void tmDpptrArray<T>::erase_remove(T* pt)
 {
-  if (this->contains(pt)) {
-    T* target = pt;  // Store pointer before potential deletion
+  if (T* target = pt; this->contains(target)) {
     tmArray<T*>::erase_remove(target);
     if (target) DstRemoveMeAsDpptrSrc(target);
   };
 }
+
 
 
 /*****
@@ -272,8 +273,9 @@ void tmDpptrArray<T>::replace_with(T*& told, T*& tnew)
   bool removedMe = false;
   while ((p = find(p, this->end(), told)) != this->end()) {
     if (!removedMe) {
-      T* target = *p;  // Store pointer before potential deletion
-      if (target) DstRemoveMeAsDpptrSrc(target);
+      if (T* target = *p; target) {
+        DstRemoveMeAsDpptrSrc(target);
+      }
       removedMe = true;
     }
     *p = tnew;
@@ -289,8 +291,9 @@ template <class T>
 void tmDpptrArray<T>::clear()
 {
   for (std::size_t i = 0; i < this->size(); ++i) {
-    T* target = (*this)[i];  // Store pointer before potential deletion
-    if (target) DstRemoveMeAsDpptrSrc(target);
+    if (T* target = (*this)[i]; target) {
+      DstRemoveMeAsDpptrSrc(target);
+    }
   }
   tmArray<T*>::clear();
 }
@@ -313,11 +316,11 @@ Replace one item with another
 template <class T>
 void tmDpptrArray<T>::ReplaceItemAt(std::size_t n, T* pt)
 {
-  T* qt = this->NthItem(n);
-  T* target = qt;  // Store pointer before potential deletion
-  tmArray<T*>::ReplaceItemAt(n, pt);
-  DstAddMeAsDpptrSrc(pt);
-  if (target) DstRemoveMeAsDpptrSrc(target);
+  if (T* target = this->NthItem(n); target) {
+    tmArray<T*>::ReplaceItemAt(n, pt);
+    DstAddMeAsDpptrSrc(pt);
+    DstRemoveMeAsDpptrSrc(target);
+  }
 }
 
 

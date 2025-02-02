@@ -21,7 +21,7 @@ void test1(const tmArray<const char*>& aList)
 {
   tmArrayIterator i(aList);  // Let compiler deduce template argument
   const char* c;
-  while (i.Next(&c)) *c; // Keep dereferencing to prevent unused variable warning for c
+  while (i.Next(&c)) { /* Testing iterator */ }
 }
 
 
@@ -31,7 +31,7 @@ void test2(const tmArray<const char*>& aList);
 void test2(const tmArray<const char*>& aList)
 {
   size_t nmax = aList.size();
-  for (size_t i = 1; i <= nmax; ++i) *(aList.NthItem(i));
+  for (size_t i = 1; i <= nmax; ++i) aList.NthItem(i);
 }
 
 
@@ -40,7 +40,7 @@ void test2(const tmArray<const char*>& aList)
 void test2a(const tmArray<const char*>& aList);
 void test2a(const tmArray<const char*>& aList)
 {
-  for (size_t i = 1; i <= aList.size(); ++i) *(aList.NthItem(i));
+  for (size_t i = 1; i <= aList.size(); ++i) { /* Testing array access */ }
 }
 
 

@@ -272,7 +272,7 @@ construction.
 template <class P>
 tmPart::StringT<P>::StringT()
 {
-  P::Tag() = GetNumTypes();
+  P::tag = GetNumTypes();
 }
 
 

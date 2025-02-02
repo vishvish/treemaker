@@ -422,8 +422,13 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
   tmFloat dist_p = Mag(p - p1);
   tmFloat x = dist_p / Mag(p2 - p1);
   tmFloat elevation = (1 - x) * mNodes.front()->mElevation + x * mNodes.back()->mElevation;
-  tmVertex* theVertex;
-  theVertex = new tmVertex(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
+  
+  // Create vertex and store it in a vector to track ownership
+  std::vector<tmVertex*> newVertices;
+  std::unique_ptr<tmVertex> theVertex = std::make_unique<tmVertex>(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
+  newVertices.push_back(theVertex);
+
+  // Insert vertex at correct position
   for (size_t i = 0; i < mOwnedVertices.size() - 1; ++i) {
     tmVertex* testVertex = mOwnedVertices[i];
     tmFloat dist_t = Mag(testVertex->mLoc - p1);
@@ -432,35 +437,29 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
       break;
     }
   }
-  
-  // TBD: Maybe no longer need to do following crease check, 
-  // since we now create all vertices first.
-  // For debugging, if we needed it, write the result to the log window.
 
-  // If this path owns any creases that overlap the vertex, split the 
-  // crease into two new ones.
+  // Handle crease splitting
   for (size_t i = 0; i < mOwnedCreases.size(); ++i) {
     tmCrease* theCrease = mOwnedCreases[i];
     tmVertex* frontVertex = theCrease->mVertices.front();
     tmVertex* backVertex = theCrease->mVertices.back();
-    // For each crease we'll check to see if the new vertex falls in the
-    // interior of the crease. If it does, then we split the crease, creating
-    // new ones and deleting the old ones.
+    
     const tmPoint& pc1 = frontVertex->mLoc;
     const tmPoint& pc2 = backVertex->mLoc;
     const tmPoint pc21 = pc2 - pc1;
     tmFloat x = Inner(p - pc1, pc21) / Mag2(pc21);
+    
     if (x > 0 && x < 1) {
       TMLOG("tmPath::MakeVertex(..) -- crease split during vertex creation");
-      new tmCrease(mTree, this, frontVertex, theVertex, theCrease->mKind);
-      new tmCrease(mTree, this, theVertex, backVertex, theCrease->mKind);
+      std::make_unique<tmCrease>(mTree, this, frontVertex, theVertex, theCrease->mKind);
+      auto newCrease2 = std::make_unique<tmCrease>(mTree, this, theVertex, backVertex, theCrease->mKind);
       delete theCrease;
-      return theVertex;
+      break;
     }
   }
+
   return theVertex;
 }
-
 
 /*****
 Return front vertex in the path, i.e., the vertex corresponding to the front
@@ -540,14 +539,13 @@ void tmPath::ConnectSelfVertices(tmCrease::Kind aKind)
   TMASSERT(frontVertex);
   for (size_t i = 0; i < mOwnedVertices.size(); ++i) {
     tmVertex* backVertex = mOwnedVertices[i];
-    GetOrMakeCrease(frontVertex, backVertex, aKind);
+    std::unique_ptr<tmCrease> crease(GetOrMakeCrease(frontVertex, backVertex, aKind));
     frontVertex = backVertex;
   }
   tmVertex* backVertex = GetBackVertex();
   TMASSERT(backVertex);
-  GetOrMakeCrease(frontVertex, backVertex, aKind);
+  std::unique_ptr<tmCrease> finalCrease(GetOrMakeCrease(frontVertex, backVertex, aKind));
 }
-
 
 /*****
 Set the depth of the given vertex relative to the coordinate system established

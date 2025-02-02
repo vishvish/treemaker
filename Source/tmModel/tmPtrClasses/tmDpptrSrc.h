@@ -5,7 +5,7 @@ Purpose:      Header file for class tmDpptrSrc
 Author:       Robert J. Lang
 Modified by:  
 Created:      2003-11-15
-Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
+Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #ifndef _TMDPPTRSRC_H_
@@ -25,9 +25,15 @@ public:
 protected:
   // Used by subclasses
   void DstAddMeAsDpptrSrc(tmDpptrTarget* aDpptrTarget) {
-    aDpptrTarget->AddDpptrSrc(this);};
+    if (aDpptrTarget) {
+      aDpptrTarget->AddDpptrSrc(this);
+    }
+  };
   void DstRemoveMeAsDpptrSrc(tmDpptrTarget* aDpptrTarget) {
-    aDpptrTarget->RemoveDpptrSrc(this);};
+    if (aDpptrTarget) {
+      aDpptrTarget->RemoveDpptrSrc(this);
+    }
+  };
   // Implemented by subclasses
   virtual void RemoveDpptrTarget(tmDpptrTarget*) {};
 private:

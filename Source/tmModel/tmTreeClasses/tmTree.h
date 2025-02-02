@@ -13,13 +13,13 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 
 // Standard TreeMaker header
 #include "tmHeader.h"
+#include "tmEdge.h"  // Add this include
 
 // Standard libraries
 #include <iostream>
 
 // TreeMaker classes
 #include "tmModel_fwd.h"
-#include "tmTreeCleaner.h"
 #include "tmPart.h"
 #include "tmCluster.h"
 #include "tmEdgeOwner.h"
@@ -30,6 +30,7 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 #include "tmArray.h"
 #include "tmArrayIterator.h"
 #include "tmCondition.h"
+#include "tmTree_fwd.h"
 
 
 /**********

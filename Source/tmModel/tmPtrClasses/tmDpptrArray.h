@@ -206,8 +206,10 @@ Destructor. Inform all objects that they're no longer referenced by us
 template <class T>
 tmDpptrArray<T>::~tmDpptrArray()
 {
-  for (std::size_t i = 0; i < this->size(); ++i) 
-    DstRemoveMeAsDpptrSrc((*this)[i]);
+  for (std::size_t i = 0; i < this->size(); ++i) {
+    T* target = (*this)[i];  // Store pointer before potential deletion
+    if (target) DstRemoveMeAsDpptrSrc(target);
+  }
 }
 
 
@@ -252,8 +254,9 @@ template <class T>
 void tmDpptrArray<T>::erase_remove(T* pt)
 {
   if (this->contains(pt)) {
-    tmArray<T*>::erase_remove(pt);
-    DstRemoveMeAsDpptrSrc(pt);
+    T* target = pt;  // Store pointer before potential deletion
+    tmArray<T*>::erase_remove(target);
+    if (target) DstRemoveMeAsDpptrSrc(target);
   };
 }
 
@@ -269,7 +272,8 @@ void tmDpptrArray<T>::replace_with(T*& told, T*& tnew)
   bool removedMe = false;
   while ((p = find(p, this->end(), told)) != this->end()) {
     if (!removedMe) {
-      DstRemoveMeAsDpptrSrc(*p);
+      T* target = *p;  // Store pointer before potential deletion
+      if (target) DstRemoveMeAsDpptrSrc(target);
       removedMe = true;
     }
     *p = tnew;
@@ -284,8 +288,10 @@ Remove all items and inform referenced objects
 template <class T>
 void tmDpptrArray<T>::clear()
 {
-  for (std::size_t i = 0; i < this->size(); ++i) 
-    DstRemoveMeAsDpptrSrc((*this)[i]);
+  for (std::size_t i = 0; i < this->size(); ++i) {
+    T* target = (*this)[i];  // Store pointer before potential deletion
+    if (target) DstRemoveMeAsDpptrSrc(target);
+  }
   tmArray<T*>::clear();
 }
 
@@ -308,9 +314,10 @@ template <class T>
 void tmDpptrArray<T>::ReplaceItemAt(std::size_t n, T* pt)
 {
   T* qt = this->NthItem(n);
+  T* target = qt;  // Store pointer before potential deletion
   tmArray<T*>::ReplaceItemAt(n, pt);
   DstAddMeAsDpptrSrc(pt);
-  DstRemoveMeAsDpptrSrc(qt);
+  if (target) DstRemoveMeAsDpptrSrc(target);
 }
 
 

@@ -143,7 +143,8 @@ Destructor. Notify the tmDpptrTarget that it no longer has me pointing at it
 template <class T>
 tmDpptr<T>::~tmDpptr()
 {
-  if (mTarget) DstRemoveMeAsDpptrSrc(mTarget);
+  T* target = mTarget;  // Store pointer before potential deletion
+  if (target) DstRemoveMeAsDpptrSrc(target);
 }
 
 
@@ -154,9 +155,10 @@ objects of the change in reference.
 template <class T>
 T* tmDpptr<T>::operator=(T* t)
 {
-  if (mTarget) DstRemoveMeAsDpptrSrc(mTarget);
+  T* oldTarget = mTarget;  // Store pointer before potential deletion
   mTarget = t;
   if (mTarget) DstAddMeAsDpptrSrc(mTarget);
+  if (oldTarget) DstRemoveMeAsDpptrSrc(oldTarget);
   return mTarget;
 }
 

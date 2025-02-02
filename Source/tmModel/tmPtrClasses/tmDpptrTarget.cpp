@@ -68,15 +68,18 @@ Notify any DpptrSrcs that point to me to clear their pointers to me.
 *****/
 tmDpptrTarget::~tmDpptrTarget()
 {
-  //  Note: a tmDpptrArray<T> can hold multiple references to the same object, in which
-  //  case mDpptrSrcs will hold multiple pointers to the same tmDpptrArray<T>.
-  vector<tmDpptrSrc*> theDpptrSrcs(mDpptrSrcs);
-  for (size_t i = 0; i < theDpptrSrcs.size(); ++i) {
-    tmDpptrSrc* theDpptrSrc = theDpptrSrcs[i];
-    theDpptrSrc->RemoveDpptrTarget(this);
+  try {
+    //  Note: a tmDpptrArray<T> can hold multiple references to the same object, in which
+    //  case mDpptrSrcs will hold multiple pointers to the same tmDpptrArray<T>.
+    vector<tmDpptrSrc*> theDpptrSrcs(mDpptrSrcs);
+    for (size_t i = 0; i < theDpptrSrcs.size(); ++i) {
+      tmDpptrSrc* theDpptrSrc = theDpptrSrcs[i];
+      theDpptrSrc->RemoveDpptrTarget(this);
+    }
+  } catch (...) {
+    // Handle or log the exception as needed
   }
 }
-
 
 /*****
 void tmDpptrTarget::AddDpptrSrc(tmDpptrSrc* r)

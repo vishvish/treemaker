@@ -505,18 +505,11 @@ void tmPart::GetPOD(istream& is, char* c)
 
 /*****
 STATIC
-Return a reference to the class tag static variable. Note that this number
-gets changed by the dynamic type system when we call InitTypes(), which is why
-this returns a reference. Each class overloads this static function, then
-overrides the related virtual function GetTag() to return the class tag.
+The class tag is now implemented as an inline variable in each class.
+Each class has a static inline tag variable that contains the discrete
+unsigned integer tag used to identify objects that are instances of that class.
+The values are not necessarily the same from build to build.
 *****/
-size_t& tmPart::Tag()
-{
-  TMFAIL("tmPart::Tag()");  // should never call this
-  static size_t sTag = RAW_TAG;
-  return sTag;
-}
-
 
 /*****
 STATIC
@@ -524,11 +517,13 @@ Return the class tag string. Each class overloads this static function, then
 overrides the related virtual function GetTagStr() to return the class tag
 string.
 *****/
+
+static inline const std::string nullTagStr = "NULL";
+
 const string& tmPart::TagStr()
 {
   TMFAIL("tmPart::TagStr()"); // should never call this
-  static const string sTagStr("NULL");
-  return sTagStr;
+  return nullTagStr;
 }
 
 
@@ -552,7 +547,7 @@ we don't recognize it, TagToStr() will throw a EX_IO_UNRECOGNIZED_TAG. This is a
 good place to remind that tmPart::GetTag() returns the tag for the given part
 polymorphically.
 *****/
-void tmPart::GetPODTag(istream& is, size_t& tag)
+void tmPart::GetPODTag(istream& is, size_t& tagValue)
 {
   TMASSERT(TypesAreInitialized());
   string tagstr;
@@ -560,7 +555,7 @@ void tmPart::GetPODTag(istream& is, size_t& tag)
   if (tagstr.length() != 4) {
     throw EX_IO_BAD_TAG(tagstr);
   }
-  tag = StrToTag(tagstr);
+  tagValue = StrToTag(tagstr);
 #if ECHO_INPUT
   TMLOG(wxString::Format("  GetTag() %s", tagstr.c_str()));
 #endif // ECHO_INPUT
@@ -572,13 +567,13 @@ STATIC
 Return the string associated with this tag, which will be the value of P::Tag()
 for some class P. Throw an exception if none is found.
 *****/
-const string& tmPart::TagToStr(size_t tag)
+const string& tmPart::TagToStr(size_t tagValue)
 {
   TMASSERT(TypesAreInitialized());
-  TMASSERT(tag != RAW_TAG);
-  if (tag >= GetTagStrs().size()) {
+  TMASSERT(tagValue != RAW_TAG);
+  if (tagValue >= GetTagStrs().size()) {
     stringstream ss;
-    ss << "[tag ID] " << int(tag);
+    ss << "[tag ID] " << int(tagValue);
     throw EX_IO_UNRECOGNIZED_TAG(ss.str());
   }
   return GetTagStrs()[tag];

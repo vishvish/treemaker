@@ -206,8 +206,16 @@ Destructor. Inform all objects that they're no longer referenced by us
 template <class T>
 tmDpptrArray<T>::~tmDpptrArray()
 {
-  for (std::size_t i = 0; i < this->size(); ++i) 
-    DstRemoveMeAsDpptrSrc((*this)[i]);
+  // Store self pointer as const
+  const tmDpptrSrc* const self = this;
+  
+  for (std::size_t i = 0; i < this->size(); ++i) {
+    // Store target pointer as const
+    T* const target = (*this)[i];
+    if (self && target) {
+      DstRemoveMeAsDpptrSrc(target);
+    }
+  }
 }
 
 
@@ -251,11 +259,16 @@ Remove all copies of this item from the list.
 template <class T>
 void tmDpptrArray<T>::erase_remove(T* pt)
 {
-  if (this->contains(pt)) {
-    tmArray<T*>::erase_remove(pt);
-    DstRemoveMeAsDpptrSrc(pt);
-  };
+  // Store pointers as const
+  const tmDpptrSrc* const self = this;
+  T* const target = pt;
+  
+  if (self && target && this->contains(target)) {
+    tmArray<T*>::erase_remove(target);
+    DstRemoveMeAsDpptrSrc(target);
+  }
 }
+
 
 
 /*****
@@ -265,15 +278,24 @@ template <class T>
 void tmDpptrArray<T>::replace_with(T*& told, T*& tnew)
 {
   if (told == tnew) return;
+  
+  // Store pointers as const
+  const tmDpptrSrc* const self = this;
+  T* const oldTarget = told;
+  T* const newTarget = tnew;
+  
   iterator p = this->begin();
   bool removedMe = false;
-  while ((p = find(p, this->end(), told)) != this->end()) {
-    if (!removedMe) {
-      DstRemoveMeAsDpptrSrc(*p);
+  
+  while ((p = find(p, this->end(), oldTarget)) != this->end()) {
+    if (!removedMe && self && oldTarget) {
+      DstRemoveMeAsDpptrSrc(oldTarget);
       removedMe = true;
     }
-    *p = tnew;
-    DstAddMeAsDpptrSrc(*p);
+    *p = newTarget;
+    if (self && newTarget) {
+      DstAddMeAsDpptrSrc(newTarget);
+    }
   }
 }
 
@@ -284,8 +306,16 @@ Remove all items and inform referenced objects
 template <class T>
 void tmDpptrArray<T>::clear()
 {
-  for (std::size_t i = 0; i < this->size(); ++i) 
-    DstRemoveMeAsDpptrSrc((*this)[i]);
+  // Store self pointer as const
+  const tmDpptrSrc* const self = this;
+  
+  for (std::size_t i = 0; i < this->size(); ++i) {
+    // Store target pointer as const 
+    T* const target = (*this)[i];
+    if (self && target) {
+      DstRemoveMeAsDpptrSrc(target);
+    }
+  }
   tmArray<T*>::clear();
 }
 
@@ -307,10 +337,18 @@ Replace one item with another
 template <class T>
 void tmDpptrArray<T>::ReplaceItemAt(std::size_t n, T* pt)
 {
-  T* qt = this->NthItem(n);
-  tmArray<T*>::ReplaceItemAt(n, pt);
-  DstAddMeAsDpptrSrc(pt);
-  DstRemoveMeAsDpptrSrc(qt);
+  // Store pointers as const
+  const tmDpptrSrc* const self = this;
+  T* const oldTarget = this->NthItem(n);
+  T* const newTarget = pt;
+  
+  if (self && oldTarget) {
+    tmArray<T*>::ReplaceItemAt(n, newTarget);
+    if (newTarget) {
+      DstAddMeAsDpptrSrc(newTarget);
+    }
+    DstRemoveMeAsDpptrSrc(oldTarget);
+  }
 }
 
 

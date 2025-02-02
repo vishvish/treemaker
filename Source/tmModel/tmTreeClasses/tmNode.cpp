@@ -9,7 +9,15 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmNode.h"
-#include "tmModel.h"
+#include <iostream>
+#include <istream>
+#include "tmConditionNodeFixed.h"
+#include "tmConditionNodeOnEdge.h"
+#include "tmConditionNodeSymmetric.h"
+#include "tmConditionNodesCollinear.h"
+#include "tmConditionNodesPaired.h"
+#include "tmTree.h"
+#include "tmPath.h"
 
 /**********
 class tmNode
@@ -26,7 +34,7 @@ void tmNode::InitNode()
 
   // Initialize member data
   std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", "");
-  mLoc = tmPoint(0. ,0.);
+  mLoc = tmPoint(0., 0.);
   mDepth = DEPTH_NOT_SET;
   mElevation = 0.0;
 
@@ -40,10 +48,8 @@ void tmNode::InitNode()
   mIsConditionedNode = false;
   
   // Clear owner
-  mNodeOwner = 0;
+  mNodeOwner = nullptr;
 }
-
-
 /*****
 Bare constructor for tmNode, used in stream I/O.
 *****/
@@ -285,7 +291,7 @@ size_t tmNode::GetNumPolygonPaths() const
 /*****
 Put a tmNode to a file in version 5 format.
 *****/    
-void tmNode::Putv5Self(ostream& os)
+void tmNode::Putv5Self(std::ostream& os)
 {
   PutPOD(os, GetTagStr());
   PutPOD(os, mIndex);  
@@ -310,7 +316,7 @@ void tmNode::Putv5Self(ostream& os)
 /*****
 Get a tmNode from a file in version 5 format.
 *****/    
-void tmNode::Getv5Self(istream& is)
+void tmNode::Getv5Self(std::istream& is) 
 {
   CheckTagStr<tmNode>(is);  
   GetPOD(is, mIndex);  
@@ -336,7 +342,7 @@ void tmNode::Getv5Self(istream& is)
 Put a tmNode to a file in version 4 format. Note that we do not put any
 polys, vertices, or creases.
 *****/    
-void tmNode::Putv4Self(ostream& os)
+void tmNode::Putv4Self(std::ostream& os)
 {
   PutPOD(os, GetTagStr());
   PutPOD(os, mIndex);  
@@ -358,7 +364,7 @@ void tmNode::Putv4Self(ostream& os)
 /*****
 Get a tmNode from a file in version 4 format.
 *****/    
-void tmNode::Getv4Self(istream& is)
+void tmNode::Getv4Self(std::istream& is)
 {
   CheckTagStr<tmNode>(is);  
   GetPOD(is, mIndex);  
@@ -381,8 +387,8 @@ void tmNode::Getv4Self(istream& is)
 Get a node from a file in version 3 format. Note that when we read a version 3
 document, we create conditions, which were previously implemented as member
 variables.
-*****/  
-void tmNode::Getv3Self(istream& is)
+*****/
+void tmNode::Getv3Self(std::istream& is)
 {
   CheckTagStr<tmNode>(is);
   
@@ -482,8 +488,10 @@ void tmNode::Getv3Self(istream& is)
   mNodeOwner = mTree;
 }
 
+static inline const std::string nodeTagStr = "node";
 
-/*****
-Dynamic type implementation
-*****/
-TM_IMPLEMENT_TAG(tmNode, "node")
+const std::string& tmNode::TagStr() {
+  return nodeTagStr;
+}
+
+

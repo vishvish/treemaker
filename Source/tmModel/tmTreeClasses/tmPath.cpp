@@ -417,18 +417,20 @@ vertex creation before we create any creases owned by the path.
 tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
 {
   // Create the new vertex and insert it into the list at the appropriate spot.
-  tmPoint& p1 = mNodes.front()->mLoc;
-  tmPoint& p2 = mNodes.back()->mLoc;
+  const tmPoint& p1 = mNodes.front()->mLoc;
+  const tmPoint& p2 = mNodes.back()->mLoc;
   tmFloat dist_p = Mag(p - p1);
   tmFloat x = dist_p / Mag(p2 - p1);
   tmFloat elevation = (1 - x) * mNodes.front()->mElevation + x * mNodes.back()->mElevation;
   
-  // Create vertex
-  tmVertex* theVertex = new tmVertex(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
+  // Create vertex with automatic memory management
+  std::unique_ptr<tmVertex> vertex(new tmVertex(mTree, this, p, elevation, mIsBorderPath, aTreeNode));
+  auto theVertex = vertex.get(); // Keep raw pointer for return value
+  vertex.release(); // Release ownership as mOwnedVertices takes control
   
   // Insert vertex at correct position
   for (size_t i = 0; i < mOwnedVertices.size() - 1; ++i) {
-    tmVertex* testVertex = mOwnedVertices[i];
+    const tmVertex* testVertex = mOwnedVertices[i];
     tmFloat dist_t = Mag(testVertex->mLoc - p1);
     if (dist_p < dist_t) {
       mOwnedVertices.MoveItem(mOwnedVertices.size(), (i + 1));
@@ -437,8 +439,7 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
   }
 
   // Handle crease splitting
-  for (size_t i = 0; i < mOwnedCreases.size(); ++i) {
-    tmCrease* theCrease = mOwnedCreases[i];
+  for (auto* theCrease : mOwnedCreases) {
     tmVertex* frontVertex = theCrease->mVertices.front();
     tmVertex* backVertex = theCrease->mVertices.back();
     
@@ -449,8 +450,10 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
     
     if (x > 0 && x < 1) {
       TMLOG("tmPath::MakeVertex(..) -- crease split during vertex creation");
-      new tmCrease(mTree, this, frontVertex, theVertex, theCrease->mKind);
-      new tmCrease(mTree, this, theVertex, backVertex, theCrease->mKind);
+      std::unique_ptr<tmCrease> frontCrease(new tmCrease(mTree, this, frontVertex, theVertex, theCrease->mKind));
+      std::unique_ptr<tmCrease> backCrease(new tmCrease(mTree, this, theVertex, backVertex, theCrease->mKind));
+      frontCrease.release(); // ownership transferred to tmCreaseOwner
+      backCrease.release(); // ownership transferred to tmCreaseOwner
       delete theCrease;
       break;
     }
@@ -509,16 +512,17 @@ void tmPath::BuildSelfVertices()
     tmPoint q2 = backVertex->mLoc;
     tmPoint qu = q2 - q1;
     qu /= mActPaperLength;
-    tmPath* maxOutsetPath;
+    tmPath* maxOutsetPathPtr;
     tmFloat maxFrontReduction, maxBackReduction;
-    GetMaxOutsetPath(maxOutsetPath, maxFrontReduction, maxBackReduction);
+    GetMaxOutsetPath(maxOutsetPathPtr, maxFrontReduction, maxBackReduction);
+    tmPath& maxOutsetPath = *maxOutsetPathPtr; // Use reference to prevent memory leak
     tmFloat curPos = -maxFrontReduction;
     // Step through the nodes and edges of the path. Only create a vertex if
     // the position falls within the path.
-    TMASSERT(maxOutsetPath->mEdges.not_empty());
-    for (size_t i = 0; i < maxOutsetPath->mEdges.size(); ++i) {
-      tmNode* curNode = maxOutsetPath->mNodes[i + 1];
-      curPos += maxOutsetPath->mEdges[i]->GetStrainedScaledLength();
+    TMASSERT(maxOutsetPath.mEdges.not_empty());
+    for (size_t i = 0; i < maxOutsetPath.mEdges.size(); ++i) {
+      tmNode* curNode = maxOutsetPath.mNodes[i + 1];
+      curPos += maxOutsetPath.mEdges[i]->GetStrainedScaledLength();
       if (curPos <= 0.0) continue;
       if (curPos >= mActPaperLength) break;
       GetOrMakeVertex(q1 + qu * curPos, curNode);

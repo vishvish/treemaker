@@ -15,10 +15,15 @@ endforeach()
 
 project(TreeMaker VERSION ${TM_VERSION_MAJOR}.${TM_VERSION_MINOR}.${TM_VERSION_RELEASE} LANGUAGES CXX)
 
-# Set C++ standard
+# Set C++20 standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Add clang-specific flags for C++20
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+endif()
 
 # Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

@@ -37,6 +37,16 @@ Building on macOS
     make -j8 (or however many threads)
     ```
 
+    Or release version:
+
+    ```sh
+    mkdir build
+    cd build
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make -j8 (or however many threads)
+    ```
+
+
 3. The built application will be in `build/bin/TreeMaker.app`
 
 Running TreeMaker

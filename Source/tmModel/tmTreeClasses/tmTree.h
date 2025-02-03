@@ -14,6 +14,12 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 // Standard TreeMaker header
 #include "tmHeader.h"
 #include "tmEdge.h"  // Add this include
+#include "tmConditionEdgeLengthFixed.h"
+#include "tmConditionNodeOnEdge.h"  // Add this include
+#include "tmConditionNodeOnCorner.h"  // Add this include
+#include "tmConditionNodeSymmetric.h"  // Add this include
+#include "tmConditionEdgesSameStrain.h"  // Add this include
+#include "tmModel_fwd.h"
 
 // Standard libraries
 #include <iostream>
@@ -382,7 +388,7 @@ public:
   
   // tmCondition queries about parts
   template <class C, class P>
-    bool IsConditioned(P* p);
+    bool IsConditioned(P* p) const;
     
   // tmCondition creation. You can only create conditions through these
   // routines.
@@ -678,12 +684,10 @@ void tmTree::GetAffectingConditions(P* const p,
 Return true if this part has a condition of type C.
 *****/
 template <class C, class P>
-bool tmTree::IsConditioned(P* p) 
-{
-  tmCondition* aCondition;
-  tmArrayIterator<tmCondition*> iConditions(mConditions);
-  while (iConditions.Next(&aCondition))
+bool tmTree::IsConditioned(P* p) const {
+  for (const auto& aCondition : mConditions) {
     if (dynamic_cast<C*>(aCondition) && aCondition->Uses(p)) return true;
+  }
   return false;
 }
 

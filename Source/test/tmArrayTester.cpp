@@ -16,33 +16,33 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 #include "tmArrayIterator.h"  // my redefinition of PowerPlant tmArrayIterator
 
 // tmArrayIterator test
-void test1(tmArray<const char*>& aList);
-void test1(tmArray<const char*>& aList)
+void test1(const tmArray<const char*>& aList);
+void test1(const tmArray<const char*>& aList)
 {
-  char ch;
-  tmArrayIterator<const char*> i(aList);
+  tmArrayIterator i(aList);  // Let compiler deduce template argument
   const char* c;
-  while (i.Next(&c)) ch = *c;
+  while (i.Next(&c)) { /* Testing iterator */ }
 }
+
 
 
 // for loop test
-void test2(tmArray<const char*>& aList);
-void test2(tmArray<const char*>& aList)
+void test2(const tmArray<const char*>& aList);  
+void test2(const tmArray<const char*>& aList)
 {
-  char ch;
   size_t nmax = aList.size();
-  for (size_t i = 1; i <= nmax; ++i) *(aList.NthItem(i));
+  for (size_t i = 1; i <= nmax; ++i) aList.NthItem(i);
 }
+
 
 
 // for loop with repeated size()
-void test2a(tmArray<const char*>& aList);
-void test2a(tmArray<const char*>& aList)
+void test2a(const tmArray<const char*>& aList);
+void test2a(const tmArray<const char*>& aList)
 {
-  char ch;
-  for (size_t i = 1; i <= aList.size(); ++i) *(aList.NthItem(i));
+  for (size_t i = 1; i <= aList.size(); ++i) { /* Testing array access */ }
 }
+
 
 
 // class for test of stored pointers
@@ -136,7 +136,7 @@ int main(void)
   std::cout << "After replace_with(d, a) the list is " << alist << std::endl;
   
   // tmArrayIterator/tmArrayIterator test
-  tmArrayIterator<const char*> i(alist);
+  tmArrayIterator i(alist);  // Let compiler deduce template argument
   const char* dp;
   std::cout << "Forward iterator test." << std::endl;
   while (i.Next(&dp)) std::cout << "an element is " << dp << std::endl;

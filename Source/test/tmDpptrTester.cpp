@@ -9,7 +9,6 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include <iostream>
-#include <string>
 #include <format>
 
 #include "tmDpptr.h"
@@ -43,33 +42,142 @@ class B;
 
 // Classes A and B hold references to each other.
 
-class A : public virtual tmDpptrTarget
-{
-  public:
-    A() {cout << "member of class A created" << endl;}
-    virtual ~A() {cout << "member of class A deleted" << endl;}
+class A : public tmDpptrTarget {
+public:
+    // Default constructor
+    A() : ab() { 
+        cout << "member of class A created" << endl; 
+    }
+    
+    // Copy constructor with initialization list
+    A(const A& other) : 
+        tmDpptrTarget(other),
+        ab(other.ab) {
+        cout << "member of class A copied" << endl;
+    }
+    
+    // Copy assignment operator
+    A& operator=(const A& other) {
+        if (this != &other) {
+            tmDpptrTarget::operator=(other);
+            ab = other.ab;
+            cout << "member of class A copy assigned" << endl;
+        }
+        return *this;
+    }
+    
+    // Move constructor - transfer ownership
+    A(A&& other) noexcept : 
+        tmDpptrTarget(std::move(other)),
+        ab(std::move(other.ab)) {
+        cout << "member of class A moved" << endl;
+    }
+    
+    // Move assignment - transfer ownership
+    A& operator=(A&& other) noexcept {
+        if (this != &other) {
+            tmDpptrTarget::operator=(std::move(other));
+            ab = std::move(other.ab);
+            cout << "member of class A move assigned" << endl;
+        }
+        return *this;
+    }
+    
+    ~A() override { cout << "member of class A deleted" << endl; }
     tmDpptr<B> ab;
 };
 
 
-class B : public virtual tmDpptrTarget
-{
-  public:
-    B() {cout << "member of class B created" << endl;}
-    virtual ~B() {cout << "member of class B deleted" << endl;}
+class B : public tmDpptrTarget {  // Remove virtual
+public:
+    // Default constructor
+    B() { cout << "member of class B created" << endl; }
+    
+    // Copy constructor - deep copy the tmDpptr
+    B(const B& other) : tmDpptrTarget(other) {
+        ba = other.ba;  // tmDpptr has its own copy semantics
+        cout << "member of class B copied" << endl;
+    }
+    
+    // Copy assignment - deep copy the tmDpptr
+    B& operator=(const B& other) {
+        if (this != &other) {
+            tmDpptrTarget::operator=(other);
+            ba = other.ba;  // tmDpptr has its own copy semantics
+            cout << "member of class B copy assigned" << endl;
+        }
+        return *this;
+    }
+    
+    // Move constructor - transfer ownership
+    B(B&& other) noexcept : tmDpptrTarget(std::move(other)), ba(std::move(other.ba)) {
+        cout << "member of class B moved" << endl;
+    }
+    
+    // Move assignment - transfer ownership
+    B& operator=(B&& other) noexcept {
+        if (this != &other) {
+            tmDpptrTarget::operator=(std::move(other));
+            ba = std::move(other.ba);
+            cout << "member of class B move assigned" << endl;
+        }
+        return *this;
+    }
+    
+    ~B() override { cout << "member of class B deleted" << endl; }
     tmDpptr<A> ba;
     
-    void Test() {cout << "test B!" << endl;}
+    void Test() { cout << "test B!" << endl; }
 };
 
 
-class D : public virtual tmDpptrTarget
-{
-  public:
-    D(char* aName) : tmDpptrTarget() {std::format_to_n(mName, 20, "{}", aName); 
-      cout << mName << " created" << endl;}
-    virtual ~D() {cout << mName << " deleted" << endl;}
-  private:
+class D : public tmDpptrTarget {
+public:
+    // Constructor
+    explicit D(const char* aName) : tmDpptrTarget() {
+        std::format_to_n(mName, 20, "{}", aName);
+        cout << mName << " created" << endl;
+    }
+    
+    // Copy constructor
+    D(const D& other) : tmDpptrTarget(other) {
+        std::copy_n(other.mName, 20, mName);
+        cout << mName << " copied" << endl;
+    }
+    
+    // Copy assignment operator
+    D& operator=(const D& other) {
+        if (this != &other) {
+            tmDpptrTarget::operator=(other);
+            std::copy_n(other.mName, 20, mName);
+            cout << mName << " copy assigned" << endl;
+        }
+        return *this;
+    }
+    
+    // Move constructor
+    D(D&& other) noexcept : tmDpptrTarget(std::move(other)) {
+        std::copy_n(other.mName, 20, mName);
+        other.mName[0] = '\0';  // Clear the source name
+        cout << mName << " moved" << endl;
+    }
+    
+    // Move assignment operator
+    D& operator=(D&& other) noexcept {
+        if (this != &other) {
+            tmDpptrTarget::operator=(std::move(other));
+            std::copy_n(other.mName, 20, mName);
+            other.mName[0] = '\0';  // Clear the source name
+            cout << mName << " move assigned" << endl;
+        }
+        return *this;
+    }
+    
+    ~D() override {
+        cout << mName << " deleted" << endl;
+    }
+
+private:
     char mName[20];
 };
 
@@ -105,44 +213,35 @@ int main(void)
   cout << "Test of pointer usage:" << endl;
   
   ((B*) c)->Test(); // cast to a pointer
-  (*c).Test();    // dereference
-  c->Test();      // indirect dereference
-
-  c = 0;    // Reassigning c removes the last reference to b.
+  (*c).Test();      // dereference
+  c->Test();        // arrow operator
   
-  cout << endl;
+  // Use smart pointers instead of raw pointers
+  auto d1 = std::make_unique<D>("d1");
+  tmDpptr<D> rd2(std::make_unique<D>("d2").release());
   
-  // Now try out a tmDpptrArray that automatically removes objects as they are
-  // are deleted.
+  // No need to delete d1, unique_ptr handles cleanup
   
+  // Create test objects and populate array
   tmDpptrArray<D> rld;    // create a list of references
 
-  D* d1 = new D(const_cast<char*>("d1"));  // create a bunch of objects to put into the list
-  D* d2 = new D(const_cast<char*>("d2"));
-  D* d3 = new D(const_cast<char*>("d3"));
-  
-  tmDpptrTarget* rd1 = d1;
-  tmDpptrTarget* rd2 = d2;
-  tmDpptrTarget* rd3 = d3;
-  
-  rld.push_back(d1);    // put them into the list.
-  rld.push_back(d2);
-  rld.push_back(d3);
-  rld.push_back(d1);    // also check out effect of multiple references.
-  
-  // Now we'll delete the original objects one by one and watch as they are
-  // automatically removed from the list.
-  
+  // Create objects with clear ownership
+  std::unique_ptr<D> up1(new D(const_cast<char*>("d1")));
+  std::unique_ptr<D> up2(new D(const_cast<char*>("d2")));
+  std::unique_ptr<D> up3(new D(const_cast<char*>("d3")));
+
+  // Add to array without transferring ownership
+  rld.push_back(up1.get());
+  rld.push_back(up2.get());
+  rld.push_back(up3.get());
+  rld.push_back(up1.get());    // test multiple references
+
   cout << "Initially rld has " << rld.size() << " elements." << endl;
-  
-  delete d1;
-  cout << "After delete d1 rld has " << rld.size() << " elements." << endl;
-  
-  delete d2;
-  cout << "After delete d2 rld has " << rld.size() << " elements." << endl;
-  
-  delete d3;
-  cout << "After delete d3 rld has " << rld.size() << " elements." << endl;
+
+  // Let smart pointers handle cleanup
+  up1.reset();
+  up2.reset();
+  up3.reset();
   
   // Try it again but this time test the clear() command
   

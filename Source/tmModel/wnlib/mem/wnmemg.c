@@ -17,7 +17,6 @@ AUTHOR:
 
 #include <stdio.h>
 
-#include "wnlib.h"
 #include "wnmax.h"
 #include "wnasrt.h"
 #include "wnmemb.h"

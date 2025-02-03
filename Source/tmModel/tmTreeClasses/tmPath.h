@@ -16,6 +16,7 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 
 // Std libraries
 #include <iostream>
+#include <memory>
 
 // TreeMaker classes
 #include "tmModel_fwd.h"
@@ -26,6 +27,9 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 #include "tmDpptrArray.h"
 #include "tmDpptr.h"
 #include "tmTree.h"
+
+const tmFloat TMFLOAT_TOL = 1.0e-10;
+
 
 
 /**********
@@ -243,7 +247,7 @@ private:
 
   // Miscellaneous utilities
   void TreePathCalcLengths();
-  static bool TestIsFeasible(const tmFloat& actLen, const tmFloat& minLen);
+  static bool TestIsFeasible(const tmFloat& x, const tmFloat& y);
   static bool TestIsActive(const tmFloat& actLen, const tmFloat& minLen);
   bool StartsOrEndsWith(tmNode* aNode) const;
   bool SharesEndNodeWith(tmPath* aPath) const;

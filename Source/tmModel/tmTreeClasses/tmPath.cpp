@@ -9,10 +9,12 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmPath.h"
-#include "tmModel.h"
+#include "tmConditionPathActive.h"
+#include "tmConditionPathAngleFixed.h"
+#include "tmNode.h"
+#include "tmPoly.h"
 
 #ifdef TMDEBUG
-  #include <fstream>
 #endif
 
 using namespace std;
@@ -243,83 +245,6 @@ tmNode* tmPath::GetOtherNode(const tmNode* aNode) const
 
 
 /*****
-STATIC
-Copy all leaf paths from srcList into dstList.
-*****/
-void tmPath::FilterLeafPaths(tmArray<tmPath*>& dstList, 
-  const tmArray<tmPath*>& srcList)
-{
-  dstList.clear();
-  for (size_t i = 0; i < srcList.size(); ++i)
-    if (srcList[i]->IsLeafPath()) dstList.push_back(srcList[i]);
-}
-
-
-/*****
-Calculate all of the length-like member variables for this tree path. Also set
-whether the path is valid and/or active based on the calculated lengths.
-*****/
-void tmPath::TreePathCalcLengths()
-{
-  // Only call this for tree paths.
-  TMASSERT(IsTreePath());
-  
-  // compute the minimum length of each path based on the lengths of its edges 
-  // and any strain that is present
-  mMinTreeLength = 0.0;
-  for (size_t i = 0; i < mEdges.size(); ++i)
-    mMinTreeLength += mEdges[i]->GetStrainedLength();
-  mMinPaperLength = mMinTreeLength * mTree->mScale;
-  
-  // compute the actual length of the path, based on the coordinates of its
-  // nodes. this is only meaningful for leaf paths; for non-leaf paths we set
-  // the length to an innocuous value, i.e., zero.
-  if (mIsLeafPath && mNodes.size() > 0)
-    mActPaperLength = Mag(mNodes.front()->mLoc - mNodes.back()->mLoc);
-  else
-    mActPaperLength = 0;
-  mActTreeLength = mActPaperLength / mTree->mScale;
-  
-  // Also, calculate feasibility and activity since we now have this
-  // information; again, only meaningful for leaf paths.
-  if (mIsLeafPath) {
-    mIsFeasiblePath = TestIsFeasible(mActPaperLength, mMinPaperLength);
-    mIsActivePath = TestIsActive(mActPaperLength, mMinPaperLength);
-  }
-  else {
-    mIsFeasiblePath = false;
-    mIsActivePath = false;
-  }
-}
-
-
-/*****
-STATIC
-This routine provides a uniform test whether a path should be considered
-feasible. i.e., whether its actual length on the paper is greater than or equal
-to its minimum length, to within a specified tolerance. The two lengths should
-be scaled lengths (i.e., distances on the paper).
-*****/
-bool tmPath::TestIsFeasible(const tmFloat& actLen, const tmFloat& minLen)
-{
-  return actLen >= minLen - DistTol();
-}
-
-
-/*****
-STATIC
-This routine provides a uniform test whether a path should be considered
-active. i.e., whether its actual length is equal to its minimum length, to
-within a specified tolerance. The two lengths should be scaled lengths (i.e.,
-distances on the paper).
-*****/
-bool tmPath::TestIsActive(const tmFloat& actLen, const tmFloat& minLen)
-{
-  return IsTiny(actLen - minLen);
-}
-
-
-/*****
 Return true if this path starts or ends on the given node.
 *****/
 bool tmPath::StartsOrEndsWith(tmNode* aNode) const
@@ -385,10 +310,8 @@ tmVertex* tmPath::GetOrMakeVertex(const tmPoint& p, tmNode* aTreeNode)
   // Check front end of path
   if (tmVertex::VerticesSameLoc(p, frontNode->mLoc))
     theVertex = frontNode->GetOrMakeVertexSelf();
-  else
-    // Check back end of path
-    if (tmVertex::VerticesSameLoc(p, backNode->mLoc))
-      theVertex = backNode->GetOrMakeVertexSelf();
+  else if (tmVertex::VerticesSameLoc(p, backNode->mLoc))  // Check back end of path
+    theVertex = backNode->GetOrMakeVertexSelf();
   else
     // Check for existing vertex owned by the path (i.e., a vertex somewhere along
     // the path).
@@ -423,11 +346,11 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
   tmFloat x = dist_p / Mag(p2 - p1);
   tmFloat elevation = (1 - x) * mNodes.front()->mElevation + x * mNodes.back()->mElevation;
   
-  // Create vertex and transfer ownership to mOwnedVertices
-  auto vertex = std::make_unique<tmVertex>(mTree, this, p, elevation, mIsBorderPath, aTreeNode);
-  auto theVertex = vertex.get(); // Keep raw pointer for return value
-  mOwnedVertices.push_back(vertex.release()); // Transfer ownership to mOwnedVertices
-  
+  // Create vertex with unique_ptr and transfer ownership to mOwnedVertices
+  std::unique_ptr<tmVertex> theVertex(new tmVertex(mTree, this, p, elevation, static_cast<bool>(mIsBorderPath), aTreeNode));
+  tmVertex* rawVertex = theVertex.get();
+  mOwnedVertices.push_back(theVertex.release());
+
   // Insert vertex at correct position
   for (size_t i = 0; i < mOwnedVertices.size() - 1; ++i) {
     const tmVertex* testVertex = mOwnedVertices[i];
@@ -438,31 +361,37 @@ tmVertex* tmPath::MakeVertex(const tmPoint& p, tmNode* aTreeNode)
     }
   }
 
-  // Handle crease splitting
-  for (auto* theCrease : mOwnedCreases) {
-    tmVertex* frontVertex = theCrease->mVertices.front();
-    tmVertex* backVertex = theCrease->mVertices.back();
-    
-    const tmPoint& pc1 = frontVertex->mLoc;
-    const tmPoint& pc2 = backVertex->mLoc;
-    const tmPoint pc21 = pc2 - pc1;
-    tmFloat x = Inner(p - pc1, pc21) / Mag2(pc21);
-    
-    if (x > 0 && x < 1) {
-      TMLOG("tmPath::MakeVertex(..) -- crease split during vertex creation");
-      // Create new creases and ensure they're properly owned
-      auto newCrease1 = std::make_unique<tmCrease>(mTree, this, frontVertex, theVertex, theCrease->mKind);
-      auto newCrease2 = std::make_unique<tmCrease>(mTree, this, theVertex, backVertex, theCrease->mKind);
-      mOwnedCreases.push_back(newCrease1.release());
-      mOwnedCreases.push_back(newCrease2.release());
-      // Now that new creases are created and owned, we can safely delete the old one
-      delete theCrease;
-      break;
+    // Handle crease splitting
+    for (auto* theCrease : mOwnedCreases) {
+      tmVertex* frontVertex = theCrease->mVertices.front();
+      tmVertex* backVertex = theCrease->mVertices.back();
+      
+      const tmPoint& pc1 = frontVertex->mLoc;
+      const tmPoint& pc2 = backVertex->mLoc;
+      const tmPoint pc21 = pc2 - pc1;
+      tmFloat x = Inner(p - pc1, pc21) / Mag2(pc21);
+      
+      if (x > 0 && x < 1) {
+        TMLOG("tmPath::MakeVertex(..) -- crease split during vertex creation");
+        // Create new creases and ensure they're properly owned
+        tmCrease* newCrease1 = new tmCrease(mTree);
+        tmCrease* newCrease2 = new tmCrease(mTree);
+        newCrease1->mVertices.push_back(frontVertex);
+        newCrease1->mVertices.push_back(rawVertex);
+        newCrease1->mKind = theCrease->mKind;
+        newCrease2->mVertices.push_back(rawVertex);
+        newCrease2->mVertices.push_back(backVertex);
+        newCrease2->mKind = theCrease->mKind;
+        mOwnedCreases.push_back(newCrease1);
+        mOwnedCreases.push_back(newCrease2);
+        // Now that new creases are created and owned, we can safely delete the old one
+        delete theCrease;
+        break;
+      }
     }
+  
+    return rawVertex;
   }
-
-  return theVertex;
-}
 
 
 /*****
@@ -788,6 +717,56 @@ void tmPath::Getv3Self(istream& is)
   mPathOwner = mTree;
 }
 
+
+/*****
+Test if this path would be active with the given actual and minimum lengths.
+*****/
+bool tmPath::TestIsActive(const tmFloat& actLen, const tmFloat& minLen) {
+  // Path is active if actual length equals minimum length within tolerance
+  return IsTiny(actLen - minLen);
+}
+
+/*****
+Test if this path would be feasible with the given actual and minimum lengths.
+*****/
+bool tmPath::TestIsFeasible(const tmFloat& actLen, const tmFloat& minLen) {
+  // Path is feasible if actual length is greater than or equal to minimum length
+  return actLen >= minLen - TMFLOAT_TOL;
+}
+
+
+/*****
+Filter the given list of paths to include only leaf paths from the source list.
+*****/
+void tmPath::FilterLeafPaths(tmArray<tmPath*>& destPaths, 
+  const tmArray<tmPath*>& srcPaths) {
+  destPaths.clear();
+  for (size_t i = 0; i < srcPaths.size(); ++i) {
+    tmPath* thePath = srcPaths[i];
+    if (thePath->IsLeafPath()) 
+      destPaths.push_back(thePath);
+  }
+}
+
+/*****
+Calculate the minimum and actual lengths of this path in both tree and paper space.
+*****/
+void tmPath::TreePathCalcLengths() {
+  // Calculate minimum paper length from tree length
+  mMinPaperLength = mMinTreeLength * mTree->GetScale();
+  
+  // Calculate actual tree length by summing edge lengths
+  mActTreeLength = 0;
+  for (size_t i = 0; i < mEdges.size(); ++i)
+    mActTreeLength += mEdges[i]->GetStrainedLength();
+    
+  // Calculate actual paper length from actual tree length
+  mActPaperLength = mActTreeLength * mTree->GetScale();
+  
+  // Set feasibility and activity flags
+  mIsFeasiblePath = (mActTreeLength >= mMinTreeLength - TMFLOAT_TOL);
+  mIsActivePath = IsTiny(mActTreeLength - mMinTreeLength);
+}
 
 /*****
 Dynamic type implementation

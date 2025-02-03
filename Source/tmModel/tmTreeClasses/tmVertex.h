@@ -30,6 +30,7 @@ class tmVertex
 Class that represents a vertex of a crease pattern.
 **********/
 class tmVertex : public tmPart, public tmDpptrTarget {
+  friend class tmPath;  // Add tmPath as friend to allow constructor access
 public:
   // Getters
   
@@ -101,6 +102,10 @@ public:
   // Destructor
   virtual ~tmVertex();
 
+  // Constructor for paths
+  tmVertex(tmTree* aTree, tmVertexOwner* aVertexOwner, tmPoint aLoc,
+           double& aElevation, bool& aIsBorderPath, tmNode*& aTreeNode);
+
 private:
   // computed at construction
   tmPoint mLoc;
@@ -169,7 +174,6 @@ private:
   friend class tmPart::CreatorFnT<tmVertex>;
   friend class tmTree;
   friend class tmNode;
-  friend class tmPath;
   friend class tmPoly;
   friend class tmVertexOwner;
   friend class tmFacet;

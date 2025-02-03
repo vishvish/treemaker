@@ -12,7 +12,6 @@ Copyright:    ©2004 Robert J. Lang. All Rights Reserved.
 #define _TMMODEL_FWD_H_
 
 // Common header
-#include "tmHeader.h"
 
 // All public TreeMaker model classes
 class tmPoint;

@@ -67,7 +67,9 @@ public:
     }
     
     // Move constructor - transfer ownership
-    A(A&& other) noexcept : tmDpptrTarget(std::move(other)), ab(std::move(other.ab)) {
+    A(A&& other) noexcept : 
+        tmDpptrTarget(std::move(other)),
+        ab(std::move(other.ab)) {
         cout << "member of class A moved" << endl;
     }
     

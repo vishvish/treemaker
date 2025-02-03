@@ -42,22 +42,25 @@ class B;
 
 // Classes A and B hold references to each other.
 
-class A : public tmDpptrTarget {  // Remove virtual
+class A : public tmDpptrTarget {
 public:
     // Default constructor
-    A() { cout << "member of class A created" << endl; }
+    A() : ab() { 
+        cout << "member of class A created" << endl; 
+    }
     
-    // Copy constructor - deep copy the tmDpptr
-    A(const A& other) : tmDpptrTarget(other) {
-        ab = other.ab;  // tmDpptr has its own copy semantics
+    // Copy constructor with initialization list
+    A(const A& other) : 
+        tmDpptrTarget(other),
+        ab(other.ab) {
         cout << "member of class A copied" << endl;
     }
     
-    // Copy assignment - deep copy the tmDpptr
+    // Copy assignment operator
     A& operator=(const A& other) {
         if (this != &other) {
             tmDpptrTarget::operator=(other);
-            ab = other.ab;  // tmDpptr has its own copy semantics
+            ab = other.ab;
             cout << "member of class A copy assigned" << endl;
         }
         return *this;

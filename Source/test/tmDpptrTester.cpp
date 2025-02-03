@@ -134,7 +134,7 @@ public:
 class D : public tmDpptrTarget {
 public:
     // Constructor
-    D(char* aName) : tmDpptrTarget() {
+    explicit D(const char* aName) : tmDpptrTarget() {
         std::format_to_n(mName, 20, "{}", aName);
         cout << mName << " created" << endl;
     }
@@ -216,15 +216,11 @@ int main(void)
   (*c).Test();      // dereference
   c->Test();        // arrow operator
   
-  // Remove unused variable rd1 declaration
-  // Create test objects and use them
-  D* d1 = new D(const_cast<char*>("d1"));
-  tmDpptr<D> rd2(new D(const_cast<char*>("d2")));
+  // Use smart pointers instead of raw pointers
+  auto d1 = std::make_unique<D>("d1");
+  tmDpptr<D> rd2(std::make_unique<D>("d2").release());
   
-  delete d1;
-  
-  // Now try out a tmDpptrArray that automatically removes objects as they are
-  // are deleted.
+  // No need to delete d1, unique_ptr handles cleanup
   
   // Create test objects and populate array
   tmDpptrArray<D> rld;    // create a list of references

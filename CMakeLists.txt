@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 set(TM_VERSION_MAJOR 5)
 set(TM_VERSION_MINOR 1)
-set(TM_VERSION_RELEASE 0)
+set(TM_VERSION_RELEASE 2)
 
 # Set project name and version from tmVersion.h
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Source/tmVersion.h" version_lines
@@ -37,6 +37,8 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Development")
     add_compile_definitions(TMDEBUG)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
     add_compile_definitions(TMPROFILE)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DNDEBUG -DWX_SUPPRESS_SIZER_FLAGS_CHECK)
 endif()
 
 # Find wxWidgets

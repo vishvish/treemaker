@@ -107,6 +107,7 @@ SHIMEOF
         --with-libpng=builtin \
         --with-libtiff=builtin \
         --with-zlib=sys \
+        --with-regex=builtin \
         --with-expat=builtin \
         CXX="clang++" \
         CXXFLAGS="-std=c++17 -arch ${ARCH} -I${WX_BUILD_DIR}/shim" \

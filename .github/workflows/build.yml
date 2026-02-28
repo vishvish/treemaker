@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: deps
-          key: wxwidgets-3.2.7-macos-14-arm64-${{ hashFiles('build.sh') }}
+          key: wxwidgets-3.2.7-v2-macos-14-arm64-${{ hashFiles('build.sh') }}
 
       - name: Build (Release)
         run: ./build.sh Release

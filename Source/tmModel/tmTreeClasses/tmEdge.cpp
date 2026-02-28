@@ -11,6 +11,7 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 #include "tmEdge.h"
 #include "tmNode.h"
 #include "tmTree.h"
+#include <cstdio>
 
 using namespace std;
 
@@ -37,7 +38,7 @@ void tmEdge::InitEdge()
   
   // Set settings
   mLength = 0;
-  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", "");
+  std::snprintf(mLabel, MAX_LABEL_LEN, "%s", "");
   mStrain = 0;
   mStiffness = 1;
 
@@ -75,7 +76,7 @@ tmEdge::tmEdge(tmTree* aTree, tmNode* node1, tmNode* node2, tmFloat aLength,
   
   // Set settings
   mLength = aLength;
-  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", aLabel);
+  std::snprintf(mLabel, MAX_LABEL_LEN, "%s", aLabel);
 
   // Fill with tmNode references
   mNodes.push_back(node1);
@@ -111,7 +112,7 @@ space.
 void tmEdge::SetLabel(const char* aLabel)
 {
   TMASSERT(strlen(aLabel) <= MAX_LABEL_LEN);
-  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", aLabel);
+  std::snprintf(mLabel, MAX_LABEL_LEN, "%s", aLabel);
 }
 
 

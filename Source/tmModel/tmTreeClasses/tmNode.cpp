@@ -9,6 +9,7 @@ Copyright:    2003 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include "tmNode.h"
+#include <cstdio>
 #include <iostream>
 #include <istream>
 #include "tmConditionNodeFixed.h"
@@ -33,7 +34,7 @@ void tmNode::InitNode()
   mIndex = mTree->mNodes.size();
 
   // Initialize member data
-  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", "");
+  std::snprintf(mLabel, MAX_LABEL_LEN, "%s", "");
   mLoc = tmPoint(0., 0.);
   mDepth = DEPTH_NOT_SET;
   mElevation = 0.0;
@@ -106,7 +107,7 @@ space.
 void tmNode::SetLabel(const char* aLabel)
 {
   TMASSERT(strlen(aLabel) <= MAX_LABEL_LEN);
-  std::format_to_n(mLabel, MAX_LABEL_LEN, "{}", aLabel);
+  std::snprintf(mLabel, MAX_LABEL_LEN, "%s", aLabel);
 }
 
 

@@ -9,7 +9,7 @@ Copyright:    2005 Robert J. Lang. All Rights Reserved.
 *******************************************************************************/
 
 #include <iostream>
-#include <format>
+#include <cstdio>
 
 #include "tmDpptr.h"
 #include "tmDpptrArray.h"
@@ -135,7 +135,7 @@ class D : public tmDpptrTarget {
 public:
     // Constructor
     explicit D(const char* aName) : tmDpptrTarget() {
-        std::format_to_n(mName, 20, "{}", aName);
+        std::snprintf(mName, 20, "%s", aName);
         cout << mName << " created" << endl;
     }
     

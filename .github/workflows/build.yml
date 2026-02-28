@@ -7,6 +7,8 @@ jobs:
   build-macos:
     runs-on: macos-14          # Apple Silicon (M1) runner
     timeout-minutes: 30
+    permissions:
+      contents: write
     env:
       HAS_SIGNING: ${{ secrets.APPLE_CERTIFICATE != '' }}
 

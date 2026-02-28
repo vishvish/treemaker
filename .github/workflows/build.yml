@@ -137,10 +137,11 @@ jobs:
           name: TreeMaker-macOS-arm64
           path: ${{ env.dmg_name }}
 
-      # --- Release (only on version tags) ---
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: TreeMaker ${{ steps.version.outputs.version }}
           files: ${{ env.dmg_name }}
           generate_release_notes: true
+          make_latest: true

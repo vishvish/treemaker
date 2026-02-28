@@ -101,6 +101,7 @@ jobs:
           DMG_NAME="TreeMaker-${{ steps.version.outputs.version }}-macOS-arm64.dmg"
           mkdir -p dmg-stage
           cp -R build/bin/TreeMaker.app dmg-stage/
+          cp LICENSE.txt dmg-stage/
           ln -s /Applications dmg-stage/Applications
           hdiutil create -volname "TreeMaker" \
             -srcfolder dmg-stage \

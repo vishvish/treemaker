@@ -77,6 +77,7 @@ all text values
 *****/
 void tmwxConditionPathActivePanel::OnApply(wxCommandEvent&)
 {
+  if (!mConditionPathActive) return;
   tmTree* theTree = mConditionPathActive->GetTree();
   
   // Validation

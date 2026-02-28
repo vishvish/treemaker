@@ -5,6 +5,8 @@
 # Build directories
 build/
 **/build/
+deps/
+out/
 
 # IDE specific files
 .vscode/

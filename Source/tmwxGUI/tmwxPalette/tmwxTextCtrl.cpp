@@ -16,7 +16,7 @@ Copyright:    ©2003 Robert J. Lang. All Rights Reserved.
 /*****
 Constructor
 *****/
-tmwxTextCtrl::tmwxTextCtrl(wxWindow* parent, const wxChar* floatFormat) : 
+tmwxTextCtrl::tmwxTextCtrl(wxWindow* parent, const wxString& floatFormat) : 
   wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 
     wxTE_PROCESS_ENTER),
   mFloatFormat(floatFormat)

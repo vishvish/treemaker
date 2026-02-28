@@ -34,7 +34,7 @@ private:
   wxString mFloatFormat;
 public:
   // Constructors
-  tmwxTextCtrl(wxWindow* parent, const wxChar* floatFormat = wxEmptyString);
+  tmwxTextCtrl(wxWindow* parent, const wxString& floatFormat = wxEmptyString);
 
   // Value setting, augments ancestor method SetValue(const wxString&)
   using wxTextCtrl::SetValue;

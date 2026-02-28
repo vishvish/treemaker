@@ -13,17 +13,22 @@ foreach(ver ${version_lines})
     endif()
 endforeach()
 
+# macOS platform settings - must be set before project()
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum macOS deployment version")
+    # Default to native architecture (arm64 on Apple Silicon, x86_64 on Intel)
+    if(NOT CMAKE_OSX_ARCHITECTURES)
+        execute_process(COMMAND uname -m OUTPUT_VARIABLE _native_arch OUTPUT_STRIP_TRAILING_WHITESPACE)
+        set(CMAKE_OSX_ARCHITECTURES "${_native_arch}" CACHE STRING "Build architectures for macOS")
+    endif()
+endif()
+
 project(TreeMaker VERSION ${TM_VERSION_MAJOR}.${TM_VERSION_MINOR}.${TM_VERSION_RELEASE} LANGUAGES CXX)
 
 # Set C++20 standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-# Add clang-specific flags for C++20
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
-endif()
 
 # Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -43,7 +48,11 @@ endif()
 
 # Find wxWidgets
 set(wxWidgets_USE_STATIC 1)
-set(wxWidgets_CONFIG_OPTIONS --toolkit=osx_cocoa --unicode)
+if(APPLE)
+    set(wxWidgets_CONFIG_OPTIONS --toolkit=osx_cocoa --unicode)
+elseif(UNIX)
+    set(wxWidgets_CONFIG_OPTIONS --unicode)
+endif()
 find_package(wxWidgets 3.2 REQUIRED COMPONENTS core base adv html xml)
 include(${wxWidgets_USE_FILE})
 
@@ -65,12 +74,6 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/images
 if(APPLE)
     # Enable @rpath in the install name for any shared libraries
     set(CMAKE_MACOSX_RPATH 1)
-    
-    # Set deployment target
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
-    
-    # Support both ARM and Intel
-    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Build architectures for macOS")
 endif()
 
 # Package configuration

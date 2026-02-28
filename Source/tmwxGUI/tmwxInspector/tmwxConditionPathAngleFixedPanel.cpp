@@ -83,6 +83,7 @@ all text values
 *****/
 void tmwxConditionPathAngleFixedPanel::OnApply(wxCommandEvent&)
 {
+  if (!mConditionPathAngleFixed) return;
   tmTree* theTree = mConditionPathAngleFixed->GetTree();
   
   // Validation

@@ -124,6 +124,7 @@ validate as if we had hit TextEnter.
 *****/
 void tmwxConditionPathComboPanel::OnRadioBox(wxCommandEvent& event)
 {
+  if (!mConditionPathCombo) return;
   int sel = mRadioBox->GetSelection();
   switch(sel) {
     case ACTIVE_ONLY: {
@@ -160,6 +161,7 @@ transfer data to tree.
 *****/
 void tmwxConditionPathComboPanel::OnApply(wxCommandEvent&)
 {
+  if (!mConditionPathCombo) return;
   tmTree* theTree = mConditionPathCombo->GetTree();
   
   // Validation
@@ -259,7 +261,7 @@ void tmwxConditionPathComboPanel::OnApply(wxCommandEvent&)
 Event table
 *****/
 BEGIN_EVENT_TABLE(tmwxConditionPathComboPanel, wxPanel)
-  EVT_RADIOBOX(wxID_ANY, tmwxConditionPathComboPanel::OnApply)
+  EVT_RADIOBOX(wxID_ANY, tmwxConditionPathComboPanel::OnRadioBox)
   EVT_BUTTON(wxID_APPLY, tmwxConditionPathComboPanel::OnApply)
   EVT_TEXT_ENTER(wxID_ANY, tmwxConditionPathComboPanel::OnApply)
 END_EVENT_TABLE()

@@ -88,7 +88,7 @@ void tmwxInspectorPanel::AddTextPair(const wxString& caption,
   
   textctrl = new tmwxTextCtrl(this, format);
   textctrl->SetMinSize(wxSize(100, -1));
-  gridsizer->Add(textctrl, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALL | wxFIXED_MINSIZE, 5);
+  gridsizer->Add(textctrl, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 5);
   
   mContentSizer->Add(gridsizer, 0, wxEXPAND | wxALL, 5);
   Layout();
@@ -126,7 +126,7 @@ void tmwxInspectorPanel::AddCheckPair(wxCheckBox*& checkbox,
   
   textctrl = new tmwxTextCtrl(this, format);
   textctrl->SetMinSize(wxSize(100, -1));
-  rowSizer->Add(textctrl, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALL, 5);
+  rowSizer->Add(textctrl, 1, wxEXPAND | wxALL, 5);
   
   mContentSizer->Add(rowSizer, 0, wxEXPAND | wxALL, 5);
   Layout();

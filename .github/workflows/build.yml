@@ -7,6 +7,8 @@ jobs:
   build-macos:
     runs-on: macos-14          # Apple Silicon (M1) runner
     timeout-minutes: 30
+    env:
+      HAS_SIGNING: ${{ secrets.APPLE_CERTIFICATE != '' }}
 
     steps:
       - name: Checkout
@@ -40,7 +42,7 @@ jobs:
 
       # --- Code Signing & Notarization ---
       - name: Import signing certificate
-        if: secrets.APPLE_CERTIFICATE != ''
+        if: env.HAS_SIGNING == 'true'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -68,7 +70,7 @@ jobs:
           rm -f /tmp/certificate.p12
 
       - name: Codesign app
-        if: secrets.APPLE_CERTIFICATE != ''
+        if: env.HAS_SIGNING == 'true'
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
@@ -101,7 +103,7 @@ jobs:
           echo "dmg_name=${DMG_NAME}" >> "$GITHUB_ENV"
 
       - name: Codesign DMG
-        if: secrets.APPLE_CERTIFICATE != ''
+        if: env.HAS_SIGNING == 'true'
         run: |
           IDENTITY=$(security find-identity -v -p codesigning /tmp/build.keychain-db \
             | grep "Developer ID Application" | head -1 \
@@ -109,7 +111,7 @@ jobs:
           codesign --force --sign "$IDENTITY" --timestamp "${{ env.dmg_name }}"
 
       - name: Notarize DMG
-        if: secrets.APPLE_CERTIFICATE != ''
+        if: env.HAS_SIGNING == 'true'
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}

@@ -24,8 +24,6 @@ jobs:
         with:
           path: deps
           key: wxwidgets-3.2.7-macos-14-arm64-${{ hashFiles('build.sh') }}
-          restore-keys: |
-            wxwidgets-3.2.7-macos-14-arm64-
 
       - name: Build (Release)
         run: ./build.sh Release
@@ -33,6 +31,12 @@ jobs:
       - name: Verify binary
         run: |
           file build/bin/TreeMaker.app/Contents/MacOS/TreeMaker
+          echo "--- Dynamic libraries ---"
+          otool -L build/bin/TreeMaker.app/Contents/MacOS/TreeMaker
+          if otool -L build/bin/TreeMaker.app/Contents/MacOS/TreeMaker | grep -q pcre2; then
+            echo "ERROR: binary still links against pcre2"
+            exit 1
+          fi
           build/bin/TreeMaker.app/Contents/MacOS/TreeMaker --help || true
 
       - name: Extract version

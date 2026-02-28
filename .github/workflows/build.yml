@@ -36,8 +36,8 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          major=$(grep 'TM_VERSION_MAJOR' Source/tmVersion.h | awk '{print $3}')
-          minor=$(grep 'TM_VERSION_MINOR' Source/tmVersion.h | awk '{print $3}')
+          major=$(grep '#define TM_VERSION_MAJOR' Source/tmVersion.h | awk '{print $3}')
+          minor=$(grep '#define TM_VERSION_MINOR' Source/tmVersion.h | awk '{print $3}')
           echo "version=${major}.${minor}" >> "$GITHUB_OUTPUT"
 
       # --- Code Signing & Notarization ---

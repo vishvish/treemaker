@@ -38,6 +38,56 @@ jobs:
           minor=$(grep 'TM_VERSION_MINOR' Source/tmVersion.h | awk '{print $3}')
           echo "version=${major}.${minor}" >> "$GITHUB_OUTPUT"
 
+      # --- Code Signing & Notarization ---
+      - name: Import signing certificate
+        if: secrets.APPLE_CERTIFICATE != ''
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          # Decode certificate
+          echo "$APPLE_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
+
+          # Create a temporary keychain
+          KEYCHAIN_PATH="/tmp/build.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 16)"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Import certificate
+          security import /tmp/certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Add to search list
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+
+          # Clean up certificate file
+          rm -f /tmp/certificate.p12
+
+      - name: Codesign app
+        if: secrets.APPLE_CERTIFICATE != ''
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          IDENTITY="Developer ID Application: ($APPLE_TEAM_ID)"
+          # Find the actual identity name from the keychain
+          IDENTITY=$(security find-identity -v -p codesigning /tmp/build.keychain-db \
+            | grep "Developer ID Application" | head -1 \
+            | sed 's/.*"\(.*\)".*/\1/')
+          echo "Signing with: $IDENTITY"
+
+          codesign --force --deep --options runtime \
+            --sign "$IDENTITY" \
+            --timestamp \
+            build/bin/TreeMaker.app
+
+          # Verify
+          codesign --verify --deep --strict build/bin/TreeMaker.app
+          echo "Codesign verified successfully"
+
       - name: Create DMG
         run: |
           DMG_NAME="TreeMaker-${{ steps.version.outputs.version }}-macOS-arm64.dmg"
@@ -49,6 +99,35 @@ jobs:
             -ov -format UDZO \
             "${DMG_NAME}"
           echo "dmg_name=${DMG_NAME}" >> "$GITHUB_ENV"
+
+      - name: Codesign DMG
+        if: secrets.APPLE_CERTIFICATE != ''
+        run: |
+          IDENTITY=$(security find-identity -v -p codesigning /tmp/build.keychain-db \
+            | grep "Developer ID Application" | head -1 \
+            | sed 's/.*"\(.*\)".*/\1/')
+          codesign --force --sign "$IDENTITY" --timestamp "${{ env.dmg_name }}"
+
+      - name: Notarize DMG
+        if: secrets.APPLE_CERTIFICATE != ''
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+        run: |
+          xcrun notarytool submit "${{ env.dmg_name }}" \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_ID_PASSWORD" \
+            --wait --timeout 10m
+
+          xcrun stapler staple "${{ env.dmg_name }}"
+          echo "Notarization and stapling complete"
+
+      - name: Cleanup keychain
+        if: always()
+        run: |
+          security delete-keychain /tmp/build.keychain-db 2>/dev/null || true
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4

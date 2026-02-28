@@ -1,0 +1,65 @@
+name: Build & Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-14          # Apple Silicon (M1) runner
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cmake
+        run: brew install cmake
+
+      - name: Cache wxWidgets
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: wxwidgets-3.2.7-macos-14-arm64-${{ hashFiles('build.sh') }}
+          restore-keys: |
+            wxwidgets-3.2.7-macos-14-arm64-
+
+      - name: Build (Release)
+        run: ./build.sh Release
+
+      - name: Verify binary
+        run: |
+          file build/bin/TreeMaker.app/Contents/MacOS/TreeMaker
+          build/bin/TreeMaker.app/Contents/MacOS/TreeMaker --help || true
+
+      - name: Extract version
+        id: version
+        run: |
+          major=$(grep 'TM_VERSION_MAJOR' Source/tmVersion.h | awk '{print $3}')
+          minor=$(grep 'TM_VERSION_MINOR' Source/tmVersion.h | awk '{print $3}')
+          echo "version=${major}.${minor}" >> "$GITHUB_OUTPUT"
+
+      - name: Create DMG
+        run: |
+          DMG_NAME="TreeMaker-${{ steps.version.outputs.version }}-macOS-arm64.dmg"
+          mkdir -p dmg-stage
+          cp -R build/bin/TreeMaker.app dmg-stage/
+          ln -s /Applications dmg-stage/Applications
+          hdiutil create -volname "TreeMaker" \
+            -srcfolder dmg-stage \
+            -ov -format UDZO \
+            "${DMG_NAME}"
+          echo "dmg_name=${DMG_NAME}" >> "$GITHUB_ENV"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TreeMaker-macOS-arm64
+          path: ${{ env.dmg_name }}
+
+      # --- Release (only on version tags) ---
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.dmg_name }}
+          generate_release_notes: true
